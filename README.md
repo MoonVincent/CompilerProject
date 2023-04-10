@@ -13,7 +13,7 @@ The project of compiler principle
 		  .
 	
     /Test
-		test1.cmm222
+		test1.cmm
 		test2.cmm
 		  .
 		  .
