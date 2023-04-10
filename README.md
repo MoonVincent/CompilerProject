@@ -1,2 +1,2 @@
-# ComplierProject
-The project of complier principle
+# CompilerProject
+The project of compiler principle
