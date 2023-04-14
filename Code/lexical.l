@@ -1,7 +1,7 @@
 %{
 #include<stdio.h>
 %}
-
+%option yylineno
 digit [0-9]
 letter [_a-zA-Z]
 %%
@@ -32,7 +32,8 @@ while {printf("WHILE\n");}//{return WHILE;}
 "]" {printf("RB\n");}//{return RB;}
 "{" {printf("LC\n");}//{return LC;}
 "}" {printf("RC\n");}//{return RC;}
-. {}
+\n|\t|" "  {}
+. { printf("Error type A at Line %d: Mysterious characters \'%s\'\n", yylineno, yytext); } 
 %%
 int main(int argc, char **argv)
 {
