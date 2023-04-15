@@ -60,6 +60,13 @@ tree buildTree(int childCnt, int lineNo, bool isToken, std::string key, std::str
     return newTree;
 }
 
+/**
+ * @brief 深度优先，输出每个子节点到tree.txt中
+ * 
+ * @param root 当前要输出的子树根节点
+ * @param out tree.txt的输出流
+ */
+
 void printDFS(tree root, std::ofstream &out) {
     if (root == nullptr) {
         return;
@@ -77,6 +84,12 @@ void printDFS(tree root, std::ofstream &out) {
     out << "]";
     return;
 }
+
+/**
+ * @brief 将给定的树按一定格式输出至tree.txt,用于树的可视化
+ * 
+ * @param root:指定树的根节点
+ */
 
 void printTree(tree root) {
     std::ofstream out("tree.txt");
