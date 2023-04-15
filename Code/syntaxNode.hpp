@@ -72,7 +72,7 @@ void printDFS(tree root, std::ofstream &out) {
         return;
     }
 
-    if (root->isToken) {
+    if (root->isToken && root->children == nullptr) {
         out << "[^" << root->key << " Value:" << root->value << " line:" << root->lineNo << "]";
         return; 
     }
