@@ -1,44 +1,38 @@
 %{
 #include<stdio.h>
+#include"syntaxNode.hpp"
 %}
 %option yylineno
 digit [0-9]
 letter [_a-zA-Z]
 %%
-struct {printf("STRUCT\n");}//{return STRUCT;}
-return {printf("RETURN\n");}//{return RETURN;}
-if {printf("IF\n");}//{return IF;}
-else {printf("ELSE\n");}//{return ELSE;}
-while {printf("WHILE\n");}//{return WHILE;}
-"int"|"float" {printf("TYPE\n");}//{return TYPE;}
-{digit}+ {printf("INT\n");}//{return INT;}
-[+−]?([0-9]*\.?[0-9]+|[0-9]+\.) {printf("FLOAT");}//{return FLOAT;}
-{letter}+[_0-9a-zA-Z]* {printf("ID\n");}//{return ID;}
-; {printf("SEMI\n");}//{return SEMI;}
-, {printf("COMMA\n");}//{return COMMA;}
-= {printf("ASSIGNOP\n");}//{return ASSIGNOP;}
->|<|>=|<=|==|!= {printf("RELOP\n");}//{return RELOP;}
-"+" {printf("PLUS\n");}//{return PLUS;}
-"-" {printf("MINUS\n");}//{return MINUS;}
-"*" {printf("STAR\n");}//{return STAR;}
-"/" {printf("DIV\n");}//{return DIV;}
-"&&" {printf("AND\n");}//{return AND;}
-"||" {printf("OR\n");}//{return OR;}
-"." {printf("DOT\n");}//{return DOT;}
-"!" {printf("NOT\n");}//{return NOT;}
-"(" {printf("LP\n");}//{return LP;}
-")" {printf("RP\n");}//{return RP;}
-"[" {printf("LB\n");}//{return LB;}
-"]" {printf("RB\n");}//{return RB;}
-"{" {printf("LC\n");}//{return LC;}
-"}" {printf("RC\n");}//{return RC;}
+struct {yylval.node = buildTree(0,yylineno,true,"STRUCT",yytext,nullptr);return STRUCT;}
+return {yylval.node = buildTree(0,yylineno,true,"RETURN",yytext,nullptr);return RETURN;}
+if {yylval.node = buildTree(0,yylineno,true,"IF",yytext,nullptr);return IF;}
+else {yylval.node = buildTree(0,yylineno,true,"ELSE",yytext,nullptr);return ELSE;}
+while {yylval.node = buildTree(0,yylineno,true,"WHILE",yytext,nullptr);return WHILE;}
+"int"|"float" {yylval.node = buildTree(0,yylineno,true,"TYPE",yytext,nullptr);return TYPE;}
+{digit}+{yylval.node = buildTree(0,yylineno,true,"INT",yytext,nullptr);return INT;}
+[+−]?([0-9]*\.?[0-9]+|[0-9]+\.) {yylval.node = buildTree(0,yylineno,true,"FLOAT",yytext,nullptr);return FLOAT;}
+{letter}+[_0-9a-zA-Z]* {yylval.node = buildTree(0,yylineno,true,"ID",yytext,nullptr);return ID;}
+; {yylval.node = buildTree(0,yylineno,true,"SEMI",yytext,nullptr);return SEMI;}
+, {yylval.node = buildTree(0,yylineno,true,"COMMA",yytext,nullptr);return COMMA;}
+= {yylval.node = buildTree(0,yylineno,true,"ASSIGNOP",yytext,nullptr);return ASSIGNOP;}
+>|<|>=|<=|==|!= {yylval.node = buildTree(0,yylineno,true,"RELOP",yytext,nullptr);return RELOP;}
+"+" {yylval.node = buildTree(0,yylineno,true,"PLUS",yytext,nullptr);return PLUS;}
+"-" {yylval.node = buildTree(0,yylineno,true,"MINUS",yytext,nullptr);return MINUS;}
+"*" {yylval.node = buildTree(0,yylineno,true,"STAR",yytext,nullptr);return STAR;}
+"/" {yylval.node = buildTree(0,yylineno,true,"DIV",yytext,nullptr);return DIV;}
+"&&" {yylval.node = buildTree(0,yylineno,true,"AND",yytext,nullptr);return AND;}
+"||" {yylval.node = buildTree(0,yylineno,true,"OR",yytext,nullptr);return OR;}
+"." {yylval.node = buildTree(0,yylineno,true,"DOT",yytext,nullptr);return DOT;}
+"!" {yylval.node = buildTree(0,yylineno,true,"NOT",yytext,nullptr);return NOT;}
+"(" {yylval.node = buildTree(0,yylineno,true,"LP",yytext,nullptr);return LP;}
+")" {yylval.node = buildTree(0,yylineno,true,"RP",yytext,nullptr);return RP;}
+"[" {yylval.node = buildTree(0,yylineno,true,"LB",yytext,nullptr);return LB;}
+"]" {yylval.node = buildTree(0,yylineno,true,"RB",yytext,nullptr);return RB;}
+"{" {yylval.node = buildTree(0,yylineno,true,"LC",yytext,nullptr);return LC;}
+"}" {yylval.node = buildTree(0,yylineno,true,"RC",yytext,nullptr);return RC;}
 \n|\t|" "  {}
 . { printf("Error type A at Line %d: Mysterious characters \'%s\'\n", yylineno, yytext); } 
 %%
-int main(int argc, char **argv)
-{
-    FILE *fin=fopen(argv[1],"r");
-    yyin=fin;
-    yylex();
-    return 0;
-}
