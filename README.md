@@ -57,3 +57,23 @@ The project of compiler principle
 
   - 用你编译生成的二进制文件替换该文件。
 
+
+
+
+### Project1
+
+- yylineno
+- yy_create_buffer
+- input(判别注释可用)
+- unput
+- yyless、yymore(用于字符串常量中的转义双引号)
+- REJECT：统计重叠时可以使用
+- YYLTYPE：Bison中记录了每个token的位置信息
+- YY_USER_ACTION:这个宏表示在执行每一个动作之前需要先被执行的一段代码
+- Bison遇到移入/规约冲突，会优先进行一如；遇到规约/规约冲突，会选择靠前的产生式
+- %left：左结合 %right：右结合 %nonassoc：不可结合
+- 排在后面的优先级大于排在前面的
+- 处理if-else的规约冲突（%prec LOWER_THEN_ELSE)
+
+- bison -v：可以生成output文件，报告错误
+- bison -t：诊断模式（debug模式）
