@@ -1,5 +1,6 @@
 %{
     #include "syntaxNode.hpp"
+    int yylex(void);
     #define NO_VALUE ""
     #define NO_LINE -1
 %}
