@@ -1,5 +1,6 @@
 %{
 #include<stdio.h>
+#include "y.tab.h"
 #include"syntaxNode.hpp"
 %}
 %option yylineno
