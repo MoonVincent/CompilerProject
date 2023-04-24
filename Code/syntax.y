@@ -3,19 +3,18 @@
     int yylex(void);
     #define NO_VALUE ""
     #define NO_LINE -1
+    tree syntaxTree = nullptr;
 %}
 
 %union{
     tree node;
 }
 
-tree syntaxTree = nullptr;
-
-%token <node> INT,FLOAT,ID,SEMI,COMMA,ASSIGNOP,RELOP,PLUS,MINUS,STAR
-%token <node> DIV,AND,OR,DOT,NOT,TYPE,LP,RP,RB,LC,RC,STRUCT,RETURN,IF,ELSE,WHILE
-%type <node> Program,ExtDefList,ExtDef,Specifier,ExtDecList,FunDec,CompSt,VarDec
-%type <node> StructSpecifier,OptTag,DefList,Tag,VarList,ParamDec,StmtList,Stmt,Exp
-%type <node> Dec,DecList,Args,Def
+%token <node> INT FLOAT ID SEMI COMMA ASSIGNOP RELOP PLUS MINUS STAR
+%token <node> DIV AND OR DOT NOT TYPE LP RP LB RB LC RC STRUCT RETURN IF ELSE WHILE
+%type <node> Program ExtDefList ExtDef Specifier ExtDecList FunDec CompSt VarDec
+%type <node> StructSpecifier OptTag DefList Tag VarList ParamDec StmtList Stmt Exp
+%type <node> Dec DecList Args Def
 %%
 
       Program: ExtDefList {syntaxTree = buildTree(1, NO_LINE, false, "Program", NO_VALUE, $1);}
@@ -27,7 +26,7 @@ tree syntaxTree = nullptr;
     
       ExtDef: Specifier ExtDecList SEMI {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
           | Specifier SEMI {$$ = buildTree(2, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2);}
-          | Specifier FunDec Compt {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
+          | Specifier FunDec CompSt {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
           ;
     
       ExtDecList: VarDec {$$ = buildTree(1, NO_LINE, false, "ExtDecList", NO_VALUE, $1);}
@@ -64,7 +63,7 @@ tree syntaxTree = nullptr;
             ;
 
       CompSt: LC DefList StmtList RC {&& = buildTree(4, NO_LINE, false, "CompSt", NO_VALUE, $1, $2, $3, $4);}
-	      ;
+          ;
 
       StmtList: Stmt StmtList {$$ = buildTree(2, NO_LINE, false, "StmtList", NO_VALUE, $1, $2);}
   	      | {$$ = nullptr;}
@@ -82,7 +81,7 @@ tree syntaxTree = nullptr;
           | {$$=nullptr}
           ;
 
-      Def: Specifier DecList SEMI {$$ = buildTree(3, NO_LINE, false, "Def", NO_VALUE, $!, $2, $3);}
+      Def: Specifier DecList SEMI {$$ = buildTree(3, NO_LINE, false, "Def", NO_VALUE, $1, $2, $3);}
           ;
 
       DecList: Dec {$$ = buildTree(1, NO_LINE, false, "DecList", NO_VALUE, $1);}
