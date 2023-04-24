@@ -1,5 +1,6 @@
 %{
 #include<stdio.h>
+#include "syntax.tab.h"
 #include"syntaxNode.hpp"
 %}
 %option yylineno
@@ -12,7 +13,7 @@ letter [_a-zA-Z]
 "else" {yylval.node = buildTree(0, yylineno, true, "ELSE", yytext); return ELSE; }
 "while" {yylval.node = buildTree(0, yylineno, true, "WHILE", yytext); return WHILE; }
 "int"|"float" {yylval.node = buildTree(0, yylineno, true, "TYPE", yytext); return TYPE; }
-{digit}+{yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
+{digit}+ {yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
 [+-]?([0-9]*\.?[0-9]+|[0-9]+\.) {yylval.node = buildTree(0, yylineno, true, "FLOAT", yytext); return FLOAT; }
 {letter}+[_0-9a-zA-Z]* {yylval.node = buildTree(0, yylineno, true, "ID", yytext); return ID; }
 ";" {yylval.node = buildTree(0, yylineno, true, "SEMI", yytext); return SEMI; }
