@@ -2,19 +2,30 @@
     #include "syntaxNode.hpp"
     #define NO_VALUE ""
     #define NO_LINE -1
+    tree syntaxNode = nullptr;
 %}
 
 %union{
     tree node;
 }
 
-tree syntaxTree = nullptr;
-
 %token <node> INT,FLOAT,ID,SEMI,COMMA,ASSIGNOP,RELOP,PLUS,MINUS,STAR
 %token <node> DIV,AND,OR,DOT,NOT,TYPE,LP,RP,RB,LC,RC,STRUCT,RETURN,IF,ELSE,WHILE
 %type <node> Program,ExtDefList,ExtDef,Specifier,ExtDecList,FunDec,CompSt,VarDec
 %type <node> StructSpecifier,OptTag,DefList,Tag,VarList,ParamDec,StmtList,Stmt,Exp
 %type <node> Dec,DecList,Args,Def
+%start Program
+%right ASSIGNOP
+%left AND
+%left OR
+%left RELOP
+%left PLUS MINUS
+%left STAR DIV
+%right NOT
+%left DOT
+%left LB RB
+%left LP RP
+
 %%
 
       Program: ExtDefList {syntaxTree = buildTree(1, NO_LINE, false, "Program", NO_VALUE, $1);}
