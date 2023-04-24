@@ -28,6 +28,7 @@ tree syntaxTree = nullptr;
       ExtDef: Specifier ExtDecList SEMI {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
           | Specifier SEMI {$$ = buildTree(2, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2);}
           | Specifier FunDec Compt {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
+          | error SEMI 
           ;
     
       ExtDecList: VarDec {$$ = buildTree(1, NO_LINE, false, "ExtDecList", NO_VALUE, $1);}
@@ -50,10 +51,12 @@ tree syntaxTree = nullptr;
 
       VarDec: ID {$$ = buildTree(1, NO_LINE, false, "VarDec", NO_VALUE, $1);}
           | VarDec LB INT RB {$$ = buildTree(4, NO_LINE, false, "VarDec", NO_VALUE, $1, $2, $3, $4);}
+          | error RB
           ;
     
       FunDec: ID LP VarList RP {$$ = buildTree(4, NO_LINE, false, "FunDec", NO_VALUE, $1, $2, $3, $4);}
           | ID LP RP {$$ = buildTree(3, NO_LINE, false, "FunDec", NO_VALUE, $1, $2, $3);}
+          | error RP 
           ;
     
       VarList: ParamDec COMMA VarList {$$ = buildTree(3, NO_LINE, false, "VarList", NO_VALUE, $1, $2, $3);}
@@ -64,7 +67,8 @@ tree syntaxTree = nullptr;
             ;
 
       CompSt: LC DefList StmtList RC {&& = buildTree(4, NO_LINE, false, "CompSt", NO_VALUE, $1, $2, $3, $4);}
-	      ;
+	      | error RC
+          ;
 
       StmtList: Stmt StmtList {$$ = buildTree(2, NO_LINE, false, "StmtList", NO_VALUE, $1, $2);}
   	      | {$$ = nullptr;}
@@ -76,6 +80,7 @@ tree syntaxTree = nullptr;
   	  	  | IF LP Exp RP Stmt {$$ = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5);}
   	  	  | IF LP Exp RP Stmt ELSE Stmt {$$ = buildTree(7, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5, $6, $7);}
   	  	  | WHILE LP Exp RP Stmt {$$ = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5);}
+          | error SEMI
   	  	  ;
 
       DefList: Def DefList {$$ = buildTree(2, NO_LINE, false, "DefList", NO_VALUE, $1, $2);}
