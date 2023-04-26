@@ -1,11 +1,14 @@
 %{
-#include<stdio.h>
-#include "syntax.tab.h"
-#include"syntaxNode.hpp"
+#include "stdio.h"
+#include "syntax.tab.hpp"
+#include "syntaxNode.hpp"
 %}
-%option yylineno
+
 digit [0-9]
 letter [_a-zA-Z]
+%option yylineno
+%option noyywrap
+
 %%
 "struct" {yylval.node = buildTree(0, yylineno, true, "STRUCT", yytext); return STRUCT; }
 "return" {yylval.node = buildTree(0, yylineno, true, "RETURN", yytext); return RETURN; }
@@ -13,9 +16,9 @@ letter [_a-zA-Z]
 "else" {yylval.node = buildTree(0, yylineno, true, "ELSE", yytext); return ELSE; }
 "while" {yylval.node = buildTree(0, yylineno, true, "WHILE", yytext); return WHILE; }
 "int"|"float" {yylval.node = buildTree(0, yylineno, true, "TYPE", yytext); return TYPE; }
-{digit}+ {yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
-[+-]?([0-9]*\.?[0-9]+|[0-9]+\.) {yylval.node = buildTree(0, yylineno, true, "FLOAT", yytext); return FLOAT; }
-{letter}+[_0-9a-zA-Z]* {yylval.node = buildTree(0, yylineno, true, "ID", yytext); return ID; }
+[0-9]+ {yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
+[+-]?([0-9]*\.[0-9]+|[0-9]+\.) {yylval.node = buildTree(0, yylineno, true, "FLOAT", yytext); return FLOAT; }
+[_a-zA-Z][a-z0-9A-Z]* {yylval.node = buildTree(0, yylineno, true, "ID", yytext); return ID;}
 ";" {yylval.node = buildTree(0, yylineno, true, "SEMI", yytext); return SEMI; }
 "," {yylval.node = buildTree(0, yylineno, true, "COMMA", yytext); return COMMA; }
 "=" {yylval.node = buildTree(0, yylineno, true, "ASSIGNOP", yytext); return ASSIGNOP; }
@@ -34,6 +37,8 @@ letter [_a-zA-Z]
 "]" {yylval.node = buildTree(0, yylineno, true, "RB", yytext); return RB; }
 "{" {yylval.node = buildTree(0, yylineno, true, "LC", yytext); return LC; }
 "}" {yylval.node = buildTree(0, yylineno, true, "RC", yytext); return RC; }
-\n|\t|" "  {}
+"\n" {}
+"\t" {}
+" " {}
 . { printf("Error type A at Line %d: Mysterious characters \'%s\'\n",  yylineno,  yytext);  } 
 %%

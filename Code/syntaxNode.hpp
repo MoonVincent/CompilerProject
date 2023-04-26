@@ -1,9 +1,12 @@
+#ifndef _NODE_
+#define _NODE_
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string>
 #include <fstream>
 #define NO_VALUE ""
 typedef struct treeNode* tree;
+
 /**
  * @功能:抽象语法树的结点定义
  * @param:
@@ -41,24 +44,7 @@ struct treeNode{
  * @return tree 返回新子树的根节点
  */
 
-tree buildTree(int childCnt, int lineNo, bool isToken, std::string key, std::string value, ...){
-
-    tree newTree = new treeNode();
-    newTree->lineNo = lineNo;
-    newTree->isToken = isToken;
-    newTree->key = key;
-    newTree->value = value;
-    
-    va_list children;
-    va_start(children, childCnt);
-    newTree->childCnt = childCnt;
-    newTree->children = (tree*)malloc(sizeof(tree) * childCnt);
-    for(int i = 0; i < childCnt; ++i) {
-        newTree->children[i] = va_arg(children, tree);
-    }
-    va_end(children);
-    return newTree;
-}
+tree buildTree(int childCnt, int lineNo, bool isToken, std::string key, std::string value, ...);
 
 /**
  * @brief 深度优先，输出每个子节点到tree.txt中
@@ -67,23 +53,7 @@ tree buildTree(int childCnt, int lineNo, bool isToken, std::string key, std::str
  * @param out tree.txt的输出流
  */
 
-void printDFS(tree root, std::ofstream &out) {
-    if (root == nullptr) {
-        return;
-    }
-
-    if (root->isToken && root->children == nullptr) {
-        out << "[^" << root->key << " Value:" << root->value << " line:" << root->lineNo << "]";
-        return; 
-    }
-
-    out << "[" << root->key;
-    for (int i = 0; i < root->childCnt; ++i) {
-        printDFS(root->children[i], out);
-    }
-    out << "]";
-    return;
-}
+void printDFS(tree root, std::ofstream &out);
 
 /**
  * @brief 将给定的树按一定格式输出至tree.txt,用于树的可视化
@@ -91,10 +61,9 @@ void printDFS(tree root, std::ofstream &out) {
  * @param root:指定树的根节点
  */
 
-void printTree(tree root) {
-    std::ofstream out("tree.txt");
-    printDFS(root,out);
-}
+void printTree(tree root);
+
+#endif
 
 
 
