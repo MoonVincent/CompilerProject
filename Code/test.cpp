@@ -2,13 +2,13 @@
 int main(int argc, char **argv)
 {
     std::ofstream out("tree.txt");
-    InterCodeList head;
     std::string s1 = "abc";
     std::string s2 = "bda";
-    Operand x1 = newOperand(VARIABLE_OP,s1);
-    Operand x2 = newOperand(VARIABLE_OP,s2);
+    Operand x1 = newOperand(OP_READ_ADDRESS,s1);
+    Operand x2 = newOperand(OP_VARIABLE,s2);
     InterCode x = newAssign(ASSIGN, x1,x2);
-    add_ICList(head,x);
-    printInterCodes(out,head);
+    InterCodeList l1 = newICList();
+    add_ICList(l1,x);
+    printInterCodes(out,l1);
     return 0;
 }

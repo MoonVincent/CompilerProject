@@ -286,10 +286,13 @@ Operand newOperand(Kind_op kind, std::string val)
     return op;
 }
 
+int num_temp = 0;
+int num_label = 0;
 Operand newtemp()
 {
     char buf[20];
-    sprintf(buf, "t%d", num_temp++);
+    sprintf(buf, "t%d", num_temp);
+    num_temp++;
     std::string name(buf);
     Operand op = newOperand(OP_VARIABLE,name);
     return op;
@@ -298,7 +301,8 @@ Operand newtemp()
 Operand newlabel()
 {
     char buf[20];
-    sprintf(buf, "label%d", num_label++);
+    sprintf(buf, "label%d", num_label);
+    num_label++;
     std::string name(buf);
     Operand op = newOperand(OP_LABEL, name);
     return op;

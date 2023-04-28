@@ -1,3 +1,4 @@
+#pragma once
 #include "global.hpp"
 typedef enum { OP_VARIABLE,OP_CONSTANT,OP_ADDRESS,OP_LABEL,OP_FUNCTION,OP_RELOP,OP_READ_ADDRESS,OP_WRITE_ADDRESS} Kind_op;
 typedef enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} Kind_IC; 
@@ -48,7 +49,5 @@ void setOperand(Operand op, Kind_op kind, std::string val);
 void printOperand(std::ofstream &out, Operand op);
 
 //产生temp和label,newtemp返回name为t0,t1.....的变量,newlabel返回name为label1,label2......的标识
-int num_temp = 0;
-int num_label = 0;
 Operand newtemp();
 Operand newlabel();
