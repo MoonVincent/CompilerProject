@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <unordered_map>
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 #define ARRAY_PARAM_NUM 2
@@ -19,9 +20,9 @@ typedef struct FieldList_* FieldList;
  *  func 存储返回值类型、参数个数和各参数类型
  *  
 */
-typedef enum Kind_ {INT, FLOAT, ARRAY, STRUCTURE, FUNC} Kind;
+typedef enum Kind_ {INT_SEMA, FLOAT_SEMA, ARRAY_SEMA, STRUCTURE_SEMA, FUNC_SEMA} Kind_SEMA;
 struct Type_{
-    Kind kind;
+    Kind_SEMA kind;
     union {
         struct {Type elemType; int elemSize;} array;
         FieldList structure;
@@ -42,7 +43,7 @@ struct FieldList_{
     FieldList tail;
 };
 
-Type newBasic(Kind kind);
+Type newBasic(Kind_SEMA kind);
 Type newArray(Type elemType, int elemSize);
 Type newStructure(std::unordered_map<std::string, Type> members);
 Type newFunc(Type rv, std::vector<Type>& paramTypes);
@@ -50,7 +51,15 @@ Type copyType(Type src);
 FieldList newFieldList(std::string name, Type type);
 void deleteFieldList(FieldList fieldList);
 FieldList copyFieldList(FieldList fieldList);
-Type getType(std::string key);
 bool isEquivalent(Type type1, Type type2);
-bool insertType(std::string key, Type type);
-void deleteType(std::string key);
+void deleteType(Type type);
+
+Type getItem(std::string key);
+void deleteItem(std::string key);
+bool insertItem(std::string key, Type type);
+Type getFieldType(FieldList target, std::string name);
+bool isLeftValue(Type type);
+Type getFuncItem(std::string key);
+void deleteFuncItem(std::string key);
+bool insertFuncItem(std::string key, Type type);
+Type getArrayElemType(Type type);
