@@ -307,7 +307,9 @@ Operand newlabel()
     Operand op = newOperand(OP_LABEL, name);
     return op;
 }
-
+/*
+将op所对应的值赋值为kind和val
+*/
 void setOperand(Operand op, Kind_op kind, std::string val)
 {
     op->kind = kind;
@@ -326,7 +328,9 @@ void setOperand(Operand op, Kind_op kind, std::string val)
         op->u.name = val;
     }
 }
-
+/*
+打印一个操作数到out中
+*/
 void printOperand(std::ofstream &out, Operand op)
 {
     switch(op->kind)
@@ -350,3 +354,220 @@ void printOperand(std::ofstream &out, Operand op)
     }
 }
 
+/*
+传入一个符号表item,输出该item需要分配的空间大小,以字节为单位
+*/
+int compute_size(Type item)
+{
+    if (item == NULL)
+            return 0;
+    switch(item->kind)
+    {
+        case INT:
+        case FLOAT:
+            return 4;
+        case ARRAY:
+            return item->u.array.elemSize*compute_size(item->u.array.elemType);
+        case STRUCTURE:
+        {
+            int size = 0;
+            FieldList temp = item->u.structure;
+            while (temp)
+            {
+                size += compute_size(temp->type);
+                temp = temp->tail;
+            }
+            return size;
+        }
+    }
+}
+
+/*
+产生中间代码主入口
+*/
+void Generate(tree root)
+{
+    if (root == NULL)
+        return;
+    // Program → ExtDefList
+    if (root->children[0]->key == "ExtDefList")
+        translate_ExtDefList(root->children[0]);
+}
+
+void translate_ExtDefList(tree node)
+{
+    if(node == NULL)
+        return;
+    // ExtDefList -> ExtDef ExtDefList
+    //             | e
+    while(node)
+    {
+        translate_ExtDef(node->children[0]);
+        translate_ExtDefList(node->children[1]);
+    }
+}
+
+void translate_ExtDef(tree node)
+{
+    if(node == NULL)
+        return;
+    // ExtDef → Specifier ExtDecList SEMI
+    //          | Specifier SEMI 
+    //          | Specifier FunDec CompSt
+    if(node->children[1]->key == "FunDec")
+    {
+        translate_FunDec(node->children[1]);
+        translate_CompSt(node->children[2]);
+    }
+}
+
+void translate_FunDec(tree node)
+{
+    // to do
+}
+
+void translate_CompSt(tree node)
+{
+    if (node == NULL)
+        return;
+    // CompSt → LC DefList StmtList RC
+    translate_DefList(node->children[1]);
+    translate_StmtList(node->children[2]);
+}
+
+void translate_DefList(tree node)
+{
+    if (node == NULL)
+        return;
+    // DefList → Def DefList
+    //           |e
+    while(node)
+    {
+        translate_Def(node->children[0]);
+        node = node->children[1];
+    }
+}
+
+void translate_Def(tree node)
+{
+    if (node == NULL)
+        return;
+    // Def → Specifier DecList SEMI
+    translate_DecList(node->children[1]);
+}
+
+void translate_DecList(tree node)
+{
+    if (node == NULL)
+        return;
+    // DecList → Dec
+    //          | Dec COMMA DecList
+    while(node)
+    {
+        translate_Dec(node->children[0]);
+        if(node->childCnt == 3)
+            node = node->children[2];
+        else
+            break;
+    }
+}
+
+void translate_Dec(tree node)
+{
+    if (node == NULL)
+        return;
+    // Dec → VarDec
+    //      | VarDec ASSIGNOP Exp
+
+    if (node->childCnt == 1)
+        translate_VarDec(node->children[0], NULL);
+    // Dec -> VarDec ASSIGNOP Exp
+    else
+    {
+        Operand t1 = newtemp();
+        translate_VarDec(node->children[0], t1);
+        Operand t2 = newtemp();
+        translate_Exp(node->children[2], t2);
+        //to do
+        //genInterCode(IR_ASSIGN, t1, t2);
+    }
+}
+
+void translate_VarDec(tree node,Operand place)
+{
+    if (node == NULL)
+        return;
+    // VarDec → ID
+    //          | VarDec LB INT RB
+    // to do
+}
+void translate_Exp(tree node, Operand place)
+{
+    if (node == NULL)
+        return;
+    // Exp → Exp ASSIGNOP Exp
+    // | Exp AND Exp
+    // | Exp OR Exp
+    // | Exp RELOP Exp
+    // | Exp PLUS Exp
+    // | Exp MINUS Exp
+    // | Exp STAR Exp
+    // | Exp DIV Exp
+    // | LP Exp RP
+    // | MINUS Exp
+    // | NOT Exp
+    // | ID LP Args RP
+    // | ID LP RP
+    // | Exp LB Exp RB
+    // | Exp DOT ID
+    // | ID
+    // | INT
+    // | FLOAT
+    // to do
+}
+void translate_StmtList(tree node)
+{
+    if (node == NULL)
+        return;
+    // StmtList -> Stmt StmtList
+    //           | e
+    while(node)
+    {
+        translate_Stmt(node->children[0]);
+        node = node->children[1];
+    }
+}
+
+void translate_Stmt(tree node)
+{
+    if (node == NULL)
+        return;
+    // Stmt -> Exp SEMI
+    //       | CompSt
+    //       | RETURN Exp SEMI
+    //       | IF LP Exp RP Stmt
+    //       | IF LP Exp RP Stmt ELSE Stmt
+    //       | WHILE LP Exp RP Stmt
+    //to do
+}
+
+void translateCond(tree node, Operand label_true, Operand label_false)
+{
+    if (node == NULL)
+        return;
+    // Exp -> Exp AND Exp
+    //      | Exp OR Exp
+    //      | Exp RELOP Exp
+    //      | NOT Exp
+    //to do
+}
+
+//to do
+// void translateArgs(tree node, ArgList argList)
+// {
+//     if (node == NULL)
+//         return;
+//     // Args -> Exp COMMA Args
+//     //       | Exp
+//     // to do
+// }

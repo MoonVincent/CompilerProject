@@ -1,5 +1,6 @@
 #pragma once
 #include "type.hpp"
+#include "syntaxNode.hpp"
 #include <unordered_map>
 #include <stack>
 #include <string>

@@ -51,3 +51,25 @@ void printOperand(std::ofstream &out, Operand op);
 //产生temp和label,newtemp返回name为t0,t1.....的变量,newlabel返回name为label1,label2......的标识
 Operand newtemp();
 Operand newlabel();
+
+//DEC里面需要计算数组或结构体大小
+int compute_size(Type item);
+
+//产生中间代码主入口
+void Generate(tree root);
+void translate_ExtDefList(tree root);
+void translate_ExtDef(tree node);
+void translate_FunDec(tree node);
+void translate_CompSt(tree node);
+void translate_DefList(tree node);
+void translate_Def(tree node);
+void translate_DecList(tree node);
+void translate_Dec(tree node);
+void translate_VarDec(tree node, Operand place);
+void translate_Exp(tree node, Operand place);
+void translate_StmtList(tree node);
+void translate_Stmt(tree node);
+void translateCond(tree node, Operand label_true, Operand label_false);
+
+// to do
+// void translateArgs(tree node, ArgList argList);
