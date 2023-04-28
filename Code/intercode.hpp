@@ -1,10 +1,11 @@
 #include"global.hpp"
+typedef enum { VARIABLE,CONSTANT,ADDRESS,LABEL,FUNCTION,RELOP,READ_ADDRESS,WRITE_ADDRESS} Kind_op;
 typedef struct Operand_* Operand; 
-struct Operand_ { 
-	enum { VARIABLE,CONSTANT,ADDRESS,LABEL,FUNCTION,RELOP,READ_ADDRESS,WRITE_ADDRESS} kind; 
-	union { 
+struct Operand_ {
+  Kind_op kind;
+  union { 
 		int value; 
-		char *name;
+		std::string name;
 	} u; 
 }; 
 
@@ -23,3 +24,9 @@ struct InterCode_
 } ;
 
 struct InterCodes { InterCode code; struct InterCodes *prev, *next; };
+
+
+//Operand Functions
+Operand newOperand(Kind_op kind,char *val);
+void setOperand(Operand op, Kind_op kind, char *val);
+void printOperand(std::ofstream &out, Operand op);
