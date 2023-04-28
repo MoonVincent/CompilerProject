@@ -163,6 +163,108 @@ InterCode newDec(Kind_IC kind, Operand x, int size)
     return temp;
 }
 
+void printInterCodes(std::ofstream &out, InterCodeList head)
+{
+    InterCodeList cur = head->next;
+    while(cur!=NULL)
+    {
+        switch (cur->code->kind)
+        {
+        case LABEL:
+            out << "LABEL ";
+            printOperand(out, cur->code->u.oneop.op);
+            out << " :";
+            break;
+        case FUNCTION:
+            out << "FUNCTION ";
+            printOperand(out, cur->code->u.oneop.op);
+            out << " :";
+            break;
+        case ASSIGN:
+            printOperand(out, cur->code->u.assign.left);
+            out << " := ";
+            printOperand(out, cur->code->u.assign.right);
+            break;
+        case ADD:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " + ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case SUB:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " - ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case MUL:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " * ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case DIV:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " / ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case GOTO:
+            out << "GOTO ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IF_GOTO:
+            out << "IF ";
+            printOperand(out, cur->code->u.if_goto.x);
+            out << " ";
+            printOperand(out, cur->code->u.if_goto.relop);
+            out << " ";
+            printOperand(out, cur->code->u.if_goto.y);
+            out << " GOTO ";
+            printOperand(out, cur->code->u.if_goto.t);
+            break;
+        case RETURN:
+            out << "RETURN ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case DEC:
+            out << "DEC ";
+            printOperand(out, cur->code->u.dec.x);
+            out << " ";
+            out << cur->code->u.dec.size;
+            break;
+        case ARG:
+            out << "ARG ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case CALL:
+            printOperand(out, cur->code->u.assign.left);
+            out << " := CALL ";
+            printOperand(out, cur->code->u.assign.right);
+            break;
+        case PARAM:
+            out << "PARAM ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case READ:
+            out << "READ ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case WRITE:
+            out << "WRITE ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        }
+        out << "\n";
+        cur = cur->next;
+    }
+}
+
+
 Operand newOperand(Kind_op kind, std::string val)
 {
     Operand op = (Operand)malloc(sizeof(struct Operand_));
