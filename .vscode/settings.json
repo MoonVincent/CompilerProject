@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.docx": "php",
         "array": "cpp",
         "atomic": "cpp",
         "bit": "cpp",
@@ -48,6 +49,8 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "optional": "cpp",
+        "sstream": "cpp"
     }
 }

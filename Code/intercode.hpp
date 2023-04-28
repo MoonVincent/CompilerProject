@@ -1,14 +1,17 @@
 #include"global.hpp"
+typedef enum { VARIABLE,CONSTANT,ADDRESS,LABEL,FUNCTION,RELOP,READ_ADDRESS,WRITE_ADDRESS} Kind_op;
+enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} kind_IC; 
 typedef struct Operand_* Operand; 
-struct Operand_ { 
-	enum { VARIABLE, CONSTANT, ADDRESS, LABEL, FUNCTION, RELOP, READ_ADDRESS, WRITE_ADDRESS} kind; 
-	union { 
+
+
+struct Operand_ {
+  Kind_op kind;
+  union { 
 		int value; 
-		char *name;
+		std::string name;
 	} u; 
 }; 
 
-enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} kind_IC; 
 typedef struct InterCode_* InterCode; 
 struct InterCode_ 
 { 
@@ -37,3 +40,7 @@ InterCode newBinop(int kind, Operand res, Operand op1, Operand op2);
 InterCode newOneop(int kind, Operand op);
 InterCode newIf_goto(int kind, Operand x, Operand relop, Operand y, Operand t);
 InterCode newDec(int kind, Operand x, int size);
+//Operand Functions
+Operand newOperand(Kind_op kind,char *val);
+void setOperand(Operand op, Kind_op kind, char *val);
+void printOperand(std::ofstream &out, Operand op);
