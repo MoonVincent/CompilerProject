@@ -1,6 +1,6 @@
 #include"global.hpp"
 typedef enum { VARIABLE,CONSTANT,ADDRESS,LABEL,FUNCTION,RELOP,READ_ADDRESS,WRITE_ADDRESS} Kind_op;
-enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} kind_IC; 
+typedef enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} kind_IC; 
 typedef struct Operand_* Operand; 
 
 
@@ -35,11 +35,11 @@ struct InterCodes
 InterCodeList newICList();
 void delICList(InterCodeList p);
 void add_ICList(InterCodeList p, InterCode q);
-InterCode newAssign(int kind, Operand right, Operand left);
-InterCode newBinop(int kind, Operand res, Operand op1, Operand op2);
-InterCode newOneop(int kind, Operand op);
-InterCode newIf_goto(int kind, Operand x, Operand relop, Operand y, Operand t);
-InterCode newDec(int kind, Operand x, int size);
+InterCode newAssign(kind_IC kind, Operand right, Operand left);
+InterCode newBinop(kind_IC kind, Operand res, Operand op1, Operand op2);
+InterCode newOneop(kind_IC kind, Operand op);
+InterCode newIf_goto(kind_IC kind, Operand x, Operand relop, Operand y, Operand t);
+InterCode newDec(kind_IC kind, Operand x, int size);
 //Operand Functions
 Operand newOperand(Kind_op kind,char *val);
 void setOperand(Operand op, Kind_op kind, char *val);
