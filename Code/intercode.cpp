@@ -1,5 +1,4 @@
 #include"intercode.hpp"
-<<<<<<< HEAD
 #include<stdio.h>
 
 InterCodeList newICList()
@@ -162,7 +161,7 @@ InterCode newDec(kind_IC kind, Operand x, int size)
         default: break;
     }
     return temp;
-=======
+}
 
 Operand newOperand(Kind_op kind, std::string val)
 {
@@ -224,5 +223,4 @@ void printOperand(std::ofstream &out, Operand op)
             out << "*" << op->u.name;
             break;
     }
->>>>>>> b3ff60327568f7730753478c69a32fb0089c57c2
 }
