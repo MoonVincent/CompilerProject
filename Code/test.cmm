@@ -1,4 +1,6 @@
-int f(int a, int b) {
-	a = 10;
+struct node {int a; int b; int c;} Node;
+int a[10][10];
+int main(int b) {
+	-main(0);
 }
 
