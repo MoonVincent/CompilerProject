@@ -269,19 +269,38 @@ Operand newOperand(Kind_op kind, std::string val)
 {
     Operand op = (Operand)malloc(sizeof(struct Operand_));
     op->kind = kind;
-    switch(kind){
-    case CONSTANT_OP:
-        op->u.value = atoi(val.c_str());
-        break;
-    case VARIABLE_OP:
-    case ADDRESS_OP: 
-    case LABEL_OP:
-    case FUNCTION_OP:
-    case RELOP_OP:
-    case READ_ADDRESS_OP: 
-    case WRITE_ADDRESS_OP:
-        op->u.name = val;
+    switch(kind)
+    {
+        case OP_CONSTANT:
+            op->u.value = atoi(val.c_str());
+            break;
+        case OP_VARIABLE:
+        case OP_ADDRESS: 
+        case OP_LABEL:
+        case OP_FUNCTION:
+        case OP_RELOP:
+        case OP_READ_ADDRESS: 
+        case OP_WRITE_ADDRESS:
+            op->u.name = val;
     }
+    return op;
+}
+
+Operand newtemp()
+{
+    char buf[20];
+    sprintf(buf, "t%d", num_temp++);
+    std::string name(buf);
+    Operand op = newOperand(OP_VARIABLE,name);
+    return op;
+}
+
+Operand newlabel()
+{
+    char buf[20];
+    sprintf(buf, "label%d", num_label++);
+    std::string name(buf);
+    Operand op = newOperand(OP_LABEL, name);
     return op;
 }
 
@@ -290,16 +309,16 @@ void setOperand(Operand op, Kind_op kind, std::string val)
     op->kind = kind;
     switch (kind)
     {
-    case CONSTANT_OP:
+    case OP_CONSTANT:
         op->u.value = atoi(val.c_str());
         break;
-    case VARIABLE_OP:
-    case ADDRESS_OP:
-    case LABEL_OP:
-    case FUNCTION_OP:
-    case RELOP_OP:
-    case READ_ADDRESS_OP:
-    case WRITE_ADDRESS_OP:
+    case OP_VARIABLE:
+    case OP_ADDRESS:
+    case OP_LABEL:
+    case OP_FUNCTION:
+    case OP_RELOP:
+    case OP_READ_ADDRESS:
+    case OP_WRITE_ADDRESS:
         op->u.name = val;
     }
 }
@@ -308,21 +327,22 @@ void printOperand(std::ofstream &out, Operand op)
 {
     switch(op->kind)
     {
-        case CONSTANT_OP:
+        case OP_CONSTANT:
             out << "#" << op->u.value;
             break;
-        case VARIABLE_OP:
-        case ADDRESS_OP:
-        case LABEL_OP:
-        case FUNCTION_OP:
-        case RELOP_OP:
+        case OP_VARIABLE:
+        case OP_ADDRESS:
+        case OP_LABEL:
+        case OP_FUNCTION:
+        case OP_RELOP:
             out << op->u.name;
             break;
-        case READ_ADDRESS_OP:
+        case OP_READ_ADDRESS:
             out << "&" << op->u.name;
             break;
-        case WRITE_ADDRESS_OP:
+        case OP_WRITE_ADDRESS:
             out << "*" << op->u.name;
             break;
     }
 }
+
