@@ -1,18 +1,18 @@
 #include"global.hpp"
 typedef struct Operand_* Operand; 
 struct Operand_ { 
-	enum { VARIABLE,CONSTANT,ADDRESS,LABEL,FUNCTION,RELOP,READ_ADDRESS,WRITE_ADDRESS} kind; 
+	enum { VARIABLE, CONSTANT, ADDRESS, LABEL, FUNCTION, RELOP, READ_ADDRESS, WRITE_ADDRESS} kind; 
 	union { 
 		int value; 
 		char *name;
 	} u; 
 }; 
 
-
+enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} kind_IC; 
 typedef struct InterCode_* InterCode; 
 struct InterCode_ 
 { 
-   enum { ASSIGN, ADD, SUB, MUL,DIV,LABEL,FUNCTION,PARAM,RETURN,DEC,IF_GOTO,GOTO,ARG,CALL,READ,WRITE} kind; 
+   kind_IC kind;
    union { 
    struct { Operand right, left; } assign; 
    struct { Operand result, op1, op2; } binop; 
@@ -22,4 +22,18 @@ struct InterCode_
   } u; 
 } ;
 
-struct InterCodes { InterCode code; struct InterCodes *prev, *next; };
+typedef struct InterCodes* InterCodeList;
+struct InterCodes
+{ 
+  InterCode code; 
+  struct InterCodes *prev, *next; 
+};
+
+InterCodeList newICList();
+void delICList(InterCodeList p);
+void add_ICList(InterCodeList p, InterCode q);
+InterCode newAssign(int kind, Operand right, Operand left);
+InterCode newBinop(int kind, Operand res, Operand op1, Operand op2);
+InterCode newOneop(int kind, Operand op);
+InterCode newIf_goto(int kind, Operand x, Operand relop, Operand y, Operand t);
+InterCode newDec(int kind, Operand x, int size);
