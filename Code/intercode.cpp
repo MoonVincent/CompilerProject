@@ -542,25 +542,133 @@ void translate_Exp(tree node, Operand place)
 {
     if (node == NULL)
         return;
-    // Exp → Exp ASSIGNOP Exp
-    // | Exp AND Exp
-    // | Exp OR Exp
-    // | Exp RELOP Exp
-    // | Exp PLUS Exp
-    // | Exp MINUS Exp
-    // | Exp STAR Exp
-    // | Exp DIV Exp
-    // | LP Exp RP
-    // | MINUS Exp
-    // | NOT Exp
-    // | ID LP Args RP
-    // | ID LP RP
+    //Exp → ID LP Args RP
     // | Exp LB Exp RB
+    if(node->childCnt == 4)
+    {
+
+    }
+    // | LP Exp RP
+    // | ID LP RP
     // | Exp DOT ID
+    else if(node->childCnt == 3)
+    {
+        // | Exp ASSIGNOP Exp
+        if(node->children[1]->key == "ASSIGNOP")
+        {
+            Operand t1 = newtemp();
+            translate_Exp(node->children[2], t1);
+            
+            Operand t2 = newtemp();
+            translate_Exp(node->children[0], t2);
+            InterCode insert = newAssign(IC_ASSIGN, t1, t2);
+            add_ICList(head, insert);
+            insert = newAssign(IC_ASSIGN, t2, place);
+            add_ICList(head, insert);
+        }
+        // | Exp AND Exp
+        // | Exp OR Exp
+        // | Exp RELOP Exp
+        if(node->children[1]->key == "AND" || node->children[1]->key == "OR" || node->children[1]->key == "RELOP")
+        {
+            Operand label1 = newlabel();
+            Operand label2 = newlabel();
+            Operand constant = newtemp();
+            setOperand(constant, OP_CONSTANT, "0");
+            InterCode insert = newAssign(IC_ASSIGN, constant, place);
+            add_ICList(head, insert);
+
+            translate_Cond(node, label1, label2);
+
+            InterCode p = newOneop(IC_LABEL, label1);
+            add_ICList(head, p);
+
+            Operand one = newtemp();
+            setOperand(one, OP_CONSTANT, "1");
+            InterCode q = newAssign(IC_ASSIGN, one, place);
+            add_ICList(head, q);
+
+            InterCode two = newOneop(IC_LABEL, label2);
+            add_ICList(head, two);
+        }
+        // | Exp PLUS Exp
+        if(node->children[1]->key == "PLUS")
+        {
+            Operand t1 = newtemp();
+            Operand t2 = newtemp();
+            translate_Exp(node->children[0], t1);
+            translate_Exp(node->children[2], t2);
+            InterCode insert = newBinop(IC_ADD, place, t1, t2);
+            add_ICList(head, insert);
+        }
+        // | Exp MINUS Exp
+        if(node->children[1]->key == "MINUS")
+        {
+            Operand t1 = newtemp();
+            Operand t2 = newtemp();
+            translate_Exp(node->children[0], t1);
+            translate_Exp(node->children[2], t2);
+            InterCode insert = newBinop(IC_SUB, place, t1, t2);
+            add_ICList(head, insert);
+        }
+        // | Exp STAR Exp
+        if(node->children[1]->key == "STAR")
+        {
+            Operand t1 = newtemp();
+            Operand t2 = newtemp();
+            translate_Exp(node->children[0], t1);
+            translate_Exp(node->children[2], t2);
+            InterCode insert = newBinop(IC_MUL, place, t1, t2);
+            add_ICList(head, insert);
+        }
+        // | Exp DIV Exp
+        if(node->children[1]->key == "DIV")
+        {
+            Operand t1 = newtemp();
+            Operand t2 = newtemp();
+            translate_Exp(node->children[0], t1);
+            translate_Exp(node->children[2], t2);
+            InterCode insert = newBinop(IC_DIV, place, t1, t2);
+            add_ICList(head, insert);
+        }
+    }
+    else if(node->childCnt == 2)
+    {
+        // | MINUS Exp
+        if(node->children[0]->key == "MINUS")
+        {
+            
+        }
+        // | NOT Exp
+        if(node->children[0]->key == "NOT")
+        {
+            Operand label1 = newlabel();
+            Operand label2 = newlabel();
+            Operand constant = newtemp();
+            setOperand(constant, OP_CONSTANT, "0");
+            InterCode insert = newAssign(IC_ASSIGN, constant, place);
+            add_ICList(head, insert);
+
+            translate_Cond(node, label1, label2);
+
+            InterCode p = newOneop(IC_LABEL, label1);
+            add_ICList(head, p);
+
+            Operand one = newtemp();
+            setOperand(one, OP_CONSTANT, "1");
+            InterCode q = newAssign(IC_ASSIGN, one, place);
+            add_ICList(head, q);
+
+            InterCode two = newOneop(IC_LABEL, label2);
+            add_ICList(head, two);
+        }
+    }
     // | ID
     // | INT
     // | FLOAT
-    // to do
+    else{
+
+    }
 }
 
 void translate_StmtList(tree node)
