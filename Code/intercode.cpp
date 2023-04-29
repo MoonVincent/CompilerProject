@@ -41,8 +41,8 @@ InterCode newAssign(Kind_IC kind, Operand right, Operand left)
     InterCode temp = new InterCode_();
     switch(kind)
     {
-        case ASSIGN:
-            temp->kind = ASSIGN;
+        case IC_ASSIGN:
+            temp->kind = IC_ASSIGN;
             temp->u.assign.right = right;
             temp->u.assign.left = left;
             break;
@@ -56,26 +56,26 @@ InterCode newBinop(Kind_IC kind, Operand res, Operand op1, Operand op2)
     InterCode temp = new InterCode_();
     switch(kind)
     {
-        case ADD:
-            temp->kind = ADD;
+        case IC_ADD:
+            temp->kind = IC_ADD;
             temp->u.binop.result = res;
             temp->u.binop.op1 = op1;
             temp->u.binop.op2 = op2;
             break;
-        case SUB:
-            temp->kind = SUB;
+        case IC_SUB:
+            temp->kind = IC_SUB;
             temp->u.binop.result = res;
             temp->u.binop.op1 = op1;
             temp->u.binop.op2 = op2;
             break;
-        case MUL:
-            temp->kind = MUL;
+        case IC_MUL:
+            temp->kind = IC_MUL;
             temp->u.binop.result = res;
             temp->u.binop.op1 = op1;
             temp->u.binop.op2 = op2;
             break;
-        case DIV:
-            temp->kind = DIV;
+        case IC_DIV:
+            temp->kind = IC_DIV;
             temp->u.binop.result = res;
             temp->u.binop.op1 = op1;
             temp->u.binop.op2 = op2;
@@ -90,40 +90,40 @@ InterCode newOneop(Kind_IC kind, Operand op)
     InterCode temp = new InterCode_();
     switch(kind)
     {
-        case LABEL:
-            temp->kind = LABEL;
+        case IC_LABEL:
+            temp->kind = IC_LABEL;
             temp->u.oneop.op = op;
             break;
-        case FUNCTION:
-            temp->kind = FUNCTION;
+        case IC_FUNCTION:
+            temp->kind = IC_FUNCTION;
             temp->u.oneop.op = op;
             break;
-        case PARAM:
-            temp->kind = PARAM;
+        case IC_PARAM:
+            temp->kind = IC_PARAM;
             temp->u.oneop.op = op;
             break;
-        case RETURN:
-            temp->kind = RETURN;
+        case IC_RETURN:
+            temp->kind = IC_RETURN;
             temp->u.oneop.op = op;
             break;
-        case GOTO:
-            temp->kind = GOTO;
+        case IC_GOTO:
+            temp->kind = IC_GOTO;
             temp->u.oneop.op = op;
             break;
-        case ARG:
-            temp->kind = ARG;
+        case IC_ARG:
+            temp->kind = IC_ARG;
             temp->u.oneop.op = op;
             break;
-        case CALL:
-            temp->kind = CALL;
+        case IC_CALL:
+            temp->kind = IC_CALL;
             temp->u.oneop.op = op;
             break;
-        case READ:
-            temp->kind = READ;
+        case IC_READ:
+            temp->kind = IC_READ;
             temp->u.oneop.op = op;
             break;
-        case WRITE:
-            temp->kind = WRITE;
+        case IC_WRITE:
+            temp->kind = IC_WRITE;
             temp->u.oneop.op = op;
             break;
         default: break;
@@ -136,8 +136,8 @@ InterCode newIf_goto(Kind_IC kind, Operand x, Operand relop, Operand y, Operand 
     InterCode temp = new InterCode_();
     switch(kind)
     {
-        case IF_GOTO:
-            temp->kind = IF_GOTO;
+        case IC_IF_GOTO:
+            temp->kind = IC_IF_GOTO;
             temp->u.if_goto.x = x;
             temp->u.if_goto.relop = relop;
             temp->u.if_goto.y = y;
@@ -153,8 +153,8 @@ InterCode newDec(Kind_IC kind, Operand x, int size)
     InterCode temp = new InterCode_();
     switch(kind)
     {
-        case DEC:
-            temp->kind = DEC;
+        case IC_DEC:
+            temp->kind = IC_DEC;
             temp->u.dec.x = x;
             temp->u.dec.size = size;
             break;
@@ -170,54 +170,54 @@ void printInterCodes(std::ofstream &out, InterCodeList head)
     {
         switch (cur->code->kind)
         {
-        case LABEL:
+        case IC_LABEL:
             out << "LABEL ";
             printOperand(out, cur->code->u.oneop.op);
             out << " :";
             break;
-        case FUNCTION:
+        case IC_FUNCTION:
             out << "FUNCTION ";
             printOperand(out, cur->code->u.oneop.op);
             out << " :";
             break;
-        case ASSIGN:
+        case IC_ASSIGN:
             printOperand(out, cur->code->u.assign.left);
             out << " := ";
             printOperand(out, cur->code->u.assign.right);
             break;
-        case ADD:
+        case IC_ADD:
             printOperand(out, cur->code->u.binop.result);
             out << " := ";
             printOperand(out, cur->code->u.binop.op1);
             out << " + ";
             printOperand(out, cur->code->u.binop.op2);
             break;
-        case SUB:
+        case IC_SUB:
             printOperand(out, cur->code->u.binop.result);
             out << " := ";
             printOperand(out, cur->code->u.binop.op1);
             out << " - ";
             printOperand(out, cur->code->u.binop.op2);
             break;
-        case MUL:
+        case IC_MUL:
             printOperand(out, cur->code->u.binop.result);
             out << " := ";
             printOperand(out, cur->code->u.binop.op1);
             out << " * ";
             printOperand(out, cur->code->u.binop.op2);
             break;
-        case DIV:
+        case IC_DIV:
             printOperand(out, cur->code->u.binop.result);
             out << " := ";
             printOperand(out, cur->code->u.binop.op1);
             out << " / ";
             printOperand(out, cur->code->u.binop.op2);
             break;
-        case GOTO:
+        case IC_GOTO:
             out << "GOTO ";
             printOperand(out, cur->code->u.oneop.op);
             break;
-        case IF_GOTO:
+        case IC_IF_GOTO:
             out << "IF ";
             printOperand(out, cur->code->u.if_goto.x);
             out << " ";
@@ -227,34 +227,34 @@ void printInterCodes(std::ofstream &out, InterCodeList head)
             out << " GOTO ";
             printOperand(out, cur->code->u.if_goto.t);
             break;
-        case RETURN:
+        case IC_RETURN:
             out << "RETURN ";
             printOperand(out, cur->code->u.oneop.op);
             break;
-        case DEC:
+        case IC_DEC:
             out << "DEC ";
             printOperand(out, cur->code->u.dec.x);
             out << " ";
             out << cur->code->u.dec.size;
             break;
-        case ARG:
+        case IC_ARG:
             out << "ARG ";
             printOperand(out, cur->code->u.oneop.op);
             break;
-        case CALL:
+        case IC_CALL:
             printOperand(out, cur->code->u.assign.left);
             out << " := CALL ";
             printOperand(out, cur->code->u.assign.right);
             break;
-        case PARAM:
+        case IC_PARAM:
             out << "PARAM ";
             printOperand(out, cur->code->u.oneop.op);
             break;
-        case READ:
+        case IC_READ:
             out << "READ ";
             printOperand(out, cur->code->u.oneop.op);
             break;
-        case WRITE:
+        case IC_WRITE:
             out << "WRITE ";
             printOperand(out, cur->code->u.oneop.op);
             break;
