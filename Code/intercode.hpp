@@ -56,7 +56,7 @@ Operand newlabel();
 int compute_size(Type item);
 
 //产生中间代码主入口
-void Generate(tree root);
+void translate_Program(tree root);
 void translate_ExtDefList(tree root);
 void translate_ExtDef(tree node);
 void translate_FunDec(tree node);
@@ -69,7 +69,7 @@ void translate_VarDec(tree node, Operand place);
 void translate_Exp(tree node, Operand place);
 void translate_StmtList(tree node);
 void translate_Stmt(tree node);
-void translateCond(tree node, Operand label_true, Operand label_false);
+void translate_Cond(tree node, Operand label_true, Operand label_false);
 
 // to do
-// void translateArgs(tree node, ArgList argList);
+// void translate_Args(tree node, ArgList argList);

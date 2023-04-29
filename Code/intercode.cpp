@@ -166,7 +166,7 @@ InterCode newDec(Kind_IC kind, Operand x, int size)
 void printInterCodes(std::ofstream &out, InterCodeList head)
 {
     InterCodeList cur = head->next;
-    while(cur!=NULL)
+    while(cur)
     {
         switch (cur->code->kind)
         {
@@ -385,7 +385,7 @@ int compute_size(Type item)
 /*
 产生中间代码主入口
 */
-void Generate(tree root)
+void translate_Program(tree root)
 {
     if (root == NULL)
         return;
@@ -403,7 +403,7 @@ void translate_ExtDefList(tree node)
     while(node)
     {
         translate_ExtDef(node->children[0]);
-        translate_ExtDefList(node->children[1]);
+        node = node->children[1];
     }
 }
 
@@ -551,7 +551,7 @@ void translate_Stmt(tree node)
     //to do
 }
 
-void translateCond(tree node, Operand label_true, Operand label_false)
+void translate_Cond(tree node, Operand label_true, Operand label_false)
 {
     if (node == NULL)
         return;
@@ -562,12 +562,12 @@ void translateCond(tree node, Operand label_true, Operand label_false)
     //to do
 }
 
-//to do
-// void translateArgs(tree node, ArgList argList)
-// {
-//     if (node == NULL)
-//         return;
-//     // Args -> Exp COMMA Args
-//     //       | Exp
-//     // to do
-// }
+// to do
+//  void translate_Args(tree node, ArgList argList)
+//  {
+//      if (node == NULL)
+//          return;
+//      // Args -> Exp COMMA Args
+//      //       | Exp
+//      // to do
+//  }
