@@ -6,3 +6,4 @@
 #include <string>
 #include <fstream>
 extern std::unordered_map<std::string, std::stack<Type>> symTable;
+extern std::unordered_map<std::string, std::stack<Type>> funcTable;

@@ -1,0 +1,23 @@
+{
+
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "./Code/main.cpp",
+                "./Code/syntax.tab.cpp",
+                "./Code/semantic.cpp",
+                "./Code/type.cpp",
+                "./Code/global.cpp",
+                "./Code/syntaxNode.cpp",
+                "-ly",
+                "-o",
+                "./Code/parser"
+            ]
+        }
+    ]
+}
