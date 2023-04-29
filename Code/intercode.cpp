@@ -1,5 +1,6 @@
 #include"intercode.hpp"
 #include<stdio.h>
+InterCodeList head = newICList();
 
 InterCodeList newICList()
 {
@@ -423,7 +424,41 @@ void translate_ExtDef(tree node)
 
 void translate_FunDec(tree node)
 {
+    if (node == NULL)
+        return;
     // to do
+    // FunDec -> ID LP VarList RP
+    //         | ID LP RP
+    InterCode x =  newOneop(IC_FUNCTION,newOperand(OP_FUNCTION,node->children[0]->value));
+    add_ICList(head,x);
+    if(node->childCnt == 4)
+        translate_VarList(node->children[2]);
+}
+
+void translate_VarList(tree node)
+{
+    if (node == NULL)
+        return;
+    // VarList → ParamDec COMMA VarList
+    //          | ParamDec
+    translate_ParamDec(node->children[0]);
+    if(node->childCnt == 3)
+        translate_VarList(node->children[2]);
+}
+
+void translate_ParamDec(tree node)
+{
+    if (node == NULL)
+        return;
+    // ParamDec → Specifier VarDec
+    // VarDec → ID
+    //          | VarDec LB INT RB
+    tree temp = node->children[1];
+    //直到找到ID
+    while(temp->childCnt != 1)
+        temp = temp->children[0];
+    InterCode x = newOneop(IC_PARAM,newOperand(OP_VARIABLE,temp->children[0]->value));
+    add_ICList(head,x);
 }
 
 void translate_CompSt(tree node)
@@ -489,7 +524,8 @@ void translate_Dec(tree node)
         Operand t2 = newtemp();
         translate_Exp(node->children[2], t2);
         //to do
-        //genInterCode(IR_ASSIGN, t1, t2);
+        InterCode x = newAssign(IC_ASSIGN,t2,t1);
+        add_ICList(head,x);
     }
 }
 
@@ -562,14 +598,97 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
     //      | Exp RELOP Exp
     //      | NOT Exp
     //to do
+
+    // Exp -> Exp RELOP Exp
+    if(node->children[1]->key == "RELOP")
+    {
+        Operand t1 = newtemp();
+        Operand t2 = newtemp();
+        translate_Exp(node->children[0],t1);
+        translate_Exp(node->children[2],t2);
+        Operand relop = newOperand(OP_RELOP,node->children[1]->value);
+
+        add_ICList(head, newIf_goto(IC_IF_GOTO, t1, relop, t2, label_true));
+        add_ICList(head, newOneop(IC_GOTO,label_false));
+    }
+    // Exp -> NOT Exp
+    else if(node->children[0]->key == "NOT")
+        translate_Cond(node->children[1],label_false,label_true);
+    // Exp -> Exp AND Exp
+    else if (node->children[1]->key == "AND")
+    {
+        Operand label1 = newlabel();
+        translate_Cond(node->children[0],label1,label_false);
+        add_ICList(head,newOneop(IC_LABEL,label1));
+        translate_Cond(node->children[2],label_true,label_false);
+    }
+
+    // Exp ->Exp OR Exp
+    else if (node->children[1]->key == "OR")
+    {
+        Operand label1 = newlabel();
+        translate_Cond(node->children[0], label_true, label1);
+        add_ICList(head, newOneop(IC_LABEL, label1));
+        translate_Cond(node->children[2], label_true, label_false);
+    }
+
+    //(other cases)
+    else
+    {
+        Operand t1 = newtemp();
+        translate_Exp(node,t1);
+        add_ICList(head,newIf_goto(IC_IF_GOTO,t1,newOperand(OP_RELOP,"!="),newOperand(OP_CONSTANT,0),label_true));
+        add_ICList(head,newOneop(IC_GOTO,label_false));
+    }
 }
 
-// to do
-//  void translate_Args(tree node, ArgList argList)
-//  {
-//      if (node == NULL)
-//          return;
-//      // Args -> Exp COMMA Args
-//      //       | Exp
-//      // to do
-//  }
+
+Arglist newArglist()
+{
+    Arglist head = new Arglist_();
+    head->head = NULL;
+    head->cur = NULL;
+    return head;
+}
+
+Arg newArg(Operand op)
+{
+    Arg temp = new Arg_();
+    temp->op = op;
+    temp->next = NULL;
+    return temp;
+}
+
+void addArg(Arglist argList, Arg arg)
+{
+    if (argList->head == NULL)
+    {
+        argList->head = arg;
+        argList->cur = arg;
+    }
+    else
+    {
+        argList->cur->next = arg;
+        argList->cur = arg;
+    }
+}
+
+void translate_Args(tree node, Arglist argList)
+{
+    if (node == NULL)
+        return;
+    // Args -> Exp COMMA Args
+    //       | Exp
+
+    // Args -> Exp
+    Operand t1 = newtemp();
+    translate_Exp(node->children[0], t1);
+    Arg temp = newArg(t1);
+    addArg(argList, temp);
+
+    // Args -> Exp COMMA Args
+    if (node->childCnt == 3)
+    {
+        translate_Args(node->children[2], argList);
+    }
+}

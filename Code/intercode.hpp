@@ -11,7 +11,21 @@ struct Operand_ {
 		int value; 
 		std::string name;
 	} u; 
-}; 
+};
+
+// translate_Args需要用到的参数链表
+typedef struct Arg_ *Arg;
+struct Arg_
+{
+  Operand op;
+  Arg next;
+};
+typedef struct Arglist_ *Arglist;
+struct Arglist_
+{
+  Arg head;
+  Arg cur;
+};
 
 typedef struct InterCode_* InterCode; 
 struct InterCode_ 
@@ -48,6 +62,12 @@ Operand newOperand(Kind_op kind,std::string val);
 void setOperand(Operand op, Kind_op kind, std::string val);
 void printOperand(std::ofstream &out, Operand op);
 
+
+//Arg Functions
+Arglist newArglist();
+Arg newArg();
+void addArg(Arglist argList, Arg arg);
+
 //产生temp和label,newtemp返回name为t0,t1.....的变量,newlabel返回name为label1,label2......的标识
 Operand newtemp();
 Operand newlabel();
@@ -60,6 +80,8 @@ void translate_Program(tree root);
 void translate_ExtDefList(tree root);
 void translate_ExtDef(tree node);
 void translate_FunDec(tree node);
+void translate_VarList(tree node);
+void translate_ParamDec(tree node);
 void translate_CompSt(tree node);
 void translate_DefList(tree node);
 void translate_Def(tree node);
