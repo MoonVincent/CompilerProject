@@ -363,13 +363,13 @@ int compute_size(Type item)
             return 0;
     switch(item->kind)
     {
-        case INT:
-        case FLOAT:
+    case INT_SEMA:
+    case FLOAT_SEMA:
             return 4;
-        case ARRAY:
+    case ARRAY_SEMA:
             return item->u.array.elemSize*compute_size(item->u.array.elemType);
-        case STRUCTURE:
-        {
+    case STRUCTURE_SEMA:
+    {
             int size = 0;
             FieldList temp = item->u.structure;
             while (temp)
