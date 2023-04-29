@@ -641,12 +641,52 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
 }
 
 
-    // to do
-    //  void translate_Args(tree node, ArgList argList)
-    //  {
-    //      if (node == NULL)
-    //          return;
-    //      // Args -> Exp COMMA Args
-    //      //       | Exp
-    //      // to do
-    //  }
+Arglist newArglist()
+{
+    Arglist head = new Arglist_();
+    head->head = NULL;
+    head->cur = NULL;
+    return head;
+}
+
+Arg newArg(Operand op)
+{
+    Arg temp = new Arg_();
+    temp->op = op;
+    temp->next = NULL;
+    return temp;
+}
+
+void addArg(Arglist argList, Arg arg)
+{
+    if (argList->head == NULL)
+    {
+        argList->head = arg;
+        argList->cur = arg;
+    }
+    else
+    {
+        argList->cur->next = arg;
+        argList->cur = arg;
+    }
+}
+
+void translate_Args(tree node, Arglist argList)
+{
+    if (node == NULL)
+        return;
+    // Args -> Exp COMMA Args
+    //       | Exp
+
+    // Args -> Exp
+    Operand t1 = newtemp();
+    translate_Exp(node->children[0], t1);
+    Arg temp = newArg(t1);
+    addArg(argList, temp);
+
+    // Args -> Exp COMMA Args
+    if (node->childCnt == 3)
+    {
+        translate_Args(node->children[2], argList);
+    }
+}
