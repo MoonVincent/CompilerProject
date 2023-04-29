@@ -60,6 +60,8 @@ void translate_Program(tree root);
 void translate_ExtDefList(tree root);
 void translate_ExtDef(tree node);
 void translate_FunDec(tree node);
+void translate_VarList(tree node);
+void translate_ParamDec(tree node);
 void translate_CompSt(tree node);
 void translate_DefList(tree node);
 void translate_Def(tree node);
