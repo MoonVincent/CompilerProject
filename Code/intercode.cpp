@@ -501,6 +501,7 @@ void translate_VarDec(tree node,Operand place)
     //          | VarDec LB INT RB
     // to do
 }
+
 void translate_Exp(tree node, Operand place)
 {
     if (node == NULL)
@@ -525,6 +526,7 @@ void translate_Exp(tree node, Operand place)
     // | FLOAT
     // to do
 }
+
 void translate_StmtList(tree node)
 {
     if (node == NULL)
