@@ -542,17 +542,52 @@ void translate_Exp(tree node, Operand place)
 {
     if (node == NULL)
         return;
-    //Exp → ID LP Args RP
-    // | Exp LB Exp RB
     if(node->childCnt == 4)
     {
+        //Exp → ID LP Args RP
+        if(node->children[0]->key == "ID")
+        {
+            Arglist list = newArglist();
+            translate_Args(node->children[2], list);
+            Operand func = newtemp();
+            setOperand(func, OP_FUNCTION, node->children[0]->value);
+            InterCode x = newOneop(IC_CALL, func);
+            add_ICList(head, x);
+        }
+        // | Exp LB Exp RB
+        else{
+            Operand t1 = newtemp();
+            Operand t2 = newtemp();
+            translate_Exp(node->children[2], t1);
+            Operand const_four = newtemp();
+            setOperand(const_four, OP_CONSTANT, "4");
+            InterCode x = newBinop(IC_MUL, t2, t1, const_four);
+            add_ICList(head, x);
 
+            Operand t3 = newtemp();
+            translate_Exp(node->children[0], t3);  
+            x = newBinop(IC_ADD, place, t3, t2);
+            add_ICList(head, x);
+        }
     }
-    // | LP Exp RP
-    // | ID LP RP
+
     // | Exp DOT ID
+
     else if(node->childCnt == 3)
     {
+        // | ID LP RP
+        if(node->children[0]->key == "ID")
+        {
+            Operand id = newtemp();
+            setOperand(id, OP_FUNCTION, node->children[0]->value);
+            InterCode x = newOneop(IC_CALL, id);
+            add_ICList(head, x);
+        }
+        // | LP Exp RP
+        if(node->children[0]->key == "LP")
+        {
+            translate_Exp(node->children[1], place);
+        }
         // | Exp ASSIGNOP Exp
         if(node->children[1]->key == "ASSIGNOP")
         {
@@ -637,7 +672,12 @@ void translate_Exp(tree node, Operand place)
         // | MINUS Exp
         if(node->children[0]->key == "MINUS")
         {
-            
+            Operand t1 = newtemp();
+            translate_Exp(node->children[1], t1);
+            Operand zero = newtemp();
+            setOperand(zero, OP_CONSTANT, "0");
+            InterCode x = newBinop(IC_SUB, place, zero, t1);
+            add_ICList(head, x);
         }
         // | NOT Exp
         if(node->children[0]->key == "NOT")
@@ -663,11 +703,22 @@ void translate_Exp(tree node, Operand place)
             add_ICList(head, two);
         }
     }
-    // | ID
-    // | INT
-    // | FLOAT
     else{
-
+        // | ID
+        if(node->children[0]->key == "ID")
+        {
+            std::string temp = regTable.find(node->children[0]->value)->second.top();
+            setOperand(place, OP_VARIABLE, temp);
+        }
+        // | INT
+        else if(node->children[0]->key == "INT")
+        {
+            setOperand(place, OP_CONSTANT, node->children[0]->value);
+        }
+        // | FLOAT
+        else{
+            setOperand(place, OP_CONSTANT, node->children[0]->value);
+        }
     }
 }
 

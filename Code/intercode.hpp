@@ -92,6 +92,4 @@ void translate_Exp(tree node, Operand place);
 void translate_StmtList(tree node);
 void translate_Stmt(tree node);
 void translate_Cond(tree node, Operand label_true, Operand label_false);
-
-// to do
-// void translate_Args(tree node, ArgList argList);
+void translate_Args(tree node, Arglist argList);
