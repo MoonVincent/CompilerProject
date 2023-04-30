@@ -3,24 +3,31 @@
 
 
 void semantic(tree syntaxTree){
-   ExtDefList(syntaxTree->children[0]); 
+   std::list<std::string> record_struct;
+   ExtDefList(syntaxTree->children[0], record_struct); 
 }
 
-void ExtDefList(tree root){
+void ExtDefList(tree root, std::list<std::string>& record_struct){
     if (root == nullptr) return ;
-    ExtDef(root->children[0]);
-    ExtDefList(root->children[1]);
+    ExtDef(root->children[0], record_struct);
+    ExtDefList(root->children[1], record_struct);
 }
 
-void ExtDef(tree root){
-    Type type = Specifier(root->children[0]);
+void ExtDef(tree root, std::list<std::string>& record_struct){
+    Type type = Specifier(root->children[0], record_struct);
     if (root->children[1]->key == "ExtDecList") {
         std::list<std::string> record;
         ExtDecList(type, root->children[1], record);
     } else if (root->children[1]->key == "FunDec") {
         std::list<std::string> record;
-        FunDec(type, root->children[1], record);
-        CompSt(root->children[2], record);
+        std::list<std::string> record_struct;
+        FunDec(type, root->children[1], record, record_struct);
+        Type ret;
+        CompSt(root->children[2], record, ret, record_struct);
+        if (!isEquivalent(type, ret)) {
+            std::cout << "[line " << root->children[1]->children[0]->lineNo <<" semantic error] "
+                      << "The type of return value doesn't match with definition" << std::endl;
+        }
     }
 }
 
@@ -31,7 +38,7 @@ void ExtDecList(Type type, tree root, std::list<std::string>& record) {
     }
 }
 
-Type Specifier(tree root){
+Type Specifier(tree root, std::list<std::string>& record_struct){
     Type type;
     if (root->children[0]->key == "TYPE") {
         if (root->children[0]->value == "int") {
@@ -40,38 +47,47 @@ Type Specifier(tree root){
             type = newBasic(FLOAT_SEMA);
         }
     } else {
-        type = StructSpecifier(root->children[0]);
+        type = StructSpecifier(root->children[0], record_struct);
     }
     return type;
 }
 
-Type StructSpecifier(tree root) {
+Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
     Type type;
-    if (root->children[1]->key == "OptTag") {
+    if (root->childCnt == 5) {
         std::string optag = OptTag(root->children[1]);
         std::list<std::string> names; 
         std::unordered_map<std::string, Type> s_field;
-        DefList(root->children[3], names);
+        DefList(root->children[3], names, record_struct);
         for (auto name : names) {
             Type cur_type = getItem(name);
             s_field.insert({name, cur_type});
             deleteItem(name);
         }
         type = newStructure(s_field);
+        if (optag != "") {
+            if (!insertStructItem(optag, type)) {
+                std::cout << "[line " << root->children[2]->lineNo <<" semantic error] "
+                          << "Multiple definition of struct " << optag << std::endl;
+            } else {
+                record_struct.push_back(optag);
+            }
+        }
+        return type;
     } else if (root->children[1]->key == "Tag") {
         std::string tag = Tag(root->children[1]);
-        type = getItem(tag);
+        type = getStructItem(tag);
         if (type == nullptr) {
-            std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+            std::cout << "[line " << root->children[1]->children[0]->lineNo <<" semantic error] "
                       << "Undefined reference to the struct " << tag << std::endl;
-
         }
     }
     return type;
 }
 
 std::string OptTag(tree root) {
-    return root->children[0]->value;
+    if (root == nullptr) return "";
+    else return root->children[0]->value;
 }
 
 std::string Tag(tree root) {
@@ -100,12 +116,12 @@ int VarDec(Type type, tree root, std::list<std::string>& record) {
     }
 }
 
-void FunDec(Type rv_type, tree root, std::list<std::string>& record) {
+void FunDec(Type rv_type, tree root, std::list<std::string>& record, std::list<std::string>& record_struct) {
 
     std::string func_name = root->children[0]->value;
     std::vector<Type> paramList;
     if (root->children[2]->key == "VarList") {
-        VarList(paramList,root->children[2], record);
+        VarList(paramList,root->children[2], record, record_struct);
     }
     Type type = newFunc(rv_type, paramList);
     if (!insertFuncItem(func_name, type)) {
@@ -115,18 +131,18 @@ void FunDec(Type rv_type, tree root, std::list<std::string>& record) {
 }
 
 
-void VarList(std::vector<Type>& paramList, tree root, std::list<std::string>& record) {
+void VarList(std::vector<Type>& paramList, tree root, std::list<std::string>& record, std::list<std::string>& record_struct) {
 
-    ParamDec(paramList, root->children[0], record);
+    ParamDec(paramList, root->children[0], record, record_struct);
 
     if (root->children[1]) {
-        VarList(paramList, root->children[2], record);
+        VarList(paramList, root->children[2], record, record_struct);
     }
 }
 
-void ParamDec(std::vector<Type>& paramList, tree root, std::list<std::string>& record) {
+void ParamDec(std::vector<Type>& paramList, tree root, std::list<std::string>& record, std::list<std::string>& record_struct) {
 
-    Type type = Specifier(root->children[0]);
+    Type type = Specifier(root->children[0], record_struct);
     VarDec(type, root->children[1], record);   //参数列表中的参数会出现在符号表中
     paramList.push_back(type);
 
@@ -136,57 +152,64 @@ void ParamDec(std::vector<Type>& paramList, tree root, std::list<std::string>& r
  * record:主要用于处理因定义函数而产生的域，因为参数列表里的参数在扫描时已经加入符号表
 */
 
-void CompSt(tree root, std::list<std::string>& record) {
-    DefList(root->children[1], record);
-    StmtList(root->children[2]);
+void CompSt(tree root, std::list<std::string>& record, Type& ret, std::list<std::string>& record_struct) {
+    DefList(root->children[1], record, record_struct);
+    StmtList(root->children[2], ret);
     //出花括号时，将域内定义过的变量进行删除item操作
     while (!record.empty()) {
         deleteItem(record.back());
         record.pop_back();
     }
 
+    while (!record.empty()) {
+        deleteStructItem(record_struct.back());
+        record_struct.pop_back();
+    }
+
 }
 
-void StmtList(tree root) {
+void StmtList(tree root, Type& ret) {
     if (root == nullptr) return ;
-    Stmt(root->children[0]);
-    StmtList(root->children[1]);
+    Stmt(root->children[0], ret);
+    StmtList(root->children[1], ret);
 }
 
-void Stmt(tree root) {
+void Stmt(tree root, Type& ret) {
     if (root->children[0]->key == "Exp") {
         Exp(root->children[0]);
     } else if (root->children[0]->key == "CompSt") {
         std::list<std::string> record;
-        CompSt(root->children[0], record);
+        std::list<std::string> record_struct;
+        Type unUsed;
+        CompSt(root->children[0], record, unUsed, record_struct);
     } else if (root->children[0]->key == "RETURN") {
-        Exp(root->children[1]);
+        ret = Exp(root->children[1]).first;
     } else if (root->children[0]->key == "WHILE") {
         Exp(root->children[2]);
     } else {
         Exp(root->children[2]);
-        Stmt(root->children[4]);
+        Stmt(root->children[4], ret);
         if (root->children[5]) {    //IF LP Exp RP Stmt ELSE Stmt
-            Stmt(root->children[6]);
+            Stmt(root->children[6], ret);
         }
     }
 }
 
-void DefList(tree root, std::list<std::string>& record) {
+void DefList(tree root, std::list<std::string>& record, std::list<std::string>& record_struct) {
     if(root == nullptr) return ;
-    Def(root->children[0], record);
-    DefList(root->children[1], record);
+    Def(root->children[0], record, record_struct);
+    DefList(root->children[1], record, record_struct);
 }
 
-void Def(tree root, std::list<std::string>& record) {
-    Type type = Specifier(root->children[0]);
+void Def(tree root, std::list<std::string>& record, std::list<std::string>& record_struct) {
+    Type type = Specifier(root->children[0], record_struct);
     DecList(type, root->children[1], record);
 }
 
 void DecList(Type type, tree root, std::list<std::string>& record) {
     Dec(type, root->children[0], record);
     if (root->children[2]){
-        DecList(type, root->children[0], record);
+        DecList(type, root->children[2], record);
     }
 }
 
@@ -208,7 +231,7 @@ std::pair<Type, bool> Exp(tree root) {
             Type type = getItem(root->children[0]->value);
             if (type == nullptr) {
                 std::cout << "[line " << root->children[0]->lineNo <<" semantic error] "
-                          << "Undefined reference to variable " << root->children[0]->key << std::endl;
+                          << "Undefined reference to variable " << root->children[0]->value << std::endl;
                 return {nullptr, false};
             } 
             return {type, true};
@@ -222,20 +245,24 @@ std::pair<Type, bool> Exp(tree root) {
             if (root->children[1]->key == "ASSIGNOP") { //Exp ASSIGNOP Exp
                 std::pair<Type, bool> exp1 = Exp(root->children[0]);
                 std::pair<Type, bool> exp2 = Exp(root->children[2]);
-                //TODO:判断是否为左值
-                if (!exp1.second) {
-                    std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
-                              << "Can't assign value to a non-left value. " << std::endl;
+
+                if (exp1.first && exp2.first) {
+                    if (!exp1.second) {
+                        std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+                                  << "Can't assign value to a non-left value. " << std::endl;
+                    }
+                    if (!isEquivalent(exp1.first, exp2.first)) {
+                        std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+                                  << "Type doesn't match" << std::endl;
+                    }
                 }
-                if (!isEquivalent(exp1.first, exp2.first)) {
-                    std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
-                              << "Type doesn't match" << std::endl;
-                }
-                return {exp2.first, false};
+
+                return {exp2.first?exp2.first : exp1.first, false};
 
             } else if (root->children[1]->key == "DOT") {   //Exp DOT ID
                 std::pair<Type, bool> typeExp = Exp(root->children[0]);
-                if (typeExp.first && typeExp.first->kind != STRUCTURE_SEMA) {
+                if (typeExp.first == nullptr) return {nullptr,false};
+                if (typeExp.first->kind != STRUCTURE_SEMA) {
                     std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
                               << "Can't access use ." << std::endl;
                     return {nullptr, false};
@@ -244,7 +271,7 @@ std::pair<Type, bool> Exp(tree root) {
                 Type typeID = getFieldType(typeExp.first->u.structure, id);
                 if (typeID == nullptr) {
                     std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
-                              << "The structure doesn't has the member" << std::endl;
+                              << "The structure doesn't has the member " << root->children[2]->value << std::endl;
                     return {nullptr, false};
                 }
                 return {typeID, true};
@@ -255,8 +282,9 @@ std::pair<Type, bool> Exp(tree root) {
                 if (!isEquivalent(exp1.first, exp2.first)) {
                     std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
                               << "Type doesn't match" << std::endl;
+                    return {nullptr, false};
                 }
-                return {nullptr, false};
+                return {exp1.first, false};
             }
             
         } else if (root->children[0]->key == "LP"){    //LP Exp RP
@@ -289,15 +317,8 @@ std::pair<Type, bool> Exp(tree root) {
                     break;
                 }
                 case ARRAY_SEMA:{
-                    Type elemType = getArrayElemType(exp.first);
-                    if (root->children[0]->key == "MINUS") {
-                        if (elemType->kind != STRUCTURE_SEMA) {
-                            return {elemType,false};
-                        }
-                    } else {
-                        if (elemType->kind != STRUCTURE_SEMA) {
-                            return {newBasic(INT_SEMA), false};
-                        }
+                    if (root->children[0]->key == "NOT") {
+                        return {newBasic(INT_SEMA), false};
                     }
                     break;
                 }
@@ -332,41 +353,56 @@ std::pair<Type, bool> Exp(tree root) {
                               << "Undefined reference to function " << func_name << std::endl;
                 return {nullptr, false};
             }
+
+            if (func_type->u.func.paraNum == 0) {
+                std::cout << "[line " << root->children[0]->lineNo <<" semantic error] "
+                          << "The paramlist of function doesn't match" << std::endl;
+                return {nullptr, false};
+            }
             if (Args(root->children[2], func_type, 0)) {
                 return {func_type->u.func.rv, false};
             }
             std::cout << "[line " << root->children[0]->lineNo <<" semantic error] "
-                              << "The paramlist doesn't match" << std::endl;
+                              << "The paramlist of function doesn't match" << std::endl;
             return {nullptr, false};
         } else {    //Exp LB Exp RB
-            std::pair<Type, bool> exp1 = Exp(root->children[0]);
-            std::pair<Type, bool> exp2 = Exp(root->children[2]);
-            //TODO:
-            if (exp1.first->kind != ARRAY_SEMA) {
-                std::cout <<"in line" << root->children[0]->lineNo << " Can't access using index except array" << std::endl;
+            int array_depth = 0;
+            Type array_type = getArrayType(root, array_depth);
+            std::pair<Type, bool> exp = Exp(root->children[2]);
+
+            if (array_type == nullptr || array_type->kind != ARRAY_SEMA) {
+                std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+                          << "Can't access using index except array" << std::endl;
                 return {nullptr, false};
             }
 
-            if (exp2.first->kind != INT_SEMA) {
-                std::cout <<"in line" << root->children[0]->lineNo << " The index of array only can be an integer" << std::endl;
+            if (exp.first->kind != INT_SEMA) {
+                std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+                          << "Can't access using non-integer index" << std::endl;
                 return {nullptr, false};
             }
-            return {getArrayElemType(exp1.first), true};
+            Type res = getArrayElemType(array_type, array_depth);
+            if (res == nullptr) {
+                std::cout << "[line " << root->children[1]->lineNo <<" semantic error] "
+                          << "The access to array is out of range" << std::endl;
+                return {nullptr, false};
+            } else {
+                return {res, true};
+            }
         }
     } 
 }
 
 bool Args(tree root, Type func_type, int paramNo){
 
-    if (paramNo == func_type->u.func.paraNum) return true;
+    if (root == nullptr && paramNo == func_type->u.func.paraNum) return true;
+    if (root == nullptr) return false;
     std::pair<Type, bool> exp = Exp(root->children[0]);
     if (!isEquivalent(exp.first, func_type->u.func.paramList[paramNo])) {
         return false;
-    }
-    if (root->children[2]) {
+    } else {
         return Args(root->children[2], func_type, paramNo + 1);
     }
-    return false;
 
 }
 

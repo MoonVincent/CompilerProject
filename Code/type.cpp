@@ -233,9 +233,29 @@ bool isLeftValue(Type type) {
     return true;
 }
 
-Type getArrayElemType(Type type) {
+Type getArrayElemType(Type type, int level) { //EXP-> EXP LB EXP RB level = 1
+    int count = 0;
     while (type->kind == ARRAY_SEMA) {
         type = type->u.array.elemType;
+        ++count;
+        if (count == level) break;
+    }
+    if (count < level) return nullptr;
+    else return type;
+}
+
+Type getArrayType(tree root, int &array_depth) {
+    Type type = nullptr;
+    while (root && root->childCnt > 1) {
+        ++array_depth;
+        root = root->children[0];
+    }
+    if (root && root->childCnt == 1 && root->children[0]->key == "ID") {
+        type = getItem(root->children[0]->value);
+        if (type == nullptr) {
+            std::cout << "[line " << root->children[0]->lineNo <<" semantic error] "
+                      << "Undefined reference to variable " << root->children[0]->value << std::endl;
+        }
     }
     return type;
 }
@@ -284,4 +304,42 @@ bool isEquivalent(Type type1, Type type2) {
         return false;
     }
     return false;
+}
+
+bool insertStructItem(std::string key, Type type) {
+    auto target = structTable.find(key);
+    if (target == structTable.end()) {
+        std::stack<Type> tmp;
+        tmp.push(type);
+        structTable.insert({key, tmp}); 
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void deleteStructItem(std::string key) {
+    auto target = structTable.find(key);
+    if (target == structTable.end()) {
+        std::cout << "Error in deleteType" << std::endl;
+    } else {
+        if (target->second.size() == 0) {
+            std::cout << "Error in deleteType" << std::endl;
+        } else {
+            target->second.pop();
+        }
+    }
+}
+
+Type getStructItem(std::string key) {
+    auto target = structTable.find(key);
+    if (target == structTable.end()) {
+        return nullptr;
+    } else {
+        if (target->second.size() == 0) {
+            return nullptr;
+        } else {
+            return target->second.top();
+        }
+    }
 }
