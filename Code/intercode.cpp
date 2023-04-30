@@ -295,7 +295,7 @@ Operand newtemp()
     sprintf(buf, "t%d", num_temp);
     num_temp++;
     std::string name(buf);
-    Operand op = newOperand(OP_VARIABLE,name);
+    Operand op = newOperand(OP_VARIABLE, name);
     return op;
 }
 
@@ -740,12 +740,72 @@ void translate_Stmt(tree node)
     if (node == NULL)
         return;
     // Stmt -> Exp SEMI
+    if(node->children[0]->key == "Exp")
+    {
+        translate_Exp(node->children[0], nullptr);
+    }
     //       | CompSt
+    if(node->children[0]->key == "CompSt")
+    {
+        translate_CompSt(node->children[0]);
+    }
     //       | RETURN Exp SEMI
-    //       | IF LP Exp RP Stmt
-    //       | IF LP Exp RP Stmt ELSE Stmt
+    if(node->children[0]->key == "RETURN")
+    {
+        Operand t1 = newtemp();
+        translate_Exp(node->children[1], t1);
+        InterCode x = newOneop(IC_RETURN, t1);
+        add_ICList(head, x);
+    }
+    if(node->children[0]->key == "IF")
+    {
+        //   | IF LP Exp RP Stmt ELSE Stmt
+        if(node->childCnt > 5)
+        {
+            Operand label1 = newlabel();
+            Operand label2 = newlabel();
+            Operand label3 = newlabel();
+            translate_Cond(node->children[2], label1, label2);
+            InterCode x = newOneop(IC_LABEL, label1);
+            add_ICList(head, x);
+            translate_Stmt(node->children[4]);
+            x = newOneop(IC_GOTO, label3);
+            add_ICList(head, x);
+            x = newOneop(IC_LABEL, label2);
+            add_ICList(head, x);
+            translate_Stmt(node->children[6]);
+            x = newOneop(IC_LABEL, label3);
+            add_ICList(head, x);
+        }
+        //   | IF LP Exp RP Stmt
+        else{
+            Operand label1 = newlabel();
+            Operand label2 = newlabel();
+            translate_Cond(node->children[2], label1, label2);
+            InterCode x = newOneop(IC_LABEL, label1);
+            add_ICList(head, x);
+            translate_Stmt(node->children[4]);
+            x = newOneop(IC_LABEL, label2);
+            add_ICList(head, x);
+        }
+    }
     //       | WHILE LP Exp RP Stmt
-    //to do
+    if(node->children[0]->key == "WHILE")
+    {
+        Operand label1 = newlabel();
+        Operand label2 = newlabel();
+        Operand label3 = newlabel();
+        InterCode x = newOneop(IC_LABEL, label1);
+        add_ICList(head, x);
+        translate_Cond(node->children[2], label2, label3);
+        x = newOneop(IC_LABEL, label2);
+        add_ICList(head, x);
+        translate_Stmt(node->children[4]);
+        x = newOneop(IC_GOTO, label1);
+        add_ICList(head, x);
+        x = newOneop(IC_LABEL, label3);
+        add_ICList(head, x);
+    }
 }
 
 void translate_Cond(tree node, Operand label_true, Operand label_false)
