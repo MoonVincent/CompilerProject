@@ -547,12 +547,31 @@ void translate_Exp(tree node, Operand place)
         //Exp → ID LP Args RP
         if(node->children[0]->key == "ID")
         {
-            Arglist list = newArglist();
-            translate_Args(node->children[2], list);
             Operand func = newtemp();
             setOperand(func, OP_FUNCTION, node->children[0]->value);
-            InterCode x = newOneop(IC_CALL, func);
-            add_ICList(head, x);
+            Arglist list = newArglist();
+            translate_Args(node->children[2], list);
+            if(node->children[0]->value == "write")
+            {
+                InterCode x = newOneop(IC_WRITE, list->head->next->op);
+                add_ICList(head, x);
+                Operand zero = newtemp();
+                setOperand(zero, OP_CONSTANT, "0");
+                InterCode x = newAssign(IC_ASSIGN, zero, place);
+                add_ICList(head, x);
+            }else{
+                Arg p = list->head;
+                while(p != nullptr)
+                {
+                    InterCode x = newOneop(IC_ARG, p->op);
+                    add_ICList(head, x);
+                    p = p->next;
+                }
+                Operand id = newtemp();
+                setOperand(id, OP_FUNCTION, node->children[0]->value);
+                InterCode x = newAssign(IC_ASSIGN, id, place);
+                add_ICList(head, x);
+            }
         }
         // | Exp LB Exp RB
         else{
@@ -580,7 +599,12 @@ void translate_Exp(tree node, Operand place)
         {
             Operand id = newtemp();
             setOperand(id, OP_FUNCTION, node->children[0]->value);
-            InterCode x = newOneop(IC_CALL, id);
+            if(node->children[0]->value == "read")
+            {
+                InterCode x = newOneop(IC_READ, id);
+                add_ICList(head, x);
+            }
+            InterCode x = newAssign(IC_ASSIGN, id, place);
             add_ICList(head, x);
         }
         // | LP Exp RP
