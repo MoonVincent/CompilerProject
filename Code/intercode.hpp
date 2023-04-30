@@ -1,7 +1,7 @@
 #pragma once
 #include "global.hpp"
 typedef enum { OP_VARIABLE,OP_CONSTANT,OP_ADDRESS,OP_LABEL,OP_FUNCTION,OP_RELOP,OP_READ_ADDRESS,OP_WRITE_ADDRESS} Kind_op;
-typedef enum { ASSIGN, ADD, SUB, MUL, DIV, LABEL, FUNCTION, PARAM, RETURN, DEC, IF_GOTO, GOTO, ARG, CALL, READ, WRITE} Kind_IC; 
+typedef enum { IC_ASSIGN, IC_ADD, IC_SUB, IC_MUL, IC_DIV, IC_LABEL, IC_FUNCTION, IC_PARAM, IC_RETURN, IC_DEC, IC_IF_GOTO, IC_GOTO, IC_ARG, IC_CALL, IC_READ, IC_WRITE} Kind_IC; 
 typedef struct Operand_* Operand; 
 
 
@@ -11,7 +11,21 @@ struct Operand_ {
 		int value; 
 		std::string name;
 	} u; 
-}; 
+};
+
+// translate_Args需要用到的参数链表
+typedef struct Arg_ *Arg;
+struct Arg_
+{
+  Operand op;
+  Arg next;
+};
+typedef struct Arglist_ *Arglist;
+struct Arglist_
+{
+  Arg head;
+  Arg cur;
+};
 
 typedef struct InterCode_* InterCode; 
 struct InterCode_ 
@@ -48,6 +62,12 @@ Operand newOperand(Kind_op kind,std::string val);
 void setOperand(Operand op, Kind_op kind, std::string val);
 void printOperand(std::ofstream &out, Operand op);
 
+
+//Arg Functions
+Arglist newArglist();
+Arg newArg();
+void addArg(Arglist argList, Arg arg);
+
 //产生temp和label,newtemp返回name为t0,t1.....的变量,newlabel返回name为label1,label2......的标识
 Operand newtemp();
 Operand newlabel();
@@ -56,10 +76,12 @@ Operand newlabel();
 int compute_size(Type item);
 
 //产生中间代码主入口
-void Generate(tree root);
+void translate_Program(tree root);
 void translate_ExtDefList(tree root);
 void translate_ExtDef(tree node);
 void translate_FunDec(tree node);
+void translate_VarList(tree node);
+void translate_ParamDec(tree node);
 void translate_CompSt(tree node);
 void translate_DefList(tree node);
 void translate_Def(tree node);
@@ -69,7 +91,5 @@ void translate_VarDec(tree node, Operand place);
 void translate_Exp(tree node, Operand place);
 void translate_StmtList(tree node);
 void translate_Stmt(tree node);
-void translateCond(tree node, Operand label_true, Operand label_false);
-
-// to do
-// void translateArgs(tree node, ArgList argList);
+void translate_Cond(tree node, Operand label_true, Operand label_false);
+void translate_Args(tree node, Arglist argList);

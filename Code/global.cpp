@@ -2,3 +2,4 @@
 std::unordered_map<std::string, std::stack<Type>> symTable;
 std::unordered_map<std::string, std::stack<Type>> funcTable;
 std::unordered_map<std::string, std::stack<Type>> structTable;
+extern std::unordered_map<std::string, std::stack<std::string>> regTable;
