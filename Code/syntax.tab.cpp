@@ -490,7 +490,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  22
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  58
+#define YYNRULES  59
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  111
 
@@ -545,11 +545,11 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    33,    33,    36,    37,    40,    41,    42,    45,    46,
-      49,    50,    53,    54,    57,    60,    63,    64,    67,    68,
-      71,    72,    75,    78,    81,    82,    85,    86,    87,    88,
-      89,    90,    93,    94,    97,   100,   101,   104,   105,   108,
+      49,    50,    53,    54,    57,    58,    61,    64,    65,    68,
+      69,    72,    73,    76,    79,    82,    83,    86,    87,    88,
+      89,    90,    91,    94,    95,    98,   101,   102,   105,   106,
      109,   110,   111,   112,   113,   114,   115,   116,   117,   118,
-     119,   120,   121,   122,   123,   124,   125,   128,   129
+     119,   120,   121,   122,   123,   124,   125,   126,   129,   130
 };
 #endif
 
@@ -614,18 +614,18 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       4,    10,     0,     0,     2,     4,     0,    11,    15,     0,
-      13,     1,     3,    16,     6,     0,     8,     0,    33,     0,
-       5,     0,     0,    33,     7,     0,     0,    33,    19,     0,
-       0,    21,    16,     9,     0,    25,    37,     0,    35,    12,
-      32,    22,    18,     0,    17,    55,    56,    54,     0,     0,
-       0,     0,     0,     0,    27,     0,    25,     0,     0,    34,
-       0,    20,     0,    48,    49,     0,     0,     0,     0,    23,
-      24,    26,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    38,    36,    51,    58,     0,    47,    28,     0,
-       0,    39,    42,    43,    44,    45,    46,    40,    41,    53,
-       0,     0,    50,     0,     0,    52,    57,    29,    31,     0,
-      30
+       4,    10,    15,     0,     2,     4,     0,    11,    16,     0,
+      13,     1,     3,    17,     6,     0,     8,     0,    34,     0,
+       5,     0,     0,    34,     7,     0,     0,    34,    20,     0,
+       0,    22,    17,     9,     0,    26,    38,     0,    36,    12,
+      33,    23,    19,     0,    18,    56,    57,    55,     0,     0,
+       0,     0,     0,     0,    28,     0,    26,     0,     0,    35,
+       0,    21,     0,    49,    50,     0,     0,     0,     0,    24,
+      25,    27,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    39,    37,    52,    59,     0,    48,    29,     0,
+       0,    40,    43,    44,    45,    46,    47,    41,    42,    54,
+       0,     0,    51,     0,     0,    53,    58,    30,    32,     0,
+      31
 };
 
 /* YYPGOTO[NTERM-NUM].  */
@@ -721,22 +721,22 @@ static const yytype_int8 yystos[] =
 static const yytype_int8 yyr1[] =
 {
        0,    30,    31,    32,    32,    33,    33,    33,    34,    34,
-      35,    35,    36,    36,    37,    38,    39,    39,    40,    40,
-      41,    41,    42,    43,    44,    44,    45,    45,    45,    45,
-      45,    45,    46,    46,    47,    48,    48,    49,    49,    50,
+      35,    35,    36,    36,    37,    37,    38,    39,    39,    40,
+      40,    41,    41,    42,    43,    44,    44,    45,    45,    45,
+      45,    45,    45,    46,    46,    47,    48,    48,    49,    49,
       50,    50,    50,    50,    50,    50,    50,    50,    50,    50,
-      50,    50,    50,    50,    50,    50,    50,    51,    51
+      50,    50,    50,    50,    50,    50,    50,    50,    51,    51
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     2,     0,     3,     2,     3,     1,     3,
-       1,     1,     5,     2,     1,     1,     1,     4,     4,     3,
-       3,     1,     2,     4,     2,     0,     2,     1,     3,     5,
-       7,     5,     2,     0,     3,     1,     3,     1,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     2,     2,
-       4,     3,     4,     3,     1,     1,     1,     3,     1
+       1,     1,     5,     2,     1,     0,     1,     1,     4,     4,
+       3,     3,     1,     2,     4,     2,     0,     2,     1,     3,
+       5,     7,     5,     2,     0,     3,     1,     3,     1,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     2,
+       2,     4,     3,     4,     3,     1,     1,     1,     3,     1
 };
 
 
@@ -1277,272 +1277,278 @@ yyreduce:
 #line 1278 "syntax.tab.cpp"
     break;
 
-  case 15: /* Tag: ID  */
-#line 60 "syntax.ypp"
-              {(yyval.node) = buildTree(1, NO_LINE, false, "Tag", NO_VALUE, (yyvsp[0].node));}
+  case 15: /* OptTag: %empty  */
+#line 58 "syntax.ypp"
+              {(yyval.node) = nullptr;}
 #line 1284 "syntax.tab.cpp"
     break;
 
-  case 16: /* VarDec: ID  */
-#line 63 "syntax.ypp"
-                 {(yyval.node) = buildTree(1, NO_LINE, false, "VarDec", NO_VALUE, (yyvsp[0].node));}
+  case 16: /* Tag: ID  */
+#line 61 "syntax.ypp"
+              {(yyval.node) = buildTree(1, NO_LINE, false, "Tag", NO_VALUE, (yyvsp[0].node));}
 #line 1290 "syntax.tab.cpp"
     break;
 
-  case 17: /* VarDec: VarDec LB INT RB  */
+  case 17: /* VarDec: ID  */
 #line 64 "syntax.ypp"
-                             {(yyval.node) = buildTree(4, NO_LINE, false, "VarDec", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                 {(yyval.node) = buildTree(1, NO_LINE, false, "VarDec", NO_VALUE, (yyvsp[0].node));}
 #line 1296 "syntax.tab.cpp"
     break;
 
-  case 18: /* FunDec: ID LP VarList RP  */
-#line 67 "syntax.ypp"
-                               {(yyval.node) = buildTree(4, NO_LINE, false, "FunDec", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 18: /* VarDec: VarDec LB INT RB  */
+#line 65 "syntax.ypp"
+                             {(yyval.node) = buildTree(4, NO_LINE, false, "VarDec", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1302 "syntax.tab.cpp"
     break;
 
-  case 19: /* FunDec: ID LP RP  */
+  case 19: /* FunDec: ID LP VarList RP  */
 #line 68 "syntax.ypp"
-                     {(yyval.node) = buildTree(3, NO_LINE, false, "FunDec", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                               {(yyval.node) = buildTree(4, NO_LINE, false, "FunDec", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1308 "syntax.tab.cpp"
     break;
 
-  case 20: /* VarList: ParamDec COMMA VarList  */
-#line 71 "syntax.ypp"
-                                      {(yyval.node) = buildTree(3, NO_LINE, false, "VarList", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 20: /* FunDec: ID LP RP  */
+#line 69 "syntax.ypp"
+                     {(yyval.node) = buildTree(3, NO_LINE, false, "FunDec", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1314 "syntax.tab.cpp"
     break;
 
-  case 21: /* VarList: ParamDec  */
+  case 21: /* VarList: ParamDec COMMA VarList  */
 #line 72 "syntax.ypp"
-                      {(yyval.node) = buildTree(1, NO_LINE, false, "VarList", NO_VALUE, (yyvsp[0].node));}
+                                      {(yyval.node) = buildTree(3, NO_LINE, false, "VarList", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1320 "syntax.tab.cpp"
     break;
 
-  case 22: /* ParamDec: Specifier VarDec  */
-#line 75 "syntax.ypp"
-                                 {(yyval.node) = buildTree(2, NO_LINE, false, "ParamDec", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+  case 22: /* VarList: ParamDec  */
+#line 73 "syntax.ypp"
+                      {(yyval.node) = buildTree(1, NO_LINE, false, "VarList", NO_VALUE, (yyvsp[0].node));}
 #line 1326 "syntax.tab.cpp"
     break;
 
-  case 23: /* CompSt: LC DefList StmtList RC  */
-#line 78 "syntax.ypp"
-                                     {(yyval.node) = buildTree(4, NO_LINE, false, "CompSt", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 23: /* ParamDec: Specifier VarDec  */
+#line 76 "syntax.ypp"
+                                 {(yyval.node) = buildTree(2, NO_LINE, false, "ParamDec", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1332 "syntax.tab.cpp"
     break;
 
-  case 24: /* StmtList: Stmt StmtList  */
-#line 81 "syntax.ypp"
-                              {(yyval.node) = buildTree(2, NO_LINE, false, "StmtList", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+  case 24: /* CompSt: LC DefList StmtList RC  */
+#line 79 "syntax.ypp"
+                                     {(yyval.node) = buildTree(4, NO_LINE, false, "CompSt", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1338 "syntax.tab.cpp"
     break;
 
-  case 25: /* StmtList: %empty  */
+  case 25: /* StmtList: Stmt StmtList  */
 #line 82 "syntax.ypp"
-                {(yyval.node) = nullptr;}
+                              {(yyval.node) = buildTree(2, NO_LINE, false, "StmtList", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1344 "syntax.tab.cpp"
     break;
 
-  case 26: /* Stmt: Exp SEMI  */
-#line 85 "syntax.ypp"
-                     {(yyval.node) = buildTree(2, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+  case 26: /* StmtList: %empty  */
+#line 83 "syntax.ypp"
+                {(yyval.node) = nullptr;}
 #line 1350 "syntax.tab.cpp"
     break;
 
-  case 27: /* Stmt: CompSt  */
+  case 27: /* Stmt: Exp SEMI  */
 #line 86 "syntax.ypp"
-                           {(yyval.node) = buildTree(1, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[0].node));}
+                     {(yyval.node) = buildTree(2, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1356 "syntax.tab.cpp"
     break;
 
-  case 28: /* Stmt: RETURN Exp SEMI  */
+  case 28: /* Stmt: CompSt  */
 #line 87 "syntax.ypp"
-                                    {(yyval.node) = buildTree(3, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                           {(yyval.node) = buildTree(1, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[0].node));}
 #line 1362 "syntax.tab.cpp"
     break;
 
-  case 29: /* Stmt: IF LP Exp RP Stmt  */
+  case 29: /* Stmt: RETURN Exp SEMI  */
 #line 88 "syntax.ypp"
-                                      {(yyval.node) = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                                    {(yyval.node) = buildTree(3, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1368 "syntax.tab.cpp"
     break;
 
-  case 30: /* Stmt: IF LP Exp RP Stmt ELSE Stmt  */
+  case 30: /* Stmt: IF LP Exp RP Stmt  */
 #line 89 "syntax.ypp"
-                                                {(yyval.node) = buildTree(7, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-6].node), (yyvsp[-5].node), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                                      {(yyval.node) = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1374 "syntax.tab.cpp"
     break;
 
-  case 31: /* Stmt: WHILE LP Exp RP Stmt  */
+  case 31: /* Stmt: IF LP Exp RP Stmt ELSE Stmt  */
 #line 90 "syntax.ypp"
-                                         {(yyval.node) = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                                                {(yyval.node) = buildTree(7, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-6].node), (yyvsp[-5].node), (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1380 "syntax.tab.cpp"
     break;
 
-  case 32: /* DefList: Def DefList  */
-#line 93 "syntax.ypp"
-                           {(yyval.node) = buildTree(2, NO_LINE, false, "DefList", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+  case 32: /* Stmt: WHILE LP Exp RP Stmt  */
+#line 91 "syntax.ypp"
+                                         {(yyval.node) = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1386 "syntax.tab.cpp"
     break;
 
-  case 33: /* DefList: %empty  */
+  case 33: /* DefList: Def DefList  */
 #line 94 "syntax.ypp"
-            {(yyval.node)=nullptr;}
+                           {(yyval.node) = buildTree(2, NO_LINE, false, "DefList", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1392 "syntax.tab.cpp"
     break;
 
-  case 34: /* Def: Specifier DecList SEMI  */
-#line 97 "syntax.ypp"
-                                  {(yyval.node) = buildTree(3, NO_LINE, false, "Def", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 34: /* DefList: %empty  */
+#line 95 "syntax.ypp"
+            {(yyval.node)=nullptr;}
 #line 1398 "syntax.tab.cpp"
     break;
 
-  case 35: /* DecList: Dec  */
-#line 100 "syntax.ypp"
-                   {(yyval.node) = buildTree(1, NO_LINE, false, "DecList", NO_VALUE, (yyvsp[0].node));}
+  case 35: /* Def: Specifier DecList SEMI  */
+#line 98 "syntax.ypp"
+                                  {(yyval.node) = buildTree(3, NO_LINE, false, "Def", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1404 "syntax.tab.cpp"
     break;
 
-  case 36: /* DecList: Dec COMMA DecList  */
+  case 36: /* DecList: Dec  */
 #line 101 "syntax.ypp"
-                              {(yyval.node) = buildTree(3, NO_LINE, false, "DecList", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                   {(yyval.node) = buildTree(1, NO_LINE, false, "DecList", NO_VALUE, (yyvsp[0].node));}
 #line 1410 "syntax.tab.cpp"
     break;
 
-  case 37: /* Dec: VarDec  */
-#line 104 "syntax.ypp"
-                  {(yyval.node) = buildTree(1, NO_LINE, false, "Dec", NO_VALUE, (yyvsp[0].node));}
+  case 37: /* DecList: Dec COMMA DecList  */
+#line 102 "syntax.ypp"
+                              {(yyval.node) = buildTree(3, NO_LINE, false, "DecList", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1416 "syntax.tab.cpp"
     break;
 
-  case 38: /* Dec: VarDec ASSIGNOP Exp  */
+  case 38: /* Dec: VarDec  */
 #line 105 "syntax.ypp"
-                                {(yyval.node) = buildTree(3, NO_LINE, false, "Dec", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                  {(yyval.node) = buildTree(1, NO_LINE, false, "Dec", NO_VALUE, (yyvsp[0].node));}
 #line 1422 "syntax.tab.cpp"
     break;
 
-  case 39: /* Exp: Exp ASSIGNOP Exp  */
-#line 108 "syntax.ypp"
-                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 39: /* Dec: VarDec ASSIGNOP Exp  */
+#line 106 "syntax.ypp"
+                                {(yyval.node) = buildTree(3, NO_LINE, false, "Dec", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1428 "syntax.tab.cpp"
     break;
 
-  case 40: /* Exp: Exp AND Exp  */
+  case 40: /* Exp: Exp ASSIGNOP Exp  */
 #line 109 "syntax.ypp"
-                         {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1434 "syntax.tab.cpp"
     break;
 
-  case 41: /* Exp: Exp OR Exp  */
+  case 41: /* Exp: Exp AND Exp  */
 #line 110 "syntax.ypp"
                          {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1440 "syntax.tab.cpp"
     break;
 
-  case 42: /* Exp: Exp RELOP Exp  */
+  case 42: /* Exp: Exp OR Exp  */
 #line 111 "syntax.ypp"
-                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                         {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1446 "syntax.tab.cpp"
     break;
 
-  case 43: /* Exp: Exp PLUS Exp  */
+  case 43: /* Exp: Exp RELOP Exp  */
 #line 112 "syntax.ypp"
-                           {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1452 "syntax.tab.cpp"
     break;
 
-  case 44: /* Exp: Exp MINUS Exp  */
+  case 44: /* Exp: Exp PLUS Exp  */
 #line 113 "syntax.ypp"
-                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                           {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1458 "syntax.tab.cpp"
     break;
 
-  case 45: /* Exp: Exp STAR Exp  */
+  case 45: /* Exp: Exp MINUS Exp  */
 #line 114 "syntax.ypp"
-                           {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                            {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1464 "syntax.tab.cpp"
     break;
 
-  case 46: /* Exp: Exp DIV Exp  */
+  case 46: /* Exp: Exp STAR Exp  */
 #line 115 "syntax.ypp"
-                          {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                           {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1470 "syntax.tab.cpp"
     break;
 
-  case 47: /* Exp: LP Exp RP  */
+  case 47: /* Exp: Exp DIV Exp  */
 #line 116 "syntax.ypp"
-                        {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                          {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1476 "syntax.tab.cpp"
     break;
 
-  case 48: /* Exp: MINUS Exp  */
+  case 48: /* Exp: LP Exp RP  */
 #line 117 "syntax.ypp"
-                        {(yyval.node) = buildTree(2, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+                        {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1482 "syntax.tab.cpp"
     break;
 
-  case 49: /* Exp: NOT Exp  */
+  case 49: /* Exp: MINUS Exp  */
 #line 118 "syntax.ypp"
-                      {(yyval.node) = buildTree(2, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
+                        {(yyval.node) = buildTree(2, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1488 "syntax.tab.cpp"
     break;
 
-  case 50: /* Exp: ID LP Args RP  */
+  case 50: /* Exp: NOT Exp  */
 #line 119 "syntax.ypp"
-                            {(yyval.node) = buildTree(4, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                      {(yyval.node) = buildTree(2, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1494 "syntax.tab.cpp"
     break;
 
-  case 51: /* Exp: ID LP RP  */
+  case 51: /* Exp: ID LP Args RP  */
 #line 120 "syntax.ypp"
-                       {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                            {(yyval.node) = buildTree(4, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1500 "syntax.tab.cpp"
     break;
 
-  case 52: /* Exp: Exp LB Exp RB  */
+  case 52: /* Exp: ID LP RP  */
 #line 121 "syntax.ypp"
-                            {(yyval.node) = buildTree(4, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                       {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1506 "syntax.tab.cpp"
     break;
 
-  case 53: /* Exp: Exp DOT ID  */
+  case 53: /* Exp: Exp LB Exp RB  */
 #line 122 "syntax.ypp"
-                         {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+                            {(yyval.node) = buildTree(4, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-3].node), (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1512 "syntax.tab.cpp"
     break;
 
-  case 54: /* Exp: ID  */
+  case 54: /* Exp: Exp DOT ID  */
 #line 123 "syntax.ypp"
-                 {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
+                         {(yyval.node) = buildTree(3, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1518 "syntax.tab.cpp"
     break;
 
-  case 55: /* Exp: INT  */
+  case 55: /* Exp: ID  */
 #line 124 "syntax.ypp"
-                  {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
+                 {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
 #line 1524 "syntax.tab.cpp"
     break;
 
-  case 56: /* Exp: FLOAT  */
+  case 56: /* Exp: INT  */
 #line 125 "syntax.ypp"
-                    {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
+                  {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
 #line 1530 "syntax.tab.cpp"
     break;
 
-  case 57: /* Args: Exp COMMA Args  */
-#line 128 "syntax.ypp"
-                           {(yyval.node) = buildTree(3, NO_LINE, false, "Args", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
+  case 57: /* Exp: FLOAT  */
+#line 126 "syntax.ypp"
+                    {(yyval.node) = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, (yyvsp[0].node));}
 #line 1536 "syntax.tab.cpp"
     break;
 
-  case 58: /* Args: Exp  */
+  case 58: /* Args: Exp COMMA Args  */
 #line 129 "syntax.ypp"
-                  {(yyval.node) = buildTree(1, NO_LINE, false, "Args", NO_VALUE, (yyvsp[0].node));}
+                           {(yyval.node) = buildTree(3, NO_LINE, false, "Args", NO_VALUE, (yyvsp[-2].node), (yyvsp[-1].node), (yyvsp[0].node));}
 #line 1542 "syntax.tab.cpp"
     break;
 
+  case 59: /* Args: Exp  */
+#line 130 "syntax.ypp"
+                  {(yyval.node) = buildTree(1, NO_LINE, false, "Args", NO_VALUE, (yyvsp[0].node));}
+#line 1548 "syntax.tab.cpp"
+    break;
 
-#line 1546 "syntax.tab.cpp"
+
+#line 1552 "syntax.tab.cpp"
 
       default: break;
     }
@@ -1735,7 +1741,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 132 "syntax.ypp"
+#line 133 "syntax.ypp"
 
 
 void yyerror(char* msg){

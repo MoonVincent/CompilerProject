@@ -55,6 +55,7 @@
                    ;
     
       OptTag: ID {$$ = buildTree(1, NO_LINE, false, "OptTag", NO_VALUE, $1);}
+            | {$$ = nullptr;}
           ;
     
       Tag: ID {$$ = buildTree(1, NO_LINE, false, "Tag", NO_VALUE, $1);}

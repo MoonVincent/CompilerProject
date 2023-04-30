@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "syntaxNode.hpp"
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 #define ARRAY_PARAM_NUM 2
@@ -62,4 +63,8 @@ bool isLeftValue(Type type);
 Type getFuncItem(std::string key);
 void deleteFuncItem(std::string key);
 bool insertFuncItem(std::string key, Type type);
-Type getArrayElemType(Type type);
+Type getArrayElemType(Type type, int level);
+Type getArrayType(tree root, int &array_depth);
+bool insertStructItem(std::string key, Type type);
+void deleteStructItem(std::string key);
+Type getStructItem(std::string key);
