@@ -731,17 +731,25 @@ void translate_Exp(tree node, Operand place)
         // | ID
         if(node->children[0]->key == "ID")
         {
-            std::string temp = regTable.find(node->children[0]->value)->second.top();
-            setOperand(place, OP_VARIABLE, temp);
+            std::string value = node->children[0]->value;
+            Operand val = newOperand(OP_VARIABLE, value);
+            InterCode x = newAssign(IC_ASSIGN, val, place);
+            add_ICList(head, x);
         }
         // | INT
         else if(node->children[0]->key == "INT")
         {
-            setOperand(place, OP_CONSTANT, node->children[0]->value);
+            std::string value = node->children[0]->value;
+            Operand val = newOperand(OP_CONSTANT, value);
+            InterCode x = newAssign(IC_ASSIGN, val, place);
+            add_ICList(head, x);
         }
         // | FLOAT
         else{
-            setOperand(place, OP_CONSTANT, node->children[0]->value);
+            std::string value = node->children[0]->value;
+            Operand val = newOperand(OP_CONSTANT, value);
+            InterCode x = newAssign(IC_ASSIGN, val, place);
+            add_ICList(head, x);
         }
     }
 }
