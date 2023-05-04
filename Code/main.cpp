@@ -1,6 +1,7 @@
 #include "syntax.tab.hpp"
 #include "syntaxNode.hpp"
 #include "semantic.hpp"
+#include "intercode.hpp"
 extern int yyparse();
 extern void yyrestart(FILE*);
 extern tree syntaxTree;
@@ -12,5 +13,6 @@ int main(int argc, char** argv) {
     yyparse();
     printTree(syntaxTree);
     semantic(syntaxTree);
+    translate_Program(syntaxTree);
     return 0;
 }

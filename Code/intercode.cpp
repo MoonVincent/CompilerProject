@@ -569,7 +569,7 @@ void translate_Exp(tree node, Operand place)
                 add_ICList(head, x);
                 Operand zero = newtemp();
                 setOperand(zero, OP_CONSTANT, "0");
-                InterCode x = newAssign(IC_ASSIGN, zero, place);
+                x = newAssign(IC_ASSIGN, zero, place);
                 add_ICList(head, x);
             }else{
                 Arg p = list->head;
