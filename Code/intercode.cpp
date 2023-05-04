@@ -535,7 +535,19 @@ void translate_VarDec(tree node,Operand place)
         return;
     // VarDec → ID
     //          | VarDec LB INT RB
-    // to do
+    int size = 1;
+    while(node->childCnt == 4)
+    {
+        size = size * std::stoi(node->children[2]->value);
+        node = node->children[0];
+    }
+
+    place->kind = OP_VARIABLE;
+    place->u.name = node->children[0]->value;
+    num_temp--;
+    size = size * 4;
+    InterCode x = newDec(IC_DEC, place, size);
+    add_ICList(head, x);
 }
 
 void translate_Exp(tree node, Operand place)
