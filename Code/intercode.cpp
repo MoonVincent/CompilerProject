@@ -312,7 +312,6 @@ Operand newlabel()
 Operand newvalue()
 {
     std::string name = "v" + std::to_string(num_value);
-    std::cout << name << std::endl;
     ++num_value;
     Operand op = newOperand(OP_LABEL, name);
     return op;
@@ -536,8 +535,11 @@ void translate_Dec(tree node)
     // Dec -> VarDec ASSIGNOP Exp
     else
     {
-        Operand v1 = newtemp();
-        translate_VarDec(node->children[0], v1);
+        tree temp = node;
+        while (temp->childCnt != 1) {
+            temp = temp->children[0];
+        }
+        Operand v1 = getValueItem(temp->children[0]->value);
         Operand t2 = newtemp();
         translate_Exp(node->children[2], t2);
         //to do
