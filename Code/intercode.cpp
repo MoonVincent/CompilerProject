@@ -583,10 +583,14 @@ void translate_Exp(tree node, Operand place)
             {
                 InterCode x = newOneop(IC_WRITE, list->head->op);
                 add_ICList(head, x);
-                Operand zero = newtemp();
-                setOperand(zero, OP_CONSTANT, "0");
-                x = newAssign(IC_ASSIGN, zero, place);
-                add_ICList(head, x);
+                Operand zero = newOperand(OP_CONSTANT,"0");
+
+                if(place)
+                {
+                    x = newAssign(IC_ASSIGN, zero, place);
+                    add_ICList(head, x);
+                }
+                return ;
             }
             Arg p = list->head;
             while(p != nullptr)
@@ -599,6 +603,7 @@ void translate_Exp(tree node, Operand place)
             setOperand(id, OP_FUNCTION, node->children[0]->value);
             InterCode x = newAssign(IC_ASSIGN, id, place);
             add_ICList(head, x);
+            return;
         }
         // | Exp LB Exp RB
         else{
@@ -655,7 +660,7 @@ void translate_Exp(tree node, Operand place)
                 if(place)
                     add_ICList(head, newAssign(IC_ASSIGN, v, place));
             }
-
+            num_temp--;
         }
         // | Exp AND Exp
         // | Exp OR Exp
@@ -730,8 +735,7 @@ void translate_Exp(tree node, Operand place)
         {
             Operand t1 = newtemp();
             translate_Exp(node->children[1], t1);
-            Operand zero = newtemp();
-            setOperand(zero, OP_CONSTANT, "0");
+            Operand zero =  newOperand(OP_CONSTANT,"0");
             InterCode x = newBinop(IC_SUB, place, zero, t1);
             add_ICList(head, x);
         }

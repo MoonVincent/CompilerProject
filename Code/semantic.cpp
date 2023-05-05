@@ -189,7 +189,7 @@ void Stmt(tree root, Type& ret) {
     } else {
         Exp(root->children[2]);
         Stmt(root->children[4], ret);
-        if (root->children[5]) {    //IF LP Exp RP Stmt ELSE Stmt
+        if (root->childCnt == 7) {    //IF LP Exp RP Stmt ELSE Stmt
             Stmt(root->children[6], ret);
         }
     }
