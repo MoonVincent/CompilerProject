@@ -1,6 +1,6 @@
 #include"intercode.hpp"
 #include<stdio.h>
-InterCodeList head = newICList();
+extern InterCodeList head = newICList();
 
 InterCodeList newICList()
 {
@@ -313,6 +313,7 @@ Operand newlabel()
 */
 void setOperand(Operand op, Kind_op kind, std::string val)
 {
+    num_temp--;
     op->kind = kind;
     switch (kind)
     {
@@ -334,10 +335,12 @@ void setOperand(Operand op, Kind_op kind, std::string val)
 */
 void printOperand(std::ofstream &out, Operand op)
 {
+    if(!op)
+        return;
     switch(op->kind)
     {
         case OP_CONSTANT:
-            out << "#" << op->u.value;
+            out << "#" << op->u.name;
             break;
         case OP_VARIABLE:
         case OP_ADDRESS:
@@ -541,13 +544,15 @@ void translate_VarDec(tree node,Operand place)
         size = size * std::stoi(node->children[2]->value);
         node = node->children[0];
     }
-
-    place->kind = OP_VARIABLE;
-    place->u.name = node->children[0]->value;
-    num_temp--;
-    size = size * 4;
-    InterCode x = newDec(IC_DEC, place, size);
-    add_ICList(head, x);
+    if(place)
+    {
+        place->kind = OP_VARIABLE;
+        place->u.name = node->children[0]->value;
+        num_temp--;
+        size = size * 4;
+        InterCode x = newDec(IC_DEC, place, size);
+        add_ICList(head, x);
+    }
 }
 
 void translate_Exp(tree node, Operand place)
@@ -565,25 +570,24 @@ void translate_Exp(tree node, Operand place)
             translate_Args(node->children[2], list);
             if(node->children[0]->value == "write")
             {
-                InterCode x = newOneop(IC_WRITE, list->head->next->op);
+                InterCode x = newOneop(IC_WRITE, list->head->op);
                 add_ICList(head, x);
                 Operand zero = newtemp();
                 setOperand(zero, OP_CONSTANT, "0");
                 x = newAssign(IC_ASSIGN, zero, place);
                 add_ICList(head, x);
-            }else{
-                Arg p = list->head;
-                while(p != nullptr)
-                {
-                    InterCode x = newOneop(IC_ARG, p->op);
-                    add_ICList(head, x);
-                    p = p->next;
-                }
-                Operand id = newtemp();
-                setOperand(id, OP_FUNCTION, node->children[0]->value);
-                InterCode x = newAssign(IC_ASSIGN, id, place);
-                add_ICList(head, x);
             }
+            Arg p = list->head;
+            while(p != nullptr)
+            {
+                InterCode x = newOneop(IC_ARG, p->op);
+                add_ICList(head, x);
+                p = p->next;
+            }
+            Operand id = newtemp();
+            setOperand(id, OP_FUNCTION, node->children[0]->value);
+            InterCode x = newAssign(IC_ASSIGN, id, place);
+            add_ICList(head, x);
         }
         // | Exp LB Exp RB
         else{
@@ -609,15 +613,19 @@ void translate_Exp(tree node, Operand place)
         // | ID LP RP
         if(node->children[0]->key == "ID")
         {
-            Operand id = newtemp();
-            setOperand(id, OP_FUNCTION, node->children[0]->value);
             if(node->children[0]->value == "read")
             {
-                InterCode x = newOneop(IC_READ, id);
+                InterCode x = newOneop(IC_READ, place);
+                add_ICList(head, x);
+                return;
+            }
+            else
+            {
+                Operand id = newtemp();
+                setOperand(id, OP_FUNCTION, node->children[0]->value);
+                InterCode x = newAssign(IC_ASSIGN, id, place);
                 add_ICList(head, x);
             }
-            InterCode x = newAssign(IC_ASSIGN, id, place);
-            add_ICList(head, x);
         }
         // | LP Exp RP
         if(node->children[0]->key == "LP")
@@ -900,7 +908,7 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
     {
         Operand t1 = newtemp();
         translate_Exp(node,t1);
-        add_ICList(head,newIf_goto(IC_IF_GOTO,t1,newOperand(OP_RELOP,"!="),newOperand(OP_CONSTANT,0),label_true));
+        add_ICList(head,newIf_goto(IC_IF_GOTO,t1,newOperand(OP_RELOP,"!="),newOperand(OP_CONSTANT,"0"),label_true));
         add_ICList(head,newOneop(IC_GOTO,label_false));
     }
 }
