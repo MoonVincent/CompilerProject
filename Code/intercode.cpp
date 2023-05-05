@@ -1,5 +1,7 @@
 #include"intercode.hpp"
+#include "global.hpp"
 #include<stdio.h>
+#include <iostream>
 InterCodeList head = newICList();
 
 InterCodeList newICList()
@@ -268,12 +270,12 @@ void printInterCodes(std::ofstream &out, InterCodeList head)
 
 Operand newOperand(Kind_op kind, std::string val)
 {
-    Operand op = (Operand)malloc(sizeof(struct Operand_));
+    Operand op = new Operand_();
     op->kind = kind;
     switch(kind)
     {
         case OP_CONSTANT:
-            op->u.value = atoi(val.c_str());
+            op->value = atoi(val.c_str());
             break;
         case OP_VARIABLE:
         case OP_ADDRESS: 
@@ -282,29 +284,35 @@ Operand newOperand(Kind_op kind, std::string val)
         case OP_RELOP:
         case OP_READ_ADDRESS: 
         case OP_WRITE_ADDRESS:
-            op->u.name = val;
+            op->name = val;
     }
     return op;
 }
 
 int num_temp = 0;
 int num_label = 0;
+int num_value = 0;
 Operand newtemp()
 {
-    char buf[20];
-    sprintf(buf, "t%d", num_temp);
-    num_temp++;
-    std::string name(buf);
+    std::string name = "t" + std::to_string(num_temp);
+    ++num_temp;
     Operand op = newOperand(OP_VARIABLE, name);
     return op;
 }
 
 Operand newlabel()
 {
-    char buf[20];
-    sprintf(buf, "label%d", num_label);
-    num_label++;
-    std::string name(buf);
+    std::string name = "label" + std::to_string(num_label);
+    ++num_label;
+    Operand op = newOperand(OP_LABEL, name);
+    return op;
+}
+
+Operand newvalue()
+{
+    std::string name = "v" + std::to_string(num_value);
+    std::cout << name << std::endl;
+    ++num_value;
     Operand op = newOperand(OP_LABEL, name);
     return op;
 }
@@ -317,7 +325,7 @@ void setOperand(Operand op, Kind_op kind, std::string val)
     switch (kind)
     {
     case OP_CONSTANT:
-        op->u.value = atoi(val.c_str());
+        op->value = atoi(val.c_str());
         break;
     case OP_VARIABLE:
     case OP_ADDRESS:
@@ -326,7 +334,7 @@ void setOperand(Operand op, Kind_op kind, std::string val)
     case OP_RELOP:
     case OP_READ_ADDRESS:
     case OP_WRITE_ADDRESS:
-        op->u.name = val;
+        op->name = val;
     }
 }
 /*
@@ -337,20 +345,20 @@ void printOperand(std::ofstream &out, Operand op)
     switch(op->kind)
     {
         case OP_CONSTANT:
-            out << "#" << op->u.value;
+            out << "#" << op->value;
             break;
         case OP_VARIABLE:
         case OP_ADDRESS:
         case OP_LABEL:
         case OP_FUNCTION:
         case OP_RELOP:
-            out << op->u.name;
+            out << op->name;
             break;
         case OP_READ_ADDRESS:
-            out << "&" << op->u.name;
+            out << "&" << op->name;
             break;
         case OP_WRITE_ADDRESS:
-            out << "*" << op->u.name;
+            out << "*" << op->name;
             break;
     }
 }
@@ -455,9 +463,12 @@ void translate_ParamDec(tree node)
     //          | VarDec LB INT RB
     tree temp = node->children[1];
     //直到找到ID
-    while(temp->childCnt != 1)
+    while(temp->childCnt != 1){
         temp = temp->children[0];
-    InterCode x = newOneop(IC_PARAM,newOperand(OP_VARIABLE,temp->children[0]->value));
+    }
+    Operand param = newvalue();
+    insertValueItem(temp->children[0]->value, param);
+    InterCode x = newOneop(IC_PARAM, param);
     add_ICList(head,x);
 }
 
@@ -514,17 +525,19 @@ void translate_Dec(tree node)
     // Dec → VarDec
     //      | VarDec ASSIGNOP Exp
 
-    if (node->childCnt == 1)
-        translate_VarDec(node->children[0], NULL);
+    if (node->childCnt == 1){
+        Operand v1 = newvalue();
+        translate_VarDec(node->children[0], v1);
+    }
     // Dec -> VarDec ASSIGNOP Exp
     else
     {
-        Operand t1 = newtemp();
-        translate_VarDec(node->children[0], t1);
+        Operand v1 = newtemp();
+        translate_VarDec(node->children[0], v1);
         Operand t2 = newtemp();
         translate_Exp(node->children[2], t2);
         //to do
-        InterCode x = newAssign(IC_ASSIGN,t2,t1);
+        InterCode x = newAssign(IC_ASSIGN,t2,v1);
         add_ICList(head,x);
     }
 }
@@ -535,19 +548,18 @@ void translate_VarDec(tree node,Operand place)
         return;
     // VarDec → ID
     //          | VarDec LB INT RB
-    int size = 1;
-    while(node->childCnt == 4)
-    {
-        size = size * std::stoi(node->children[2]->value);
-        node = node->children[0];
+    if (node->childCnt == 4) {
+            int size = 1;
+        while(node->childCnt == 4) {
+            size = size * std::stoi(node->children[2]->value);
+            node = node->children[0];
+        }
+        size = size * 4;
+        InterCode x = newDec(IC_DEC, place, size);
+        add_ICList(head, x);
     }
+    insertValueItem(node->children[0]->value, place);
 
-    place->kind = OP_VARIABLE;
-    place->u.name = node->children[0]->value;
-    num_temp--;
-    size = size * 4;
-    InterCode x = newDec(IC_DEC, place, size);
-    add_ICList(head, x);
 }
 
 void translate_Exp(tree node, Operand place)
@@ -953,5 +965,44 @@ void translate_Args(tree node, Arglist argList)
     if (node->childCnt == 3)
     {
         translate_Args(node->children[2], argList);
+    }
+}
+
+Operand getValueItem(std::string key) {
+    auto target = valueTable.find(key);
+    if (target == valueTable.end()) {
+        return nullptr;
+    } else {
+        if (target->second.size() == 0) {
+            return nullptr;
+        } else {
+            return target->second.top();
+        }
+    }
+}
+
+bool insertValueItem(std::string key, Operand place) {
+    auto target = valueTable.find(key);
+    if (target == valueTable.end()) {
+        std::stack<Operand> tmp;
+        tmp.push(place);
+        valueTable.insert({key, tmp}); 
+    } else {
+        target->second.push(place);
+    }
+
+    return true;
+}
+
+void deleteValueItem(std::string key) {
+    auto target = valueTable.find(key);
+    if (target == valueTable.end()) {
+        std::cout << "Error in deleteValueItem" << std::endl;
+    } else {
+        if (target->second.size() == 0) {
+            std::cout << "Error in deleteValueItem" << std::endl;
+        } else {
+            target->second.pop();
+        }
     }
 }

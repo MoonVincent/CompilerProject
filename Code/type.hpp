@@ -68,3 +68,4 @@ Type getArrayType(tree root, int &array_depth);
 bool insertStructItem(std::string key, Type type);
 void deleteStructItem(std::string key);
 Type getStructItem(std::string key);
+

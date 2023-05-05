@@ -1,16 +1,17 @@
 #pragma once
-#include "global.hpp"
+#include <string>
+#include "type.hpp"
+#include "syntaxNode.hpp"
+typedef struct Operand_* Operand; 
 typedef enum { OP_VARIABLE,OP_CONSTANT,OP_ADDRESS,OP_LABEL,OP_FUNCTION,OP_RELOP,OP_READ_ADDRESS,OP_WRITE_ADDRESS} Kind_op;
 typedef enum { IC_ASSIGN, IC_ADD, IC_SUB, IC_MUL, IC_DIV, IC_LABEL, IC_FUNCTION, IC_PARAM, IC_RETURN, IC_DEC, IC_IF_GOTO, IC_GOTO, IC_ARG, IC_CALL, IC_READ, IC_WRITE} Kind_IC; 
-typedef struct Operand_* Operand; 
+
 
 
 struct Operand_ {
   Kind_op kind;
-  union { 
-		int value; 
-		std::string name;
-	} u; 
+  int value;
+  std::string name;
 };
 
 // translate_Args需要用到的参数链表
@@ -93,3 +94,8 @@ void translate_StmtList(tree node);
 void translate_Stmt(tree node);
 void translate_Cond(tree node, Operand label_true, Operand label_false);
 void translate_Args(tree node, Arglist argList);
+Operand getValueItem(std::string key);
+void deleteValueItem(std::string key);
+bool insertValueItem(std::string key, Operand place);
+
+extern InterCodeList head;
