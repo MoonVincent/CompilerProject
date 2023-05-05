@@ -94,6 +94,7 @@ void translate_StmtList(tree node);
 void translate_Stmt(tree node);
 void translate_Cond(tree node, Operand label_true, Operand label_false);
 void translate_Args(tree node, Arglist argList);
+void translate_ExtDecList(tree node);
 Operand getValueItem(std::string key);
 void deleteValueItem(std::string key);
 bool insertValueItem(std::string key, Operand place);

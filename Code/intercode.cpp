@@ -424,10 +424,24 @@ void translate_ExtDef(tree node)
     // ExtDef → Specifier ExtDecList SEMI
     //          | Specifier SEMI 
     //          | Specifier FunDec CompSt
-    if(node->children[1]->key == "FunDec")
-    {
+    if (node->children[1]->key == "FunDec") {
         translate_FunDec(node->children[1]);
         translate_CompSt(node->children[2]);
+    } else if (node->children[1]->key == "ExtDecList") {
+        translate_ExtDecList(node->children[1]);
+    }
+}
+
+void translate_ExtDecList(tree node) {
+    if (node == nullptr) {
+        return ;
+    }
+    //ExtDecList -> VarDec
+    //           -> VarDec COMMA ExtDecList
+    Operand place = newvalue();
+    translate_VarDec(node->children[0], place);
+    if (node->childCnt == 3) {
+        translate_ExtDecList(node->children[2]);
     }
 }
 
