@@ -276,8 +276,6 @@ Operand newOperand(Kind_op kind, std::string val)
     switch(kind)
     {
         case OP_CONSTANT:
-            op->value = atoi(val.c_str());
-            break;
         case OP_VARIABLE:
         case OP_ADDRESS: 
         case OP_LABEL:
@@ -652,13 +650,14 @@ void translate_Exp(tree node, Operand place)
         {
             Operand t1 = newtemp();
             translate_Exp(node->children[2], t1);
-            
-            Operand t2 = newtemp();
-            translate_Exp(node->children[0], t2);
-            InterCode insert = newAssign(IC_ASSIGN, t1, t2);
-            add_ICList(head, insert);
-            insert = newAssign(IC_ASSIGN, t2, place);
-            add_ICList(head, insert);
+            if (node->children[0]->children[0]->key == "ID")
+            {
+                Operand v = getValueItem(node->children[0]->children[0]->value);
+                add_ICList(head,newAssign(IC_ASSIGN,t1,v));
+                if(place)
+                    add_ICList(head, newAssign(IC_ASSIGN, v, place));
+            }
+
         }
         // | Exp AND Exp
         // | Exp OR Exp
@@ -767,7 +766,7 @@ void translate_Exp(tree node, Operand place)
         if(node->children[0]->key == "ID")
         {
             std::string value = node->children[0]->value;
-            Operand val = newOperand(OP_VARIABLE, value);
+            Operand val = getValueItem(value);
             InterCode x = newAssign(IC_ASSIGN, val, place);
             add_ICList(head, x);
         }
