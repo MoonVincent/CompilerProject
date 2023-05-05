@@ -276,8 +276,6 @@ Operand newOperand(Kind_op kind, std::string val)
     switch(kind)
     {
         case OP_CONSTANT:
-            op->value = atoi(val.c_str());
-            break;
         case OP_VARIABLE:
         case OP_ADDRESS: 
         case OP_LABEL:
