@@ -245,8 +245,6 @@ void printInterCodes(std::ofstream &out, InterCodeList head)
             printOperand(out, cur->code->u.oneop.op);
             break;
         case IC_CALL:
-            printOperand(out, cur->code->u.assign.left);
-            out << " := CALL ";
             printOperand(out, cur->code->u.assign.right);
             break;
         case IC_PARAM:
@@ -282,6 +280,7 @@ Operand newOperand(Kind_op kind, std::string val)
         case OP_RELOP:
         case OP_READ_ADDRESS: 
         case OP_WRITE_ADDRESS:
+        case OP_CALL:
             op->name = val;
     }
     return op;
@@ -346,6 +345,9 @@ void printOperand(std::ofstream &out, Operand op)
     {
         case OP_CONSTANT:
             out << "#" << op->name;
+            break;
+        case OP_CALL:
+            out << "CALL "<<op->name;
             break;
         case OP_VARIABLE:
         case OP_ADDRESS:
@@ -592,7 +594,6 @@ void translate_Exp(tree node, Operand place)
         //Exp → ID LP Args RP
         if(node->children[0]->key == "ID")
         {
-            Operand func = newOperand(OP_FUNCTION, node->children[0]->value);
             Arglist list = newArglist();
             translate_Args(node->children[2], list);
             if(node->children[0]->value == "write")
@@ -615,8 +616,12 @@ void translate_Exp(tree node, Operand place)
                 add_ICList(head, x);
                 p = p->next;
             }
-            Operand id = newOperand(OP_FUNCTION, node->children[0]->value);
-            InterCode x = newAssign(IC_ASSIGN, id, place);
+            Operand id = newOperand(OP_CALL, node->children[0]->value);
+            InterCode x;
+            if (place)
+                x = newAssign(IC_ASSIGN, id, place);
+            else
+                x = newOneop(IC_CALL,id);
             add_ICList(head, x);
             return;
         }
@@ -662,8 +667,7 @@ void translate_Exp(tree node, Operand place)
             }
             else
             {
-                Operand id = newtemp();
-                setOperand(id, OP_FUNCTION, node->children[0]->value);
+                Operand id = newOperand(OP_FUNCTION,node->children[0]->value);
                 InterCode x = newAssign(IC_ASSIGN, id, place);
                 add_ICList(head, x);
             }
@@ -685,6 +689,15 @@ void translate_Exp(tree node, Operand place)
                 if(place)
                     add_ICList(head, newAssign(IC_ASSIGN, v, place));
             }
+            else
+            {
+                Operand t2 = newtemp();
+                translate_Exp(node->children[0],t2);
+                add_ICList(head,newAssign(IC_ASSIGN,t1,t2));
+                if(place)
+                    add_ICList(head, newAssign(IC_ASSIGN, t2, place));
+                num_temp--;
+            }
             num_temp--;
         }
         // | Exp AND Exp
@@ -694,8 +707,7 @@ void translate_Exp(tree node, Operand place)
         {
             Operand label1 = newlabel();
             Operand label2 = newlabel();
-            Operand constant = newtemp();
-            setOperand(constant, OP_CONSTANT, "0");
+            Operand constant = newOperand(OP_CONSTANT,"0");
             InterCode insert = newAssign(IC_ASSIGN, constant, place);
             add_ICList(head, insert);
 
@@ -704,8 +716,7 @@ void translate_Exp(tree node, Operand place)
             InterCode p = newOneop(IC_LABEL, label1);
             add_ICList(head, p);
 
-            Operand one = newtemp();
-            setOperand(one, OP_CONSTANT, "1");
+            Operand one = newOperand(OP_CONSTANT,"1");
             InterCode q = newAssign(IC_ASSIGN, one, place);
             add_ICList(head, q);
 
@@ -721,6 +732,7 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[2], t2);
             InterCode insert = newBinop(IC_ADD, place, t1, t2);
             add_ICList(head, insert);
+            num_temp -= 2;
         }
         // | Exp MINUS Exp
         if(node->children[1]->key == "MINUS")
@@ -731,6 +743,7 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[2], t2);
             InterCode insert = newBinop(IC_SUB, place, t1, t2);
             add_ICList(head, insert);
+            num_temp -= 2;
         }
         // | Exp STAR Exp
         if(node->children[1]->key == "STAR")
@@ -741,6 +754,7 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[2], t2);
             InterCode insert = newBinop(IC_MUL, place, t1, t2);
             add_ICList(head, insert);
+            num_temp -= 2;
         }
         // | Exp DIV Exp
         if(node->children[1]->key == "DIV")
@@ -751,6 +765,7 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[2], t2);
             InterCode insert = newBinop(IC_DIV, place, t1, t2);
             add_ICList(head, insert);
+            num_temp -= 2;
         }
     }
     else if(node->childCnt == 2)
@@ -763,14 +778,14 @@ void translate_Exp(tree node, Operand place)
             Operand zero =  newOperand(OP_CONSTANT,"0");
             InterCode x = newBinop(IC_SUB, place, zero, t1);
             add_ICList(head, x);
+            num_temp -= 1;
         }
         // | NOT Exp
         if(node->children[0]->key == "NOT")
         {
             Operand label1 = newlabel();
             Operand label2 = newlabel();
-            Operand constant = newtemp();
-            setOperand(constant, OP_CONSTANT, "0");
+            Operand constant = newOperand(OP_CONSTANT,"0");
             InterCode insert = newAssign(IC_ASSIGN, constant, place);
             add_ICList(head, insert);
 
@@ -779,8 +794,7 @@ void translate_Exp(tree node, Operand place)
             InterCode p = newOneop(IC_LABEL, label1);
             add_ICList(head, p);
 
-            Operand one = newtemp();
-            setOperand(one, OP_CONSTANT, "1");
+            Operand one = newOperand(OP_CONSTANT,"1");
             InterCode q = newAssign(IC_ASSIGN, one, place);
             add_ICList(head, q);
 
@@ -849,6 +863,7 @@ void translate_Stmt(tree node)
         translate_Exp(node->children[1], t1);
         InterCode x = newOneop(IC_RETURN, t1);
         add_ICList(head, x);
+        num_temp-=1;
     }
     if(node->children[0]->key == "IF")
     {
@@ -922,6 +937,7 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
 
         add_ICList(head, newIf_goto(IC_IF_GOTO, t1, relop, t2, label_true));
         add_ICList(head, newOneop(IC_GOTO,label_false));
+        num_temp -= 2;
     }
     // Exp -> NOT Exp
     else if(node->children[0]->key == "NOT")
@@ -951,6 +967,7 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
         translate_Exp(node,t1);
         add_ICList(head,newIf_goto(IC_IF_GOTO,t1,newOperand(OP_RELOP,"!="),newOperand(OP_CONSTANT,"0"),label_true));
         add_ICList(head,newOneop(IC_GOTO,label_false));
+        num_temp -= 1;
     }
 }
 
