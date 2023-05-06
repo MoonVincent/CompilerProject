@@ -246,8 +246,6 @@ void printInterCodes(std::ofstream &out, InterCodeList head)
             printOperand(out, cur->code->u.oneop.op);
             break;
         case IC_CALL:
-            printOperand(out, cur->code->u.assign.left);
-            out << " := CALL ";
             printOperand(out, cur->code->u.assign.right);
             break;
         case IC_PARAM:
@@ -283,6 +281,7 @@ Operand newOperand(Kind_op kind, std::string val)
         case OP_RELOP:
         case OP_READ_ADDRESS: 
         case OP_WRITE_ADDRESS:
+        case OP_CALL:
             op->name = val;
     }
     return op;
@@ -347,6 +346,9 @@ void printOperand(std::ofstream &out, Operand op)
     {
         case OP_CONSTANT:
             out << "#" << op->name;
+            break;
+        case OP_CALL:
+            out << "CALL "<<op->name;
             break;
         case OP_VARIABLE:
         case OP_ADDRESS:
@@ -593,7 +595,6 @@ void translate_Exp(tree node, Operand place)
         //Exp → ID LP Args RP
         if(node->children[0]->key == "ID")
         {
-            Operand func = newOperand(OP_FUNCTION, node->children[0]->value);
             Arglist list = newArglist();
             translate_Args(node->children[2], list);
             if(node->children[0]->value == "write")
@@ -616,8 +617,12 @@ void translate_Exp(tree node, Operand place)
                 add_ICList(head, x);
                 p = p->next;
             }
-            Operand id = newOperand(OP_FUNCTION, node->children[0]->value);
-            InterCode x = newAssign(IC_ASSIGN, id, place);
+            Operand id = newOperand(OP_CALL, node->children[0]->value);
+            InterCode x;
+            if (place)
+                x = newAssign(IC_ASSIGN, id, place);
+            else
+                x = newOneop(IC_CALL,id);
             add_ICList(head, x);
             return;
         }
