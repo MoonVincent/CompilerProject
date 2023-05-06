@@ -551,12 +551,14 @@ void translate_Dec(tree node)
         while (temp->childCnt != 1) {
             temp = temp->children[0];
         }
-        Operand v1 = getValueItem(temp->children[0]->value);
+        Operand v1 = newvalue();
+        translate_VarDec(node->children[0], v1);
         Operand t2 = newtemp();
         translate_Exp(node->children[2], t2);
         //to do
         InterCode x = newAssign(IC_ASSIGN,t2,v1);
         add_ICList(head,x);
+        num_temp--;
     }
 }
 
@@ -591,8 +593,7 @@ void translate_Exp(tree node, Operand place)
         //Exp → ID LP Args RP
         if(node->children[0]->key == "ID")
         {
-            Operand func = newtemp();
-            setOperand(func, OP_FUNCTION, node->children[0]->value);
+            Operand func = newOperand(OP_FUNCTION, node->children[0]->value);
             Arglist list = newArglist();
             translate_Args(node->children[2], list);
             if(node->children[0]->value == "write")
@@ -615,8 +616,7 @@ void translate_Exp(tree node, Operand place)
                 add_ICList(head, x);
                 p = p->next;
             }
-            Operand id = newtemp();
-            setOperand(id, OP_FUNCTION, node->children[0]->value);
+            Operand id = newOperand(OP_FUNCTION, node->children[0]->value);
             InterCode x = newAssign(IC_ASSIGN, id, place);
             add_ICList(head, x);
             return;
@@ -626,15 +626,25 @@ void translate_Exp(tree node, Operand place)
             Operand t1 = newtemp();
             Operand t2 = newtemp();
             translate_Exp(node->children[2], t1);
-            Operand const_four = newtemp();
-            setOperand(const_four, OP_CONSTANT, "4");
+            Operand const_four = newOperand(OP_CONSTANT,"4");
             InterCode x = newBinop(IC_MUL, t2, t1, const_four);
             add_ICList(head, x);
 
             Operand t3 = newtemp();
             translate_Exp(node->children[0], t3);  
-            x = newBinop(IC_ADD, place, t3, t2);
-            add_ICList(head, x);
+            if(node->children[0]->childCnt==1)
+            {
+                Operand new_place = newOperand(OP_VARIABLE,place->name);
+                x = newBinop(IC_ADD, new_place, t3, t2);
+                add_ICList(head, x);
+                place->kind = OP_WRITE_ADDRESS;
+            }
+            else
+            {
+                x = newBinop(IC_ADD, place, t3, t2);
+                add_ICList(head, x);
+            }
+            num_temp-=3;
         }
     }
 
