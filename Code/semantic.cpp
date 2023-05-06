@@ -184,8 +184,9 @@ void Stmt(tree root, Type& ret) {
         CompSt(root->children[0], record, unUsed, record_struct);
     } else if (root->children[0]->key == "RETURN") {
         ret = Exp(root->children[1]).first;
-    } else if (root->children[0]->key == "WHILE") {
+    } else if (root->children[0]->key == "WHILE") { //WHILE LP EXP RP Stmt
         Exp(root->children[2]);
+        Stmt(root->children[4], ret);
     } else {
         Exp(root->children[2]);
         Stmt(root->children[4], ret);
