@@ -1,0 +1,53 @@
+int array[1000];
+int QuickSort(int low, int high)
+{
+    if (low < high)
+    {
+        int i = low;
+        int j = high;
+        int k = arr[low];
+        while (i < j)
+        {
+            while(i < j && arr[j] >= k)
+            {
+                j = j - 1;
+            }
+ 
+            if(i < j)
+            {
+                arr[i] = arr[j];
+                i = i + 1;
+            }
+ 
+            while(i < j && arr[i] < k)
+            {
+                i = i + 1;
+            }
+ 
+            if(i < j)
+            {
+                arr[j] = arr[i];
+                j = j - 1;
+            }
+        }
+ 
+        arr[i] = k;
+        QuickSort(low, i - 1);
+        QuickSort(i + 1, high);
+    }
+}
+
+int main() {
+    int n = read();
+    int i = 0;
+    while (i < n) {
+        array[i] = read();
+        i = i + 1;
+    }
+    QuickSort(0, n - 1);
+    i = 0;
+    while (i < n) {
+        write(array[i]);
+    }
+    return 0;
+}
