@@ -997,7 +997,8 @@ void addArg(Arglist argList, Arg arg)
     }
     else
     {
-        argList->cur->next = arg;
+        argList->head = arg;
+        argList->head->next = argList->cur;
         argList->cur = arg;
     }
 }

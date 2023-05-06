@@ -189,7 +189,7 @@ Value:\<][Exp[#Key:ID\
 Value:n]]][#Key:RP\
 Value:\)][Stmt[CompSt[#Key:LC\
 Value:\{][StmtList[Stmt[Exp[Exp[Exp[#Key:ID\
-Value:array]][#Key:LB\
+Value:arr]][#Key:LB\
 Value:\-][Exp[#Key:ID\
 Value:i]][#Key:RB\
 Value:\+]][#Key:ASSIGNOP\
@@ -227,7 +227,7 @@ Value:\)][Stmt[CompSt[#Key:LC\
 Value:\{][StmtList[Stmt[Exp[#Key:ID\
 Value:write][#Key:LP\
 Value:\(][Args[Exp[Exp[#Key:ID\
-Value:array]][#Key:LB\
+Value:arr]][#Key:LB\
 Value:\-][Exp[#Key:ID\
 Value:i]][#Key:RB\
 Value:\+]]][#Key:RP\

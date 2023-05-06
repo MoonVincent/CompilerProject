@@ -7,146 +7,166 @@ t1 := v2
 IF t0 < t1 GOTO label0
 GOTO label1
 LABEL label0 :
-t2 := v1
-v3 := t2
-t2 := v2
-v4 := t2
-t3 := v1
-t4 := t3 * #4
-t5 := v0
-t2 := t5 + t4
-v5 := *t2
+t0 := v1
+v3 := t0
+t0 := v2
+v4 := t0
+t1 := v1
+t2 := t1 * #4
+t3 := v0
+t0 := t3 + t2
+v5 := *t0
 LABEL label2 :
-t2 := v3
-t3 := v4
-IF t2 < t3 GOTO label3
+t0 := v3
+t1 := v4
+IF t0 < t1 GOTO label3
 GOTO label4
 LABEL label3 :
 LABEL label5 :
-t4 := v3
-t5 := v4
-IF t4 < t5 GOTO label8
+t0 := v3
+t1 := v4
+IF t0 < t1 GOTO label8
 GOTO label7
 LABEL label8 :
-t8 := v4
-t9 := t8 * #4
-t10 := v0
-t6 := t10 + t9
-t7 := v5
-IF *t6 >= t7 GOTO label6
+t2 := v4
+t3 := t2 * #4
+t4 := v0
+t0 := t4 + t3
+t1 := v5
+IF *t0 >= t1 GOTO label6
 GOTO label7
 LABEL label6 :
-t9 := v4
-t10 := #1
-t8 := t9 - t10
-v4 := t8
+t1 := v4
+t2 := #1
+t0 := t1 - t2
+v4 := t0
 GOTO label5
 LABEL label7 :
-t10 := v3
-t11 := v4
-IF t10 < t11 GOTO label9
+t0 := v3
+t1 := v4
+IF t0 < t1 GOTO label9
 GOTO label10
 LABEL label9 :
-t13 := v4
-t14 := t13 * #4
-t15 := v0
-t12 := t15 + t14
-t13 := v3
-t14 := #1
-t12 := t13 + t14
-v3 := t12
+t1 := v4
+t2 := t1 * #4
+t3 := v0
+t0 := t3 + t2
+t2 := v3
+t3 := t2 * #4
+t4 := v0
+t1 := t4 + t3
+*t1 := *t0
+t1 := v3
+t2 := #1
+t0 := t1 + t2
+v3 := t0
 LABEL label10 :
 LABEL label11 :
-t14 := v3
-t15 := v4
-IF t14 < t15 GOTO label14
+t0 := v3
+t1 := v4
+IF t0 < t1 GOTO label14
 GOTO label13
 LABEL label14 :
-t18 := v3
-t19 := t18 * #4
-t20 := v0
-t16 := t20 + t19
-t17 := v5
-IF *t16 < t17 GOTO label12
+t2 := v3
+t3 := t2 * #4
+t4 := v0
+t0 := t4 + t3
+t1 := v5
+IF *t0 < t1 GOTO label12
 GOTO label13
 LABEL label12 :
-t19 := v3
-t20 := #1
-t18 := t19 + t20
-v3 := t18
+t1 := v3
+t2 := #1
+t0 := t1 + t2
+v3 := t0
 GOTO label11
 LABEL label13 :
-t20 := v3
-t21 := v4
-IF t20 < t21 GOTO label15
+t0 := v3
+t1 := v4
+IF t0 < t1 GOTO label15
 GOTO label16
 LABEL label15 :
-t23 := v3
-t24 := t23 * #4
-t25 := v0
-t22 := t25 + t24
-t23 := v4
-t24 := #1
-t22 := t23 - t24
-v4 := t22
+t1 := v3
+t2 := t1 * #4
+t3 := v0
+t0 := t3 + t2
+t2 := v4
+t3 := t2 * #4
+t4 := v0
+t1 := t4 + t3
+*t1 := *t0
+t1 := v4
+t2 := #1
+t0 := t1 - t2
+v4 := t0
 LABEL label16 :
 GOTO label2
 LABEL label4 :
-t24 := v5
-t24 := v1
-t26 := v3
-t27 := #1
-t25 := t26 - t27
-ARG t24
-ARG t25
- := QuickSort
-t29 := v3
-t30 := #1
-t28 := t29 + t30
-t31 := v2
-ARG t28
-ARG t31
- := QuickSort
+t0 := v5
+t2 := v3
+t3 := t2 * #4
+t4 := v0
+t1 := t4 + t3
+*t1 := t0
+t0 := v1
+t2 := v3
+t3 := #1
+t1 := t2 - t3
+ARG t1
+ARG t0
+CALL QuickSort
+t3 := v3
+t4 := #1
+t2 := t3 + t4
+t3 := v2
+ARG t3
+ARG t2
+CALL QuickSort
 LABEL label1 :
 FUNCTION main :
-READ t32
-v6 := t32
-t32 := #0
-v7 := t32
+READ t4
+v6 := t4
+t4 := #0
+v7 := t4
 LABEL label17 :
-t32 := v7
-t33 := v6
-IF t32 < t33 GOTO label18
+t4 := v7
+t5 := v6
+IF t4 < t5 GOTO label18
 GOTO label19
 LABEL label18 :
-READ t34
-t35 := v7
-t36 := #1
-t34 := t35 + t36
-v7 := t34
+READ t4
+t6 := v7
+t7 := t6 * #4
+t8 := v0
+t5 := t8 + t7
+*t5 := t4
+t5 := v7
+t6 := #1
+t4 := t5 + t6
+v7 := t4
 GOTO label17
 LABEL label19 :
-t36 := #0
-t38 := v6
-t39 := #1
-t37 := t38 - t39
-ARG t36
-ARG t37
- := QuickSort
-t40 := #0
-v7 := t40
+t4 := #0
+t6 := v6
+t7 := #1
+t5 := t6 - t7
+ARG t5
+ARG t4
+CALL QuickSort
+t6 := #0
+v7 := t6
 LABEL label20 :
-t40 := v7
-t41 := v6
-IF t40 < t41 GOTO label21
+t6 := v7
+t7 := v6
+IF t6 < t7 GOTO label21
 GOTO label22
 LABEL label21 :
-t43 := v7
-t44 := t43 * #4
-t45 := 
-t42 := t45 + t44
-WRITE *t42
+t7 := v7
+t8 := t7 * #4
+t9 := v0
+t6 := t9 + t8
+WRITE *t6
 GOTO label20
 LABEL label22 :
-t43 := #0
-RETURN t43
+t7 := #0
+RETURN t7
