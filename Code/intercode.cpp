@@ -4,7 +4,6 @@
 #include <iostream>
 InterCodeList head = newICList();
 
-
 InterCodeList newICList()
 {
     InterCodeList p = new InterCodes();
@@ -311,7 +310,7 @@ Operand newvalue()
 {
     std::string name = "v" + std::to_string(num_value);
     ++num_value;
-    Operand op = newOperand(OP_LABEL, name);
+    Operand op = newOperand(OP_VARIABLE, name);
     return op;
 }
 /*
