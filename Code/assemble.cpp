@@ -112,7 +112,15 @@ instrSelectedList newLabel(Kind_instr kind, std::string label){
 
 void selectAssign(InterCodeList interCode){
     instrSelectedList newInstr;
-    if (interCode->code->u.assign.right->kind == OP_CONSTANT) { //li
+    if (interCode->code->u.assign.right->kind == OP_WRITE_ADDRESS) {    //x = *y
+        std::string dst = interCode->code->u.assign.left->name;
+        std::string src = interCode->code->u.assign.right->name;
+        newInstr  = newL(INST_LW, dst, "0", src);
+    } else if (interCode->code->u.assign.left->kind == OP_WRITE_ADDRESS) { //*x = y
+        std::string dst = interCode->code->u.assign.left->name;
+        std::string src = interCode->code->u.assign.right->name;
+        newInstr  = newS(INST_SW, src, "0", dst);
+    } else if (interCode->code->u.assign.right->kind == OP_CONSTANT) { //li
         std::string dst = interCode->code->u.assign.left->name;
         std::string imm = interCode->code->u.assign.right->name;
         newInstr = newM(INST_LI, dst, imm);
@@ -127,14 +135,6 @@ void selectAssign(InterCodeList interCode){
         addInstList(newInstr);
         newInstr = newM(INST_MOVE, dst, "v0");  //move x, $v0
         newInstr->instr->u.M.src->reg_num = 2;
-    } else if (interCode->code->u.assign.right->kind == OP_READ_ADDRESS) {
-        std::string dst = interCode->code->u.assign.left->name;
-        std::string src = interCode->code->u.assign.right->name;
-        newInstr = newL(INST_LW, dst, "0", src);
-    } else if (interCode->code->u.assign.left->kind == OP_WRITE_ADDRESS) {
-        std::string dst = interCode->code->u.assign.left->name;
-        std::string src = interCode->code->u.assign.right->name;
-        newInstr = newS(INST_SW, src, "0", dst);
     }
     addInstList(newInstr);
 }
@@ -238,7 +238,10 @@ void selectMul(InterCodeList interCode) {
     std::string dst = interCode->code->u.binop.result->name;
     std::string src1 = interCode->code->u.binop.op1->name;
     std::string src2 = interCode->code->u.binop.op2->name;
-    instrSelectedList newInstr = newR(INST_MUL, dst, src1, src2);
+    instrSelectedList newInstr;
+    if (interCode->code->u.binop.op2->kind == OP_VARIABLE) {
+        
+    }
     addInstList(newInstr);
 }
 
