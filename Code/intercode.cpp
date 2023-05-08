@@ -638,10 +638,10 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[0], t3);  
             if(node->children[0]->childCnt==1)
             {
-                Operand new_place = newOperand(OP_VARIABLE,place->name);
-                x = newBinop(IC_ADD, new_place, t3, t2);
+                Operand new_place = newOperand(OP_WRITE_ADDRESS,place->name);
+                x = newBinop(IC_ADD, place, t3, t2);
                 add_ICList(head, x);
-                place->kind = OP_WRITE_ADDRESS;
+                add_ICList(head,newAssign(IC_ASSIGN,new_place,place));
             }
             else
             {
@@ -945,28 +945,15 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
     if(node->children[1]->key == "RELOP")
     {
         Operand t1,t2;
-        int temp = 0;
-        if(node->children[0]->children[0]->key=="ID")
-            t1 = getValueItem(node->children[0]->children[0]->value);
-        else
-        {
-            t1 = newtemp();
-            translate_Exp(node->children[0], t1);
-            temp++;
-        }
-        if (node->children[2]->children[0]->key == "ID")
-            t2 = getValueItem(node->children[2]->children[0]->value);
-        else
-        {
-            t2 = newtemp();
-            translate_Exp(node->children[2], t2);
-            temp++;
-        }
+        t1 = newtemp();
+        translate_Exp(node->children[0], t1);
+        t2 = newtemp();
+        translate_Exp(node->children[2], t2);
         Operand relop = newOperand(OP_RELOP,node->children[1]->value);
 
         add_ICList(head, newIf_goto(IC_IF_GOTO, t1, relop, t2, label_true));
         add_ICList(head, newOneop(IC_GOTO,label_false));
-        num_temp -= temp;
+        num_temp -= 2;
     }
     // Exp -> NOT Exp
     else if(node->children[0]->key == "NOT")
