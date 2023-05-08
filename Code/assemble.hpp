@@ -5,7 +5,7 @@ typedef struct instrSelected_* instrSelected;
 typedef struct instrItem_* instrItem;
 typedef struct instrSelectedList_* instrSelectedList;
 typedef enum { INST_ADD, INST_ADDI, INST_SUB, INST_MUL, INST_DIV, INST_MFLO, INST_LI, INST_LW, INST_SW, INST_J, INST_JAL, INST_MOVE,
-               INST_JR, INST_BEQ, INST_BNE, INST_BGT, INST_BLT, INST_BGE, INST_BLE} Kind_instr;
+               INST_JR, INST_BEQ, INST_BNE, INST_BGT, INST_BLT, INST_BGE, INST_BLE, INST_LABEL} Kind_instr;
 typedef enum { REG, LABEL, IMM} Kind_item;
 struct instrSelected_{
     Kind_instr kind;
@@ -17,6 +17,9 @@ struct instrSelected_{
         struct {instrItem src; instrItem imm; instrItem dst;} S;
         struct {instrItem LABEL_REG;} J;
         struct {instrItem reg1; instrItem reg2; instrItem LABEL;} B;
+        struct {instrItem src1; instrItem src2;} DIV;
+        struct {instrItem dst;} MFLO;
+        struct {instrItem LABEL;} Label;
     } u; 
 
 };

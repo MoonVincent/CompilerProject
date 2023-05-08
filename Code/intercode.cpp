@@ -685,7 +685,15 @@ void translate_Exp(tree node, Operand place)
             if (node->children[0]->children[0]->key == "ID")
             {
                 Operand v = getValueItem(node->children[0]->children[0]->value);
-                add_ICList(head,newAssign(IC_ASSIGN,t1,v));
+                if (v->kind == OP_WRITE_ADDRESS && t1->kind == OP_WRITE_ADDRESS) {
+                    Operand tmp = newtemp();
+                    tmp->kind = OP_VARIABLE;
+                    add_ICList(head, newAssign(IC_ASSIGN, t1, tmp));
+                    add_ICList(head, newAssign(IC_ASSIGN, tmp, v));
+                } else {
+                    add_ICList(head,newAssign(IC_ASSIGN,t1,v));
+                }
+
                 if(place)
                     add_ICList(head, newAssign(IC_ASSIGN, v, place));
             }
@@ -693,7 +701,14 @@ void translate_Exp(tree node, Operand place)
             {
                 Operand t2 = newtemp();
                 translate_Exp(node->children[0],t2);
-                add_ICList(head,newAssign(IC_ASSIGN,t1,t2));
+                if (t2->kind == OP_WRITE_ADDRESS && t1->kind == OP_WRITE_ADDRESS) {
+                    Operand tmp = newtemp();
+                    tmp->kind = OP_VARIABLE;
+                    add_ICList(head, newAssign(IC_ASSIGN, t1, tmp));
+                    add_ICList(head, newAssign(IC_ASSIGN, tmp, t2));
+                } else {
+                    add_ICList(head,newAssign(IC_ASSIGN, t1, t2));
+                }
                 if(place)
                     add_ICList(head, newAssign(IC_ASSIGN, t2, place));
                 num_temp--;
