@@ -929,15 +929,29 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
     // Exp -> Exp RELOP Exp
     if(node->children[1]->key == "RELOP")
     {
-        Operand t1 = newtemp();
-        Operand t2 = newtemp();
-        translate_Exp(node->children[0],t1);
-        translate_Exp(node->children[2],t2);
+        Operand t1,t2;
+        int temp = 0;
+        if(node->children[0]->children[0]->key=="ID")
+            t1 = getValueItem(node->children[0]->children[0]->value);
+        else
+        {
+            t1 = newtemp();
+            translate_Exp(node->children[0], t1);
+            temp++;
+        }
+        if (node->children[2]->children[0]->key == "ID")
+            t2 = getValueItem(node->children[2]->children[0]->value);
+        else
+        {
+            t2 = newtemp();
+            translate_Exp(node->children[2], t2);
+            temp++;
+        }
         Operand relop = newOperand(OP_RELOP,node->children[1]->value);
 
         add_ICList(head, newIf_goto(IC_IF_GOTO, t1, relop, t2, label_true));
         add_ICList(head, newOneop(IC_GOTO,label_false));
-        num_temp -= 2;
+        num_temp -= temp;
     }
     // Exp -> NOT Exp
     else if(node->children[0]->key == "NOT")
