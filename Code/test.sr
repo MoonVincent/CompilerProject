@@ -1,0 +1,181 @@
+QuickSort:
+move reg(t0), reg(v1)
+move reg(t1), reg(v2)
+blt reg(t0), reg(t1), label0
+j label1
+label0:
+move reg(t0), reg(v1)
+move reg(v3), reg(t0)
+move reg(t0), reg(v2)
+move reg(v4), reg(t0)
+move reg(t1), reg(v1)
+li reg(t3), 4
+mul reg(t2), reg(t1), reg(t3)
+move reg(t4), reg(v0)
+add reg(t0), reg(t4), reg(t2)
+lw reg(t0), 0(reg(t0))
+move reg(v5), reg(t0)
+label2:
+move reg(t1), reg(v3)
+move reg(t2), reg(v4)
+blt reg(t1), reg(t2), label3
+j label4
+label3:
+label5:
+move reg(t1), reg(v3)
+move reg(t2), reg(v4)
+blt reg(t1), reg(t2), label8
+j label7
+label8:
+move reg(t2), reg(v4)
+li reg(t4), 4
+mul reg(t3), reg(t2), reg(t4)
+move reg(t5), reg(v0)
+add reg(t1), reg(t5), reg(t3)
+lw reg(t1), 0(reg(t1))
+move reg(t3), reg(v5)
+bge reg(t1), reg(t3), label6
+j label7
+label6:
+move reg(t3), reg(v4)
+li reg(t4), 1
+add reg(t2), reg(t3), reg(t4)
+move reg(v4), reg(t2)
+j label5
+label7:
+move reg(t2), reg(v3)
+move reg(t3), reg(v4)
+blt reg(t2), reg(t3), label9
+j label10
+label9:
+move reg(t3), reg(v4)
+li reg(t5), 4
+mul reg(t4), reg(t3), reg(t5)
+move reg(t6), reg(v0)
+add reg(t2), reg(t6), reg(t4)
+lw reg(t2), 0(reg(t2))
+move reg(t5), reg(v3)
+li reg(t7), 4
+mul reg(t6), reg(t5), reg(t7)
+move reg(t8), reg(v0)
+add reg(t4), reg(t8), reg(t6)
+lw reg(t4), 0(reg(t4))
+move reg(t4), reg(t2)
+move reg(t5), reg(v3)
+li reg(t6), 1
+add reg(t4), reg(t5), reg(t6)
+move reg(v3), reg(t4)
+label10:
+label11:
+move reg(t4), reg(v3)
+move reg(t5), reg(v4)
+blt reg(t4), reg(t5), label14
+j label13
+label14:
+move reg(t5), reg(v3)
+li reg(t7), 4
+mul reg(t6), reg(t5), reg(t7)
+move reg(t8), reg(v0)
+add reg(t4), reg(t8), reg(t6)
+lw reg(t4), 0(reg(t4))
+move reg(t6), reg(v5)
+blt reg(t4), reg(t6), label12
+j label13
+label12:
+move reg(t6), reg(v3)
+li reg(t7), 1
+add reg(t5), reg(t6), reg(t7)
+move reg(v3), reg(t5)
+j label11
+label13:
+move reg(t5), reg(v3)
+move reg(t6), reg(v4)
+blt reg(t5), reg(t6), label15
+j label16
+label15:
+move reg(t6), reg(v3)
+li reg(t8), 4
+mul reg(t7), reg(t6), reg(t8)
+move reg(t9), reg(v0)
+add reg(t5), reg(t9), reg(t7)
+lw reg(t5), 0(reg(t5))
+move reg(t8), reg(v4)
+li reg(t10), 4
+mul reg(t9), reg(t8), reg(t10)
+move reg(t11), reg(v0)
+add reg(t7), reg(t11), reg(t9)
+lw reg(t7), 0(reg(t7))
+move reg(t7), reg(t5)
+move reg(t8), reg(v4)
+li reg(t9), 1
+add reg(t7), reg(t8), reg(t9)
+move reg(v4), reg(t7)
+label16:
+j label2
+label4:
+move reg(t7), reg(v5)
+move reg(t9), reg(v3)
+li reg(t11), 4
+mul reg(t10), reg(t9), reg(t11)
+move reg(t12), reg(v0)
+add reg(t8), reg(t12), reg(t10)
+lw reg(t8), 0(reg(t8))
+move reg(t8), reg(t7)
+move reg(t8), reg(v1)
+move reg(t10), reg(v3)
+li reg(t11), 1
+add reg(t9), reg(t10), reg(t11)
+jal QuickSort
+move reg(t11), reg(v3)
+li reg(t12), 1
+add reg(t10), reg(t11), reg(t12)
+move reg(t11), reg(v2)
+jal QuickSort
+label1:
+main:
+move reg(v6), reg(t12)
+li reg(t12), 0
+move reg(v7), reg(t12)
+label17:
+move reg(t12), reg(v7)
+move reg(t13), reg(v6)
+blt reg(t12), reg(t13), label18
+j label19
+label18:
+move reg(t14), reg(v7)
+li reg(t16), 4
+mul reg(t15), reg(t14), reg(t16)
+move reg(t17), reg(v0)
+add reg(t13), reg(t17), reg(t15)
+lw reg(t13), 0(reg(t13))
+move reg(t13), reg(t12)
+move reg(t14), reg(v7)
+li reg(t15), 1
+add reg(t13), reg(t14), reg(t15)
+move reg(v7), reg(t13)
+j label17
+label19:
+li reg(t13), 0
+move reg(t15), reg(v6)
+li reg(t16), 1
+add reg(t14), reg(t15), reg(t16)
+jal QuickSort
+li reg(t15), 0
+move reg(v7), reg(t15)
+label20:
+move reg(t15), reg(v7)
+move reg(t16), reg(v6)
+blt reg(t15), reg(t16), label21
+j label22
+label21:
+move reg(t16), reg(v7)
+li reg(t18), 4
+mul reg(t17), reg(t16), reg(t18)
+move reg(t19), reg(v0)
+add reg(t15), reg(t19), reg(t17)
+lw reg(t15), 0(reg(t15))
+j label20
+label22:
+li reg(t17), 0
+move reg(v0), reg(t17)
+jr ra

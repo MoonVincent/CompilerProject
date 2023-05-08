@@ -2,6 +2,7 @@
 #include "syntaxNode.hpp"
 #include "semantic.hpp"
 #include "intercode.hpp"
+#include "assemble.hpp"
 extern int yyparse();
 extern void yyrestart(FILE*);
 extern tree syntaxTree;
@@ -16,5 +17,9 @@ int main(int argc, char** argv) {
     translate_Program(syntaxTree);
     std::ofstream ir("test.ir");
     printInterCodes(ir, head);
+    selectInstr(head);
+    std::cout << "Hello" << std::endl;
+    std::ofstream sr("test.sr");
+    printSelectedInstr(sr, instrListHead);
     return 0;
 }

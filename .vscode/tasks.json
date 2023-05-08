@@ -15,6 +15,7 @@
                 "./Code/global.cpp",
                 "./Code/syntaxNode.cpp",
                 "./Code/intercode.cpp",
+                "./Code/assemble.cpp",
                 "-ly",
                 "-o",
                 "./Code/parser"

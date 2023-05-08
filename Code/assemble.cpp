@@ -1,6 +1,7 @@
 #include "assemble.hpp"
 #include <iostream>
 instrSelectedList instrList;
+instrSelectedList instrListHead;
 
 void addInstList(instrSelectedList new_node){
     instrList->next = new_node;
@@ -194,7 +195,7 @@ void selectDiv(InterCodeList interCode) { // x:= y / z
 void selectFunction(InterCodeList interCode) {
     instrSelectedList newInstr;
     std::string funcName = interCode->code->u.oneop.op->name;
-    newInstr = newJ(INST_JAL, funcName);
+    newInstr = newLabel(INST_LABEL, funcName);
     addInstList(newInstr);
 }
 
@@ -238,10 +239,7 @@ void selectMul(InterCodeList interCode) {
     std::string dst = interCode->code->u.binop.result->name;
     std::string src1 = interCode->code->u.binop.op1->name;
     std::string src2 = interCode->code->u.binop.op2->name;
-    instrSelectedList newInstr;
-    if (interCode->code->u.binop.op2->kind == OP_VARIABLE) {
-        
-    }
+    instrSelectedList newInstr = newR(INST_MUL, dst, src1, src2);
     addInstList(newInstr);
 }
 
@@ -249,8 +247,17 @@ void selectParam(InterCodeList interCode) {
     //TODO:
 }
 
+void selectReturn(InterCodeList interCode) {
+    std::string ret = interCode->code->u.oneop.op->name;
+    instrSelectedList newInstr = newM(INST_MOVE, "v0", ret);
+    addInstList(newInstr);
+    newInstr = newJ(INST_JR, "ra");
+    addInstList(newInstr);
+}
+
 void selectInstr(InterCodeList interCode){
     instrList = new instrSelectedList_();
+    instrListHead = instrList;
     interCode = interCode->next;
     while (interCode != nullptr) {
         switch (interCode->code->kind)
@@ -269,6 +276,7 @@ void selectInstr(InterCodeList interCode){
         }
         case IC_ARG:{
             selectArg(interCode); 
+            break;
         }
         case IC_CALL:{
             selectCall(interCode);
@@ -306,11 +314,135 @@ void selectInstr(InterCodeList interCode){
             selectParam(interCode);
             break;
         }
+        case IC_RETURN:{
+            selectReturn(interCode);
+            break;
+        }
         default:{
             std::cout << "Error" << std::endl;
             break;
         }
         }
+        interCode = interCode->next;
+    }
+}
+
+void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
+    instrs = instrs->next;
+    while (instrs != nullptr) {
+        switch(instrs->instr->kind){
+            case INST_ADD:{
+                out << "add reg(" << instrs->instr->u.R.dst->value << "), reg(" 
+                    << instrs->instr->u.R.src1->value << "), reg("
+                    << instrs->instr->u.R.src2->value << ")" << std::endl;
+                break;
+            }
+            case INST_ADDI:{
+                out << "addi reg(" << instrs->instr->u.I.dst->value << "), reg(" 
+                    << instrs->instr->u.I.src->value << "), "
+                    << instrs->instr->u.I.imm->value << std::endl;
+                break;
+            }
+            case INST_BEQ:{
+                out << "beq reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_BGE:{
+                out << "bge reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_BGT:{
+                out << "bgt reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_BLE:{
+                out << "ble reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_BLT:{
+                out << "blt reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_BNE:{
+                out << "bne reg(" << instrs->instr->u.B.reg1->value << "), reg(" 
+                    << instrs->instr->u.B.reg2->value << "), "
+                    << instrs->instr->u.B.LABEL->value << std::endl;
+                break;
+            }
+            case INST_DIV:{
+                out << "div reg(" << instrs->instr->u.DIV.src1->value << "), reg(" 
+                    << instrs->instr->u.DIV.src2->value << ")" << std::endl;
+                break;
+            }
+            case INST_J:{
+                out << "j " << instrs->instr->u.J.LABEL_REG->value << std::endl;
+                break;
+            }
+            case INST_JAL:{
+                out << "jal " << instrs->instr->u.J.LABEL_REG->value << std::endl;
+                break;
+            }
+            case INST_JR:{
+                out << "jr " << instrs->instr->u.J.LABEL_REG->value << std::endl;
+                break;
+            }
+            case INST_LABEL:{
+                out << instrs->instr->u.Label.LABEL->value <<":" << std::endl;
+                break;
+            }
+            case INST_LI:{
+                out << "li reg(" << instrs->instr->u.M.dst->value << "), "
+                    << instrs->instr->u.M.src->value << std::endl;
+                break;
+            }
+            case INST_LW:{
+                out << "lw reg(" << instrs->instr->u.L.dst->value << "), "
+                    << instrs->instr->u.L.imm->value << "(reg("
+                    << instrs->instr->u.L.src->value << "))" << std::endl;
+                break;
+            }
+            case INST_MFLO:{
+                out << "mflo reg(" << instrs->instr->u.MFLO.dst->value << ")" << std::endl;
+                break;
+            }
+            case INST_MOVE:{
+                out << "move reg(" << instrs->instr->u.M.dst->value << "), reg("
+                    << instrs->instr->u.M.src->value << ")" << std::endl;
+                break;
+            }
+            case INST_MUL:{
+                out << "mul reg(" << instrs->instr->u.R.dst->value << "), reg(" 
+                    << instrs->instr->u.R.src1->value << "), reg("
+                    << instrs->instr->u.R.src2->value << ")" << std::endl;
+                break;
+            }
+            case INST_SUB:{
+                out << "sub reg(" << instrs->instr->u.R.dst->value << "), reg(" 
+                    << instrs->instr->u.R.src1->value << "), reg("
+                    << instrs->instr->u.R.src2->value << ")" << std::endl;
+                break;
+            }
+            case INST_SW:{
+                out << "sw reg(" << instrs->instr->u.S.src->value << "), "
+                    << instrs->instr->u.S.imm->value << "(reg("
+                    << instrs->instr->u.S.dst->value << "))" << std::endl;
+                break;
+            }
+            default:{
+                std::cout << "Error in print" << std::endl;
+            }
+        }
+        instrs = instrs->next;
     }
 }
 
