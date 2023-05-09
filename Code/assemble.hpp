@@ -27,11 +27,11 @@ struct instrSelected_{
 struct instrItem_{
     Kind_item kind;
     std::string value;
-    int reg_num;
+    int regNum;
     instrItem_(Kind_item k, std::string v){
         kind = k;
         value = v;
-        reg_num = -1;
+        regNum = -1;
     }
 };
 
@@ -43,6 +43,11 @@ struct instrSelectedList_{
         prev = nullptr;
         next = nullptr;
     }
+};
+
+struct regInfo{
+    std::string name;
+    int avaliableLine;
 };
 
 void selectInstr(InterCodeList interCode);
@@ -68,7 +73,15 @@ void selectGoto(InterCodeList interCode);
 void selectIf(InterCodeList interCode);
 void selectLabel(InterCodeList interCode);
 void selectMul(InterCodeList interCode);
-void selectParam(InterCodeList interCode);
+void selectParam(InterCodeList interCode, int paramNum);
 void selectReturn(InterCodeList interCode);
 void printSelectedInstr(std::ofstream& out, instrSelectedList instrs);
+void updateActiveRecord(std::string regName, int lineNum);
+void printActiveRecord();
+void allocateRegister();
+int getRegister(std::string regName);
+int getAvaiableReg(std::string vrName);
+void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs);
+void initializeRegs();
+int getValueOffset(std::string valueName);
 extern instrSelectedList instrListHead;

@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
     printInterCodes(ir, head);
     selectInstr(head);
     std::cout << "Hello" << std::endl;
-    std::ofstream sr("test.sr");
-    printSelectedInstr(sr, instrListHead);
+    
     return 0;
 }

@@ -38,8 +38,12 @@ int QuickSort(int low, int high)
 }
 
 int main() {
+
     int n = read();
     int i = 0;
+    if (arr[i + 1] < arr[i]) {
+        int j = 0;
+    }
     while (i < n) {
         arr[i] = read();
         i = i + 1;
