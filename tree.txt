@@ -163,7 +163,10 @@ Value:\,][Args[Exp[#Key:ID\
 Value:high]]]][#Key:RP\
 Value:\)]][#Key:SEMI\
 Value:\;]]]]]][#Key:RC\
-Value:\}]]]]][#Key:RC\
+Value:\}]]]][StmtList[Stmt[#Key:RETURN\
+Value:return][Exp[#Key:INT\
+Value:\0]][#Key:SEMI\
+Value:\;]]]][#Key:RC\
 Value:\}]]][ExtDefList[ExtDef[Specifier[#Key:TYPE\
 Value:int]][FunDec[#Key:ID\
 Value:main][#Key:LP\

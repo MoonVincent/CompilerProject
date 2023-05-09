@@ -163,10 +163,10 @@ void selectAssign(InterCodeList interCode){
         std::string src = interCode->code->u.assign.right->name;
         if (dst[0] == 'v') {
             int off = getValueOffset(dst);
-            newInstr = newS(INST_SW, src, std::to_string(off), "$sp");  //TODO:
+            newInstr = newS(INST_SW, src, "-" + std::to_string(off), "$fp");  //TODO:
         } else if (src[0] == 'v') {
             int off = getValueOffset(src);
-            newInstr = newL(INST_LW, dst, std::to_string(off), "$sp");  //TODO:
+            newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "$fp");  //TODO:
         } else {
             newInstr = newM(INST_MOVE, dst, src);
         }
@@ -207,8 +207,11 @@ void selectSub(InterCodeList interCode) {
     addInstList(newInstr);
 }
 
-void selectArg(InterCodeList InterCode){
+void selectArg(InterCodeList interCode, int argNum){
     //TODO:栈帧的分配估计后续会在这里涉及到
+    std::string argName = interCode->code->u.oneop.op->name;
+    instrSelectedList newInstr = newM(INST_MOVE, "$a" + std::to_string(argNum), argName);
+    addInstList(newInstr);
 
 }
 
@@ -238,6 +241,14 @@ void selectFunction(InterCodeList interCode) {
     instrSelectedList newInstr;
     std::string funcName = interCode->code->u.oneop.op->name;
     newInstr = newLabel(INST_LABEL, funcName);
+    addInstList(newInstr);
+    newInstr = newI(INST_ADDI, "$sp", "$sp", "-8");
+    addInstList(newInstr);
+    newInstr = newS(INST_SW, "$ra", "-4", "$sp");
+    addInstList(newInstr);
+    newInstr = newS(INST_SW, "$fp", "0", "$sp");
+    addInstList(newInstr);
+    newInstr = newI(INST_ADDI, "$fp", "$sp", "8");
     addInstList(newInstr);
     offset.clear();
 }
@@ -289,14 +300,21 @@ void selectMul(InterCodeList interCode) {
 void selectParam(InterCodeList interCode, int paramNum) {
 
     std::string param = interCode->code->u.oneop.op->name;
-    offset.insert({param, paramNum * 4});
+    offset.insert({param, paramNum * 4 + 12});
 
 }
 
 void selectReturn(InterCodeList interCode) {
     std::string ret = interCode->code->u.oneop.op->name;
-    instrSelectedList newInstr = newM(INST_MOVE, "$v0", ret);
+    instrSelectedList newInstr = newM(INST_MOVE, "$sp", "$fp");
     addInstList(newInstr);
+    newInstr = newL(INST_LW, "$ra", "-4", "$fp");
+    addInstList(newInstr);
+    newInstr = newL(INST_LW, "$fp", "-8", "$fp");
+    addInstList(newInstr);
+    newInstr = newM(INST_MOVE, "$v0", ret);
+    addInstList(newInstr);
+
     newInstr = newJ(INST_JR, "$ra");
     addInstList(newInstr);
 }
@@ -321,7 +339,13 @@ void selectInstr(InterCodeList interCode){
             break;
         }
         case IC_ARG:{
-            selectArg(interCode); 
+            int argNum = 0;
+            while (interCode->code->kind == IC_ARG){
+                selectArg(interCode, argNum); 
+                interCode = interCode->next;
+                ++argNum;
+            }
+            interCode = interCode->prev;
             break;
         }
         case IC_CALL:{
@@ -357,19 +381,53 @@ void selectInstr(InterCodeList interCode){
             break;
         }
         case IC_PARAM:{
-            int paramNum = 0;
+            int paramNum = -1;
             while (interCode->code->kind == IC_PARAM) {
-                selectParam(interCode, paramNum);
                 ++paramNum;
+                selectParam(interCode, paramNum);
                 interCode = interCode->next;
             }
             interCode = interCode->prev;
-            instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(4 * paramNum));
+            int size = 4 * (paramNum + 1);
+            instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
             addInstList(newInstr);
+            if (paramNum >= 0) {
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - 4), "$sp");
+                addInstList(newInstr);
+            }
+            if (paramNum >= 1) {
+                newInstr = newS(INST_SW, "$a1", std::to_string(size - 8), "$sp");
+                addInstList(newInstr);
+            }
+            if (paramNum >= 2) {
+                newInstr = newS(INST_SW, "$a2", std::to_string(size - 12), "$sp");
+                addInstList(newInstr);
+            }
+            if (paramNum >= 3) {
+                newInstr = newS(INST_SW, "$a3", std::to_string(size - 16), "$sp");
+                addInstList(newInstr);
+            }
+
             break;
         }
         case IC_RETURN:{
             selectReturn(interCode);
+            break;
+        }
+        case IC_READ:{
+            std::string dst = interCode->code->u.oneop.op->name;
+            instrSelectedList newInstr = newJ(INST_JAL, "read");
+            addInstList(newInstr);
+            newInstr = newM(INST_MOVE, dst, "$v0");
+            addInstList(newInstr);
+            break;
+        }
+        case IC_WRITE:{
+            std::string src = interCode->code->u.oneop.op->name;
+            instrSelectedList newInstr = newM(INST_MOVE, "$a0", src);
+            addInstList(newInstr);
+            newInstr = newJ(INST_JAL, "write");
+            addInstList(newInstr);
             break;
         }
         default:{
@@ -513,6 +571,21 @@ int getRegister(std::string regName) {
     if (regName == "$ra") {
         return 31;
     }
+    if (regName == "$a0") {
+        return 4;
+    }
+    if (regName == "$a1") {
+        return 5;
+    }
+    if (regName == "$a2") {
+        return 6;
+    }
+    if (regName == "$a3") {
+        return 7;
+    }
+    if (regName == "$fp") {
+        return 30;
+    }
     auto target = vrTranslation.find(regName);
     if (target == vrTranslation.end()) {
         return getAvaiableReg(regName);
@@ -549,7 +622,7 @@ int getAvaiableReg(std::string vrName){
 int getValueOffset(std::string valueName) {
     auto target = offset.find(valueName);
     if (target == offset.end()) {
-        int size = offset.size();
+        int size = offset.size() + 2;
         int off = (size + 1) * 4;
         offset.insert({valueName, off});
         instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-4");
@@ -569,6 +642,8 @@ void printActiveRecord(){
 
 void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
     instrs = instrs->next;
+    out << ".global main" << std::endl;
+    out << ".text" << std::endl;
     while (instrs != nullptr) {
         switch(instrs->instr->kind){
             case INST_ADD:{

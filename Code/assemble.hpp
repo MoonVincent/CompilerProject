@@ -64,7 +64,7 @@ instrSelectedList newLabel(Kind_instr kind, std::string label);
 void selectAssign(InterCodeList interCode);
 void selectAdd(InterCodeList interCode);
 void selectSub(InterCodeList interCode);
-void selectArg(InterCodeList InterCode);
+void selectArg(InterCodeList InterCode, int argNum);
 void selectCall(InterCodeList interCode);
 void selectDec(InterCodeList interCode);
 void selectDiv(InterCodeList interCode);

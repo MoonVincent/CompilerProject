@@ -1,201 +1,224 @@
 QuickSort:
-    lw reg(t0), offset_v1(reg($sp))
-    lw reg(t1), offset_v2(reg($sp))
+    addi reg($sp), reg($sp), -16
+    sw reg($ra), 12(reg($sp))
+    sw reg($fp), 8(reg($sp))
+    sw reg($a0), 4(reg($sp))
+    sw reg($a1), 0(reg($sp))
+    addi reg($fp), reg($sp), 16
+    lw reg(t0), -12(reg($fp))
+    lw reg(t1), -16(reg($fp))
     blt reg(t0), reg(t1), label0
     j label1
 label0:
-    lw reg(t2), offset_v1(reg($sp))
-    sw reg(t2), offset_v3(reg($sp))
-    lw reg(t3), offset_v2(reg($sp))
-    sw reg(t3), offset_v4(reg($sp))
-    lw reg(t5), offset_v1(reg($sp))
+    lw reg(t2), -12(reg($fp))
+    addi reg($sp), reg($sp), -4
+    sw reg(t2), -20(reg($fp))
+    lw reg(t3), -16(reg($fp))
+    addi reg($sp), reg($sp), -4
+    sw reg(t3), -24(reg($fp))
+    lw reg(t5), -12(reg($fp))
     li reg(t7), 4
     mul reg(t6), reg(t5), reg(t7)
-    lw reg(t8), offset_v0(reg($sp))
+    addi reg($sp), reg($sp), -4
+    lw reg(t8), -28(reg($fp))
     add reg(t4), reg(t8), reg(t6)
     lw reg(t4), 0(reg(t4))
-    sw reg(t4), offset_v5(reg($sp))
+    addi reg($sp), reg($sp), -4
+    sw reg(t4), -32(reg($fp))
 label2:
-    lw reg(t9), offset_v3(reg($sp))
-    lw reg(t10), offset_v4(reg($sp))
+    lw reg(t9), -20(reg($fp))
+    lw reg(t10), -24(reg($fp))
     blt reg(t9), reg(t10), label3
     j label4
 label3:
 label5:
-    lw reg(t11), offset_v3(reg($sp))
-    lw reg(t12), offset_v4(reg($sp))
+    lw reg(t11), -20(reg($fp))
+    lw reg(t12), -24(reg($fp))
     blt reg(t11), reg(t12), label8
     j label7
 label8:
-    lw reg(t14), offset_v4(reg($sp))
+    lw reg(t14), -24(reg($fp))
     li reg(t16), 4
     mul reg(t15), reg(t14), reg(t16)
-    lw reg(t17), offset_v0(reg($sp))
+    lw reg(t17), -28(reg($fp))
     add reg(t13), reg(t17), reg(t15)
     lw reg(t13), 0(reg(t13))
-    lw reg(t18), offset_v5(reg($sp))
+    lw reg(t18), -32(reg($fp))
     bge reg(t13), reg(t18), label6
     j label7
 label6:
-    lw reg(t20), offset_v4(reg($sp))
+    lw reg(t20), -24(reg($fp))
     li reg(t21), 1
     add reg(t19), reg(t20), reg(t21)
-    sw reg(t19), offset_v4(reg($sp))
+    sw reg(t19), -24(reg($fp))
     j label5
 label7:
-    lw reg(t22), offset_v3(reg($sp))
-    lw reg(t23), offset_v4(reg($sp))
+    lw reg(t22), -20(reg($fp))
+    lw reg(t23), -24(reg($fp))
     blt reg(t22), reg(t23), label9
     j label10
 label9:
-    lw reg(t25), offset_v4(reg($sp))
+    lw reg(t25), -24(reg($fp))
     li reg(t27), 4
     mul reg(t26), reg(t25), reg(t27)
-    lw reg(t28), offset_v0(reg($sp))
+    lw reg(t28), -28(reg($fp))
     add reg(t24), reg(t28), reg(t26)
     lw reg(t24), 0(reg(t24))
-    lw reg(t30), offset_v3(reg($sp))
+    lw reg(t30), -20(reg($fp))
     li reg(t32), 4
     mul reg(t31), reg(t30), reg(t32)
-    lw reg(t33), offset_v0(reg($sp))
+    lw reg(t33), -28(reg($fp))
     add reg(t29), reg(t33), reg(t31)
     lw reg(t29), 0(reg(t29))
     move reg(t29), reg(t24)
-    lw reg(t35), offset_v3(reg($sp))
+    lw reg(t35), -20(reg($fp))
     li reg(t36), 1
     add reg(t34), reg(t35), reg(t36)
-    sw reg(t34), offset_v3(reg($sp))
+    sw reg(t34), -20(reg($fp))
 label10:
 label11:
-    lw reg(t37), offset_v3(reg($sp))
-    lw reg(t38), offset_v4(reg($sp))
+    lw reg(t37), -20(reg($fp))
+    lw reg(t38), -24(reg($fp))
     blt reg(t37), reg(t38), label14
     j label13
 label14:
-    lw reg(t40), offset_v3(reg($sp))
+    lw reg(t40), -20(reg($fp))
     li reg(t42), 4
     mul reg(t41), reg(t40), reg(t42)
-    lw reg(t43), offset_v0(reg($sp))
+    lw reg(t43), -28(reg($fp))
     add reg(t39), reg(t43), reg(t41)
     lw reg(t39), 0(reg(t39))
-    lw reg(t44), offset_v5(reg($sp))
+    lw reg(t44), -32(reg($fp))
     blt reg(t39), reg(t44), label12
     j label13
 label12:
-    lw reg(t46), offset_v3(reg($sp))
+    lw reg(t46), -20(reg($fp))
     li reg(t47), 1
     add reg(t45), reg(t46), reg(t47)
-    sw reg(t45), offset_v3(reg($sp))
+    sw reg(t45), -20(reg($fp))
     j label11
 label13:
-    lw reg(t48), offset_v3(reg($sp))
-    lw reg(t49), offset_v4(reg($sp))
+    lw reg(t48), -20(reg($fp))
+    lw reg(t49), -24(reg($fp))
     blt reg(t48), reg(t49), label15
     j label16
 label15:
-    lw reg(t51), offset_v3(reg($sp))
+    lw reg(t51), -20(reg($fp))
     li reg(t53), 4
     mul reg(t52), reg(t51), reg(t53)
-    lw reg(t54), offset_v0(reg($sp))
+    lw reg(t54), -28(reg($fp))
     add reg(t50), reg(t54), reg(t52)
     lw reg(t50), 0(reg(t50))
-    lw reg(t56), offset_v4(reg($sp))
+    lw reg(t56), -24(reg($fp))
     li reg(t58), 4
     mul reg(t57), reg(t56), reg(t58)
-    lw reg(t59), offset_v0(reg($sp))
+    lw reg(t59), -28(reg($fp))
     add reg(t55), reg(t59), reg(t57)
     lw reg(t55), 0(reg(t55))
     move reg(t55), reg(t50)
-    lw reg(t61), offset_v4(reg($sp))
+    lw reg(t61), -24(reg($fp))
     li reg(t62), 1
     add reg(t60), reg(t61), reg(t62)
-    sw reg(t60), offset_v4(reg($sp))
+    sw reg(t60), -24(reg($fp))
 label16:
     j label2
 label4:
-    lw reg(t63), offset_v5(reg($sp))
-    lw reg(t65), offset_v3(reg($sp))
+    lw reg(t63), -32(reg($fp))
+    lw reg(t65), -20(reg($fp))
     li reg(t67), 4
     mul reg(t66), reg(t65), reg(t67)
-    lw reg(t68), offset_v0(reg($sp))
+    lw reg(t68), -28(reg($fp))
     add reg(t64), reg(t68), reg(t66)
     lw reg(t64), 0(reg(t64))
     move reg(t64), reg(t63)
-    lw reg(t69), offset_v1(reg($sp))
-    lw reg(t71), offset_v3(reg($sp))
+    lw reg(t69), -12(reg($fp))
+    lw reg(t71), -20(reg($fp))
     li reg(t72), 1
     add reg(t70), reg(t71), reg(t72)
+    move reg($a0), reg(t70)
+    move reg($a1), reg(t69)
     jal QuickSort
-    lw reg(t74), offset_v3(reg($sp))
+    lw reg(t74), -20(reg($fp))
     li reg(t75), 1
     add reg(t73), reg(t74), reg(t75)
-    lw reg(t76), offset_v2(reg($sp))
+    lw reg(t76), -16(reg($fp))
+    move reg($a0), reg(t76)
+    move reg($a1), reg(t73)
     jal QuickSort
 label1:
+    li reg(t77), 0
+    move reg($v0), reg(t77)
+    jr $ra
 main:
-    sw reg(t77), offset_v6(reg($sp))
-    li reg(t78), 0
-    sw reg(t78), offset_v7(reg($sp))
-    lw reg(t82), offset_v7(reg($sp))
-    li reg(t83), 1
-    add reg(t80), reg(t82), reg(t83)
-    li reg(t84), 4
-    mul reg(t81), reg(t80), reg(t84)
-    lw reg(t85), offset_v0(reg($sp))
-    add reg(t79), reg(t85), reg(t81)
-    lw reg(t79), 0(reg(t79))
-    lw reg(t87), offset_v7(reg($sp))
-    li reg(t89), 4
-    mul reg(t88), reg(t87), reg(t89)
-    lw reg(t90), offset_v0(reg($sp))
-    add reg(t86), reg(t90), reg(t88)
-    lw reg(t86), 0(reg(t86))
-    blt reg(t79), reg(t86), label17
+    addi reg($sp), reg($sp), -4
+    sw reg(t78), -12(reg($fp))
+    li reg(t79), 0
+    addi reg($sp), reg($sp), -4
+    sw reg(t79), -16(reg($fp))
+    lw reg(t83), -16(reg($fp))
+    li reg(t84), 1
+    add reg(t81), reg(t83), reg(t84)
+    li reg(t85), 4
+    mul reg(t82), reg(t81), reg(t85)
+    addi reg($sp), reg($sp), -4
+    lw reg(t86), -20(reg($fp))
+    add reg(t80), reg(t86), reg(t82)
+    lw reg(t80), 0(reg(t80))
+    lw reg(t88), -16(reg($fp))
+    li reg(t90), 4
+    mul reg(t89), reg(t88), reg(t90)
+    lw reg(t91), -20(reg($fp))
+    add reg(t87), reg(t91), reg(t89)
+    lw reg(t87), 0(reg(t87))
+    blt reg(t80), reg(t87), label17
     j label18
 label17:
-    li reg(t91), 0
-    sw reg(t91), offset_v8(reg($sp))
+    li reg(t92), 0
+    addi reg($sp), reg($sp), -4
+    sw reg(t92), -24(reg($fp))
 label18:
 label19:
-    lw reg(t92), offset_v7(reg($sp))
-    lw reg(t93), offset_v6(reg($sp))
-    blt reg(t92), reg(t93), label20
+    lw reg(t93), -16(reg($fp))
+    lw reg(t94), -12(reg($fp))
+    blt reg(t93), reg(t94), label20
     j label21
 label20:
-    lw reg(t96), offset_v7(reg($sp))
-    li reg(t98), 4
-    mul reg(t97), reg(t96), reg(t98)
-    lw reg(t99), offset_v0(reg($sp))
-    add reg(t95), reg(t99), reg(t97)
-    lw reg(t95), 0(reg(t95))
-    move reg(t95), reg(t94)
-    lw reg(t101), offset_v7(reg($sp))
-    li reg(t102), 1
-    add reg(t100), reg(t101), reg(t102)
-    sw reg(t100), offset_v7(reg($sp))
+    lw reg(t97), -16(reg($fp))
+    li reg(t99), 4
+    mul reg(t98), reg(t97), reg(t99)
+    lw reg(t100), -20(reg($fp))
+    add reg(t96), reg(t100), reg(t98)
+    lw reg(t96), 0(reg(t96))
+    move reg(t96), reg(t95)
+    lw reg(t102), -16(reg($fp))
+    li reg(t103), 1
+    add reg(t101), reg(t102), reg(t103)
+    sw reg(t101), -16(reg($fp))
     j label19
 label21:
-    li reg(t103), 0
-    lw reg(t105), offset_v6(reg($sp))
-    li reg(t106), 1
-    add reg(t104), reg(t105), reg(t106)
+    li reg(t104), 0
+    lw reg(t106), -12(reg($fp))
+    li reg(t107), 1
+    add reg(t105), reg(t106), reg(t107)
+    move reg($a0), reg(t105)
+    move reg($a1), reg(t104)
     jal QuickSort
-    li reg(t107), 0
-    sw reg(t107), offset_v7(reg($sp))
+    li reg(t108), 0
+    sw reg(t108), -16(reg($fp))
 label22:
-    lw reg(t108), offset_v7(reg($sp))
-    lw reg(t109), offset_v6(reg($sp))
-    blt reg(t108), reg(t109), label23
+    lw reg(t109), -16(reg($fp))
+    lw reg(t110), -12(reg($fp))
+    blt reg(t109), reg(t110), label23
     j label24
 label23:
-    lw reg(t111), offset_v7(reg($sp))
-    li reg(t113), 4
-    mul reg(t112), reg(t111), reg(t113)
-    lw reg(t114), offset_v0(reg($sp))
-    add reg(t110), reg(t114), reg(t112)
-    lw reg(t110), 0(reg(t110))
+    lw reg(t112), -16(reg($fp))
+    li reg(t114), 4
+    mul reg(t113), reg(t112), reg(t114)
+    lw reg(t115), -20(reg($fp))
+    add reg(t111), reg(t115), reg(t113)
+    lw reg(t111), 0(reg(t111))
     j label22
 label24:
-    li reg(t115), 0
-    move reg($v0), reg(t115)
+    li reg(t116), 0
+    move reg($v0), reg(t116)
     jr $ra

@@ -35,6 +35,7 @@ int QuickSort(int low, int high)
         QuickSort(low, i - 1);
         QuickSort(i + 1, high);
     }
+    return 0;
 }
 
 int main() {
