@@ -65,8 +65,7 @@ label9:
     li reg(t32), 4
     mul reg(t31), reg(t30), reg(t32)
     add reg(t29), reg(t33), reg(t31)
-    lw reg(t29), 0(reg(t29))
-    move reg(t29), reg(t24)
+    sw reg(t24), 0(reg(t29))
     lw reg(t35), -8(reg($fp))
     li reg(t36), 1
     add reg(t34), reg(t35), reg(t36)
@@ -107,8 +106,7 @@ label15:
     li reg(t58), 4
     mul reg(t57), reg(t56), reg(t58)
     add reg(t55), reg(t59), reg(t57)
-    lw reg(t55), 0(reg(t55))
-    move reg(t55), reg(t50)
+    sw reg(t50), 0(reg(t55))
     lw reg(t61), -12(reg($fp))
     li reg(t62), 1
     sub reg(t60), reg(t61), reg(t62)
@@ -121,8 +119,7 @@ label4:
     li reg(t67), 4
     mul reg(t66), reg(t65), reg(t67)
     add reg(t64), reg(t68), reg(t66)
-    lw reg(t64), 0(reg(t64))
-    move reg(t64), reg(t63)
+    sw reg(t63), 0(reg(t64))
     lw reg(t69), -12(reg($fp))
     lw reg(t71), -8(reg($fp))
     li reg(t72), 1
@@ -168,8 +165,7 @@ label18:
     li reg(t86), 4
     mul reg(t85), reg(t84), reg(t86)
     add reg(t83), reg(t87), reg(t85)
-    lw reg(t83), 0(reg(t83))
-    move reg(t83), reg(t82)
+    sw reg(t82), 0(reg(t83))
     lw reg(t89), -12(reg($fp))
     li reg(t91), 4
     mul reg(t90), reg(t89), reg(t91)

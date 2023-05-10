@@ -86,8 +86,7 @@ label9:
     mul $t3, $t0, $t2
     la $t0, v0
     add $t2, $t0, $t3
-    lw $t2, 0($t2)
-    move $t2, $t1
+    sw $t1, 0($t2)
     lw $t0, -8($fp)
     li $t1, 1
     add $t2, $t0, $t1
@@ -131,8 +130,7 @@ label15:
     mul $t3, $t0, $t2
     la $t0, v0
     add $t2, $t0, $t3
-    lw $t2, 0($t2)
-    move $t2, $t1
+    sw $t1, 0($t2)
     lw $t0, -12($fp)
     li $t1, 1
     sub $t2, $t0, $t1
@@ -146,8 +144,7 @@ label4:
     mul $t3, $t1, $t2
     la $t1, v0
     add $t2, $t1, $t3
-    lw $t2, 0($t2)
-    move $t2, $t0
+    sw $t0, 0($t2)
     lw $t0, -12($fp)
     lw $t1, -8($fp)
     li $t2, 1
@@ -194,8 +191,7 @@ label18:
     mul $t3, $t1, $t2
     la $t1, v0
     add $t2, $t1, $t3
-    lw $t2, 0($t2)
-    move $t2, $t0
+    sw $t0, 0($t2)
     lw $t0, -12($fp)
     li $t1, 4
     mul $t2, $t0, $t1
