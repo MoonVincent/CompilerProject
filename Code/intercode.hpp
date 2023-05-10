@@ -10,7 +10,7 @@ typedef enum { IC_ASSIGN, IC_ADD, IC_SUB, IC_MUL, IC_DIV, IC_LABEL, IC_FUNCTION,
 
 struct Operand_ {
   Kind_op kind;
-  int value;
+  int loc;
   std::string name;
 };
 
