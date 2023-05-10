@@ -5,6 +5,12 @@ Value:\-][#Key:INT\
 Value:\1\0\0\0][#Key:RB\
 Value:\+]]][#Key:SEMI\
 Value:\;]][ExtDefList[ExtDef[Specifier[#Key:TYPE\
+Value:int]][ExtDecList[VarDec[VarDec[#Key:ID\
+Value:array]][#Key:LB\
+Value:\-][#Key:INT\
+Value:\1\0\0\0][#Key:RB\
+Value:\+]]][#Key:SEMI\
+Value:\;]][ExtDefList[ExtDef[Specifier[#Key:TYPE\
 Value:int]][FunDec[#Key:ID\
 Value:QuickSort][#Key:LP\
 Value:\(][VarList[ParamDec[Specifier[#Key:TYPE\
@@ -261,4 +267,4 @@ Value:\}]]]][StmtList[Stmt[#Key:RETURN\
 Value:return][Exp[#Key:INT\
 Value:\0]][#Key:SEMI\
 Value:\;]]]]]]]][#Key:RC\
-Value:\}]]]]]]]
+Value:\}]]]]]]]]

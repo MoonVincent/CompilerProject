@@ -5,7 +5,7 @@ typedef struct instrSelected_* instrSelected;
 typedef struct instrItem_* instrItem;
 typedef struct instrSelectedList_* instrSelectedList;
 typedef enum { INST_ADD, INST_ADDI, INST_SUB, INST_MUL, INST_DIV, INST_MFLO, INST_LI, INST_LW, INST_SW, INST_J, INST_JAL, INST_MOVE,
-               INST_JR, INST_BEQ, INST_BNE, INST_BGT, INST_BLT, INST_BGE, INST_BLE, INST_LABEL} Kind_instr;
+               INST_JR, INST_BEQ, INST_BNE, INST_BGT, INST_BLT, INST_BGE, INST_BLE, INST_LABEL, INST_LA} Kind_instr;
 typedef enum { REG, LABEL, IMM} Kind_item;
 struct instrSelected_{
     Kind_instr kind;
@@ -20,6 +20,7 @@ struct instrSelected_{
         struct {instrItem src1; instrItem src2;} DIV;
         struct {instrItem dst;} MFLO;
         struct {instrItem LABEL;} Label;
+        struct {instrItem dst; instrItem tag;} La;
     } u; 
 
 };
@@ -83,5 +84,5 @@ int getRegister(std::string regName);
 int getAvaiableReg(std::string vrName);
 void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs);
 void initializeRegs();
-int getValueOffset(std::string valueName);
+int getValueOffset(std::string valueName, int size);
 extern instrSelectedList instrListHead;

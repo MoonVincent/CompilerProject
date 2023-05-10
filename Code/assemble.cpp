@@ -4,9 +4,12 @@
 instrSelectedList instrList;
 instrSelectedList instrListHead;
 int line = 0;
+int currentFrameSize = 0; //当前栈帧的大小，因为一定会存储ra和fp，因此初始大小为16
+bool isGlobal = true;
 std::unordered_map<std::string, std::pair<int, int>> activeRecord;
 std::unordered_map<std::string, int> vrTranslation;
 std::unordered_map<std::string, int> offset;
+std::unordered_map<std::string, int> globalArrays;
 struct regInfo regs[32];
 void addInstList(instrSelectedList new_node){
     instrList->next = new_node;
@@ -68,6 +71,16 @@ instrSelectedList newL(Kind_instr kind, std::string dst, std::string imm, std::s
     ++line;
     updateActiveRecord(dst, line);
     updateActiveRecord(src, line);
+    return ret;
+}
+
+instrSelectedList newLa(Kind_instr kind, std::string dst, std::string tag) {
+    instrSelectedList ret = new instrSelectedList_();
+    ret->instr = new instrSelected_();
+    ret->instr->kind = kind;
+    ret->instr->u.La.dst = new instrItem_(REG, dst);
+    ret->instr->u.La.tag = new instrItem_(LABEL, tag);
+    ++line;
     return ret;
 }
 
@@ -162,11 +175,15 @@ void selectAssign(InterCodeList interCode){
         std::string dst = interCode->code->u.assign.left->name;
         std::string src = interCode->code->u.assign.right->name;
         if (dst[0] == 'v') {
-            int off = getValueOffset(dst);
+            int off = getValueOffset(dst, 8);
             newInstr = newS(INST_SW, src, "-" + std::to_string(off), "$fp");  //TODO:
         } else if (src[0] == 'v') {
-            int off = getValueOffset(src);
-            newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "$fp");  //TODO:
+            if (globalArrays.find(src) == globalArrays.end()) {
+                int off = getValueOffset(src, 8);
+                newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "$fp");  //TODO:
+            } else {
+                newInstr = newLa(INST_LA, dst, src);
+            }
         } else {
             newInstr = newM(INST_MOVE, dst, src);
         }
@@ -222,8 +239,16 @@ void selectCall(InterCodeList interCode) {  //无返回值的函数CALL CALL f
     addInstList(newInstr);
 }
 
-void selectDec(InterCodeList interCode) {  
-    //TODO:
+void selectDec(InterCodeList interCode) {
+    if (isGlobal) {
+        std::string name = interCode->code->u.dec.x->name;
+        int size = interCode->code->u.dec.size;
+        globalArrays.insert({name, size});
+    } else {
+        std::string name = interCode->code->u.dec.x->name;
+        int size = interCode->code->u.dec.size;
+        getValueOffset(name, size);
+    }
 }
 
 void selectDiv(InterCodeList interCode) { // x:= y / z
@@ -242,15 +267,17 @@ void selectFunction(InterCodeList interCode) {
     std::string funcName = interCode->code->u.oneop.op->name;
     newInstr = newLabel(INST_LABEL, funcName);
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$sp", "$sp", "-8");
+    newInstr = newI(INST_ADDI, "$sp", "$sp", "-16");
     addInstList(newInstr);
-    newInstr = newS(INST_SW, "$ra", "-4", "$sp");
+    newInstr = newS(INST_SW, "$ra", "8", "$sp");
     addInstList(newInstr);
     newInstr = newS(INST_SW, "$fp", "0", "$sp");
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$fp", "$sp", "8");
+    newInstr = newI(INST_ADDI, "$fp", "$sp", "16");
+    currentFrameSize += 16;
     addInstList(newInstr);
     offset.clear();
+    isGlobal = false;
 }
 
 void selectGoto(InterCodeList interCode){
@@ -308,15 +335,17 @@ void selectReturn(InterCodeList interCode) {
     std::string ret = interCode->code->u.oneop.op->name;
     instrSelectedList newInstr = newM(INST_MOVE, "$sp", "$fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$ra", "-4", "$fp");
+    newInstr = newL(INST_LW, "$ra", "-8", "$fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$fp", "-8", "$fp");
+    newInstr = newL(INST_LW, "$fp", "-16", "$fp");
     addInstList(newInstr);
     newInstr = newM(INST_MOVE, "$v0", ret);
     addInstList(newInstr);
 
     newInstr = newJ(INST_JR, "$ra");
     addInstList(newInstr);
+    currentFrameSize = 0;
+    isGlobal = true;
 }
 
 void selectInstr(InterCodeList interCode){
@@ -388,23 +417,23 @@ void selectInstr(InterCodeList interCode){
                 interCode = interCode->next;
             }
             interCode = interCode->prev;
-            int size = 4 * (paramNum + 1);
+            int size = 8 * (paramNum + 1);
             instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
             addInstList(newInstr);
             if (paramNum >= 0) {
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - 4), "$sp");
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - 8), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 1) {
-                newInstr = newS(INST_SW, "$a1", std::to_string(size - 8), "$sp");
+                newInstr = newS(INST_SW, "$a1", std::to_string(size - 16), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 2) {
-                newInstr = newS(INST_SW, "$a2", std::to_string(size - 12), "$sp");
+                newInstr = newS(INST_SW, "$a2", std::to_string(size - 24), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 3) {
-                newInstr = newS(INST_SW, "$a3", std::to_string(size - 16), "$sp");
+                newInstr = newS(INST_SW, "$a3", std::to_string(size - 32), "$sp");
                 addInstList(newInstr);
             }
 
@@ -552,6 +581,11 @@ void allocateRegister() {
                 std::cout << "J and JAL" << std::endl;
                 break;
             }
+            case INST_LA:{
+                std::string dst = instrs->instr->u.La.dst->value;
+                instrs->instr->u.La.dst->value = regs[getRegister(dst)].name;
+                break;
+            }
             default:{
                 std::cout << "Error in select" << std::endl;
             }
@@ -619,13 +653,13 @@ int getAvaiableReg(std::string vrName){
     return -1;
 }
 
-int getValueOffset(std::string valueName) {
+int getValueOffset(std::string valueName, int size) {
     auto target = offset.find(valueName);
     if (target == offset.end()) {
-        int size = offset.size() + 2;
-        int off = (size + 1) * 4;
-        offset.insert({valueName, off});
-        instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-4");
+        int off = currentFrameSize;
+        offset.insert({valueName, currentFrameSize});
+        currentFrameSize += size;
+        instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
         addInstList(newInstr);
         return off;
     } else {
@@ -642,6 +676,13 @@ void printActiveRecord(){
 
 void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
     instrs = instrs->next;
+    if (globalArrays.size() > 0) {
+        out << ".data" << std::endl;
+        for (auto array : globalArrays) {
+            out << "    " << array.first << ":" << std::endl;
+            out << "        .space " << array.second << std::endl;
+        }
+    }
     out << ".global main" << std::endl;
     out << ".text" << std::endl;
     while (instrs != nullptr) {
@@ -751,6 +792,11 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                 out << "    sw " << instrs->instr->u.S.src->value << ", "
                     << instrs->instr->u.S.imm->value << "("
                     << instrs->instr->u.S.dst->value << ")" << std::endl;
+                break;
+            }
+            case INST_LA:{
+                out << "    la " << instrs->instr->u.La.dst->value << ", "
+                    << instrs->instr->u.La.tag->value << std::endl;
                 break;
             }
             default:{

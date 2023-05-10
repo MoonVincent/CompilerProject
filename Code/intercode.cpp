@@ -573,7 +573,7 @@ void translate_VarDec(tree node,Operand place)
             size = size * std::stoi(node->children[2]->value);
             node = node->children[0];
         }
-        size = size * 4;
+        size = size * 8;
         InterCode x = newDec(IC_DEC, place, size);
         add_ICList(head, x);
     }
@@ -629,7 +629,7 @@ void translate_Exp(tree node, Operand place)
             Operand t2 = newtemp();
             translate_Exp(node->children[2], t1);
             Operand tmp = newtemp();
-            InterCode x = newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "4"), tmp);
+            InterCode x = newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), tmp);
             add_ICList(head, x);
             x = newBinop(IC_MUL, t2, t1, tmp);
             add_ICList(head, x);
