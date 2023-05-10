@@ -1,224 +1,214 @@
-DEC v0 8000
-DEC v1 8000
+DEC v0 4000
 FUNCTION QuickSort :
+PARAM v1
 PARAM v2
-PARAM v3
-DEC v4 80000
-t0 := #100
-t2 := #2
-t4 := #4
-t3 := t2 * t4
-t5 := v4
-t1 := t5 + t3
-t1 := *t1
-t1 := t0
-t6 := v2
-t7 := v3
-IF t6 < t7 GOTO label0
+t0 := v1
+t1 := v2
+IF t0 < t1 GOTO label0
 GOTO label1
 LABEL label0 :
-t8 := v2
-v5 := t8
-t9 := v3
-v6 := t9
-t11 := v2
-t13 := #4
-t12 := t11 * t13
-t14 := v0
-t10 := t14 + t12
-t10 := *t10
-v7 := t10
+t2 := v1
+v3 := t2
+t3 := v2
+v4 := t3
+t5 := v1
+t7 := #4
+t6 := t5 * t7
+t8 := v0
+t4 := t8 + t6
+t4 := *t4
+v5 := t4
 LABEL label2 :
-t15 := v5
-t16 := v6
-IF t15 < t16 GOTO label3
+t9 := v3
+t10 := v4
+IF t9 < t10 GOTO label3
 GOTO label4
 LABEL label3 :
 LABEL label5 :
-t17 := v5
-t18 := v6
-IF t17 < t18 GOTO label8
+t11 := v3
+t12 := v4
+IF t11 < t12 GOTO label8
 GOTO label7
 LABEL label8 :
-t20 := v6
-t22 := #4
-t21 := t20 * t22
-t23 := v0
-t19 := t23 + t21
-t19 := *t19
-t24 := v7
-IF t19 >= t24 GOTO label6
+t14 := v4
+t16 := #4
+t15 := t14 * t16
+t17 := v0
+t13 := t17 + t15
+t13 := *t13
+t18 := v5
+IF t13 >= t18 GOTO label6
 GOTO label7
 LABEL label6 :
-t26 := v6
-t27 := #1
-t25 := t26 - t27
-v6 := t25
+t20 := v4
+t21 := #1
+t19 := t20 - t21
+v4 := t19
 GOTO label5
 LABEL label7 :
-t28 := v5
-t29 := v6
-IF t28 < t29 GOTO label9
+t22 := v3
+t23 := v4
+IF t22 < t23 GOTO label9
 GOTO label10
 LABEL label9 :
-t31 := v6
-t33 := #4
-t32 := t31 * t33
-t34 := v0
-t30 := t34 + t32
-t30 := *t30
-t36 := v5
-t38 := #4
-t37 := t36 * t38
-t39 := v0
-t35 := t39 + t37
-t35 := *t35
-t35 := t30
-t41 := v5
-t42 := #1
-t40 := t41 + t42
-v5 := t40
+t25 := v4
+t27 := #4
+t26 := t25 * t27
+t28 := v0
+t24 := t28 + t26
+t24 := *t24
+t30 := v3
+t32 := #4
+t31 := t30 * t32
+t33 := v0
+t29 := t33 + t31
+t29 := *t29
+t29 := t24
+t35 := v3
+t36 := #1
+t34 := t35 + t36
+v3 := t34
 LABEL label10 :
 LABEL label11 :
-t43 := v5
-t44 := v6
-IF t43 < t44 GOTO label14
+t37 := v3
+t38 := v4
+IF t37 < t38 GOTO label14
 GOTO label13
 LABEL label14 :
-t46 := v5
-t48 := #4
-t47 := t46 * t48
-t49 := v0
-t45 := t49 + t47
-t45 := *t45
-t50 := v7
-IF t45 < t50 GOTO label12
+t40 := v3
+t42 := #4
+t41 := t40 * t42
+t43 := v0
+t39 := t43 + t41
+t39 := *t39
+t44 := v5
+IF t39 < t44 GOTO label12
 GOTO label13
 LABEL label12 :
-t52 := v5
-t53 := #1
-t51 := t52 + t53
-v5 := t51
+t46 := v3
+t47 := #1
+t45 := t46 + t47
+v3 := t45
 GOTO label11
 LABEL label13 :
-t54 := v5
-t55 := v6
-IF t54 < t55 GOTO label15
+t48 := v3
+t49 := v4
+IF t48 < t49 GOTO label15
 GOTO label16
 LABEL label15 :
-t57 := v5
-t59 := #4
-t58 := t57 * t59
-t60 := v0
-t56 := t60 + t58
-t56 := *t56
-t62 := v6
-t64 := #4
-t63 := t62 * t64
-t65 := v0
-t61 := t65 + t63
-t61 := *t61
-t61 := t56
-t67 := v6
-t68 := #1
-t66 := t67 - t68
-v6 := t66
+t51 := v3
+t53 := #4
+t52 := t51 * t53
+t54 := v0
+t50 := t54 + t52
+t50 := *t50
+t56 := v4
+t58 := #4
+t57 := t56 * t58
+t59 := v0
+t55 := t59 + t57
+t55 := *t55
+t55 := t50
+t61 := v4
+t62 := #1
+t60 := t61 - t62
+v4 := t60
 LABEL label16 :
 GOTO label2
 LABEL label4 :
-t69 := v7
-t71 := v5
-t73 := #4
-t72 := t71 * t73
-t74 := v0
-t70 := t74 + t72
-t70 := *t70
-t70 := t69
-t75 := v2
-t77 := v5
-t78 := #1
-t76 := t77 - t78
-ARG t76
-ARG t75
+t63 := v5
+t65 := v3
+t67 := #4
+t66 := t65 * t67
+t68 := v0
+t64 := t68 + t66
+t64 := *t64
+t64 := t63
+t69 := v1
+t71 := v3
+t72 := #1
+t70 := t71 - t72
+ARG t70
+ARG t69
 CALL QuickSort
-t80 := v5
-t81 := #1
-t79 := t80 + t81
-t82 := v3
-ARG t82
-ARG t79
+t74 := v3
+t75 := #1
+t73 := t74 + t75
+t76 := v2
+ARG t76
+ARG t73
 CALL QuickSort
 LABEL label1 :
-t83 := #0
-RETURN t83
+t77 := #0
+RETURN t77
 FUNCTION main :
-READ t84
-v8 := t84
-t85 := #0
-v9 := t85
-t89 := v9
-t90 := #1
-t87 := t89 + t90
-t91 := #4
-t88 := t87 * t91
-t92 := v0
-t86 := t92 + t88
-t86 := *t86
-t94 := v9
-t96 := #4
-t95 := t94 * t96
-t97 := v0
-t93 := t97 + t95
-t93 := *t93
-IF t86 < t93 GOTO label17
+READ t78
+v6 := t78
+t79 := #0
+v7 := t79
+t83 := v7
+t84 := #1
+t81 := t83 + t84
+t85 := #4
+t82 := t81 * t85
+t86 := v0
+t80 := t86 + t82
+t80 := *t80
+t88 := v7
+t90 := #4
+t89 := t88 * t90
+t91 := v0
+t87 := t91 + t89
+t87 := *t87
+IF t80 < t87 GOTO label17
 GOTO label18
 LABEL label17 :
-t98 := #0
-v10 := t98
+t92 := #0
+v8 := t92
 LABEL label18 :
 LABEL label19 :
-t99 := v9
-t100 := v8
-IF t99 < t100 GOTO label20
+t93 := v7
+t94 := v6
+IF t93 < t94 GOTO label20
 GOTO label21
 LABEL label20 :
-READ t101
-t103 := v9
-t105 := #4
-t104 := t103 * t105
-t106 := v0
-t102 := t106 + t104
-t102 := *t102
-t102 := t101
-t108 := v9
-t109 := #1
-t107 := t108 + t109
-v9 := t107
+READ t95
+t97 := v7
+t99 := #4
+t98 := t97 * t99
+t100 := v0
+t96 := t100 + t98
+t96 := *t96
+t96 := t95
+t102 := v7
+t103 := #1
+t101 := t102 + t103
+v7 := t101
 GOTO label19
 LABEL label21 :
-t110 := #0
-t112 := v8
-t113 := #1
-t111 := t112 - t113
-ARG t111
-ARG t110
+t104 := #0
+t106 := v6
+t107 := #1
+t105 := t106 - t107
+ARG t105
+ARG t104
 CALL QuickSort
-t114 := #0
-v9 := t114
+t108 := #0
+v7 := t108
 LABEL label22 :
-t115 := v9
-t116 := v8
-IF t115 < t116 GOTO label23
+t109 := v7
+t110 := v6
+IF t109 < t110 GOTO label23
 GOTO label24
 LABEL label23 :
-t118 := v9
-t120 := #4
-t119 := t118 * t120
-t121 := v0
-t117 := t121 + t119
-t117 := *t117
-WRITE t117
+t112 := v7
+t114 := #4
+t113 := t112 * t114
+t115 := v0
+t111 := t115 + t113
+t111 := *t111
+WRITE t111
 GOTO label22
 LABEL label24 :
-t122 := #0
-RETURN t122
+t116 := #0
+RETURN t116

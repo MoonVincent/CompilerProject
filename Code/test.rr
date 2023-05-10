@@ -1,146 +1,147 @@
 .data
-    v1:
-        .space 8000
     v0:
-        .space 8000
+        .space 4000
+    _prompt: .asciiz "Enter an integer:"
 .global main
 .text
+read:
+    li $v0, 4
+    la $a0, _prompt
+    syscall
+    li $v0, 5
+    syscall
+    jr $ra
+write:
+    li $v0, 1
+    syscall
+    jr $ra
 QuickSort:
-    addi $sp, $sp, -16
-    sw $ra, 8($sp)
+    addi $sp, $sp, -8
+    sw $ra, 4($sp)
     sw $fp, 0($sp)
-    addi $fp, $sp, 16
-    addi $sp, $sp, -16
-    sw $a0, 8($sp)
+    addi $fp, $sp, 8
+    addi $sp, $sp, -8
+    sw $a0, 4($sp)
     sw $a1, 0($sp)
-    addi $sp, $sp, -80000
-    li $t0, 100
-    li $t1, 2
-    li $t2, 4
-    mul $t3, $t1, $t2
-    lw $t1, -16($fp)
-    add $t2, $t1, $t3
-    lw $t2, 0($t2)
-    move $t2, $t0
     lw $t0, -12($fp)
     lw $t1, -16($fp)
     blt $t0, $t1, label0
     j label1
 label0:
     lw $t0, -12($fp)
-    addi $sp, $sp, -8
-    sw $t0, -80016($fp)
+    addi $sp, $sp, -4
+    sw $t0, -8($fp)
     lw $t0, -16($fp)
-    addi $sp, $sp, -8
-    sw $t0, -80024($fp)
+    addi $sp, $sp, -4
+    sw $t0, -12($fp)
     lw $t0, -12($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
     add $t1, $t0, $t2
     lw $t1, 0($t1)
-    addi $sp, $sp, -8
-    sw $t1, -80032($fp)
+    addi $sp, $sp, -4
+    sw $t1, -16($fp)
 label2:
-    lw $t0, -80016($fp)
-    lw $t1, -80024($fp)
+    lw $t0, -8($fp)
+    lw $t1, -12($fp)
     blt $t0, $t1, label3
     j label4
 label3:
 label5:
-    lw $t0, -80016($fp)
-    lw $t1, -80024($fp)
+    lw $t0, -8($fp)
+    lw $t1, -12($fp)
     blt $t0, $t1, label8
     j label7
 label8:
-    lw $t0, -80024($fp)
+    lw $t0, -12($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
     add $t1, $t0, $t2
     lw $t1, 0($t1)
-    lw $t0, -80032($fp)
+    lw $t0, -16($fp)
     bge $t1, $t0, label6
     j label7
 label6:
-    lw $t0, -80024($fp)
+    lw $t0, -12($fp)
     li $t1, 1
     add $t2, $t0, $t1
-    sw $t2, -80024($fp)
+    sw $t2, -12($fp)
     j label5
 label7:
-    lw $t0, -80016($fp)
-    lw $t1, -80024($fp)
+    lw $t0, -8($fp)
+    lw $t1, -12($fp)
     blt $t0, $t1, label9
     j label10
 label9:
-    lw $t0, -80024($fp)
+    lw $t0, -12($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
     add $t1, $t0, $t2
     lw $t1, 0($t1)
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t2, 4
     mul $t3, $t0, $t2
     la $t0, v0
     add $t2, $t0, $t3
     lw $t2, 0($t2)
     move $t2, $t1
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t1, 1
     add $t2, $t0, $t1
-    sw $t2, -80016($fp)
+    sw $t2, -8($fp)
 label10:
 label11:
-    lw $t0, -80016($fp)
-    lw $t1, -80024($fp)
+    lw $t0, -8($fp)
+    lw $t1, -12($fp)
     blt $t0, $t1, label14
     j label13
 label14:
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
     add $t1, $t0, $t2
     lw $t1, 0($t1)
-    lw $t0, -80032($fp)
+    lw $t0, -16($fp)
     blt $t1, $t0, label12
     j label13
 label12:
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t1, 1
     add $t2, $t0, $t1
-    sw $t2, -80016($fp)
+    sw $t2, -8($fp)
     j label11
 label13:
-    lw $t0, -80016($fp)
-    lw $t1, -80024($fp)
+    lw $t0, -8($fp)
+    lw $t1, -12($fp)
     blt $t0, $t1, label15
     j label16
 label15:
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
     add $t1, $t0, $t2
     lw $t1, 0($t1)
-    lw $t0, -80024($fp)
+    lw $t0, -12($fp)
     li $t2, 4
     mul $t3, $t0, $t2
     la $t0, v0
     add $t2, $t0, $t3
     lw $t2, 0($t2)
     move $t2, $t1
-    lw $t0, -80024($fp)
+    lw $t0, -12($fp)
     li $t1, 1
     add $t2, $t0, $t1
-    sw $t2, -80024($fp)
+    sw $t2, -12($fp)
 label16:
     j label2
 label4:
-    lw $t0, -80032($fp)
-    lw $t1, -80016($fp)
+    lw $t0, -16($fp)
+    lw $t1, -8($fp)
     li $t2, 4
     mul $t3, $t1, $t2
     la $t1, v0
@@ -148,13 +149,13 @@ label4:
     lw $t2, 0($t2)
     move $t2, $t0
     lw $t0, -12($fp)
-    lw $t1, -80016($fp)
+    lw $t1, -8($fp)
     li $t2, 1
     add $t3, $t1, $t2
     move $a0, $t3
     move $a1, $t0
     jal QuickSort
-    lw $t0, -80016($fp)
+    lw $t0, -8($fp)
     li $t1, 1
     add $t2, $t0, $t1
     lw $t0, -16($fp)
@@ -164,23 +165,23 @@ label4:
 label1:
     li $t0, 0
     move $sp, $fp
-    lw $ra, -8($fp)
-    lw $fp, -16($fp)
+    lw $ra, -4($fp)
+    lw $fp, -8($fp)
     move $v0, $t0
     jr $ra
 main:
-    addi $sp, $sp, -16
-    sw $ra, 8($sp)
+    addi $sp, $sp, -8
+    sw $ra, 4($sp)
     sw $fp, 0($sp)
-    addi $fp, $sp, 16
+    addi $fp, $sp, 8
     jal read
     move $t0, $v0
-    addi $sp, $sp, -8
-    sw $t0, -16($fp)
+    addi $sp, $sp, -4
+    sw $t0, -8($fp)
     li $t0, 0
-    addi $sp, $sp, -8
-    sw $t0, -24($fp)
-    lw $t0, -24($fp)
+    addi $sp, $sp, -4
+    sw $t0, -12($fp)
+    lw $t0, -12($fp)
     li $t1, 1
     add $t2, $t0, $t1
     li $t0, 4
@@ -188,7 +189,7 @@ main:
     la $t0, v0
     add $t2, $t0, $t1
     lw $t2, 0($t2)
-    lw $t0, -24($fp)
+    lw $t0, -12($fp)
     li $t1, 4
     mul $t3, $t0, $t1
     la $t0, v0
@@ -198,46 +199,46 @@ main:
     j label18
 label17:
     li $t0, 0
-    addi $sp, $sp, -8
-    sw $t0, -32($fp)
+    addi $sp, $sp, -4
+    sw $t0, -16($fp)
 label18:
 label19:
-    lw $t0, -24($fp)
-    lw $t1, -16($fp)
+    lw $t0, -12($fp)
+    lw $t1, -8($fp)
     blt $t0, $t1, label20
     j label21
 label20:
     jal read
     move $t0, $v0
-    lw $t1, -24($fp)
+    lw $t1, -12($fp)
     li $t2, 4
     mul $t3, $t1, $t2
     la $t1, v0
     add $t2, $t1, $t3
     lw $t2, 0($t2)
     move $t2, $t0
-    lw $t0, -24($fp)
+    lw $t0, -12($fp)
     li $t1, 1
     add $t2, $t0, $t1
-    sw $t2, -24($fp)
+    sw $t2, -12($fp)
     j label19
 label21:
     li $t0, 0
-    lw $t1, -16($fp)
+    lw $t1, -8($fp)
     li $t2, 1
     add $t3, $t1, $t2
     move $a0, $t3
     move $a1, $t0
     jal QuickSort
     li $t0, 0
-    sw $t0, -24($fp)
+    sw $t0, -12($fp)
 label22:
-    lw $t0, -24($fp)
-    lw $t1, -16($fp)
+    lw $t0, -12($fp)
+    lw $t1, -8($fp)
     blt $t0, $t1, label23
     j label24
 label23:
-    lw $t0, -24($fp)
+    lw $t0, -12($fp)
     li $t1, 4
     mul $t2, $t0, $t1
     la $t0, v0
@@ -249,7 +250,7 @@ label23:
 label24:
     li $t0, 0
     move $sp, $fp
-    lw $ra, -8($fp)
-    lw $fp, -16($fp)
+    lw $ra, -4($fp)
+    lw $fp, -8($fp)
     move $v0, $t0
     jr $ra

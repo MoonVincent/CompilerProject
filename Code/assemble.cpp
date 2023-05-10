@@ -1,6 +1,7 @@
 #include "assemble.hpp"
 #include <iostream>
 #include <unordered_map>
+#define VERSION 4
 instrSelectedList instrList;
 instrSelectedList instrListHead;
 int line = 0;
@@ -175,11 +176,11 @@ void selectAssign(InterCodeList interCode){
         std::string dst = interCode->code->u.assign.left->name;
         std::string src = interCode->code->u.assign.right->name;
         if (dst[0] == 'v') {
-            int off = getValueOffset(dst, 8);
+            int off = getValueOffset(dst, VERSION);
             newInstr = newS(INST_SW, src, "-" + std::to_string(off), "$fp");  //TODO:
         } else if (src[0] == 'v') {
             if (globalArrays.find(src) == globalArrays.end()) {
-                int off = getValueOffset(src, 8);
+                int off = getValueOffset(src, VERSION);
                 newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "$fp");  //TODO:
             } else {
                 newInstr = newLa(INST_LA, dst, src);
@@ -267,14 +268,14 @@ void selectFunction(InterCodeList interCode) {
     std::string funcName = interCode->code->u.oneop.op->name;
     newInstr = newLabel(INST_LABEL, funcName);
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$sp", "$sp", "-16");
+    newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(2 * VERSION));
     addInstList(newInstr);
-    newInstr = newS(INST_SW, "$ra", "8", "$sp");
+    newInstr = newS(INST_SW, "$ra", std::to_string(VERSION), "$sp");
     addInstList(newInstr);
     newInstr = newS(INST_SW, "$fp", "0", "$sp");
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$fp", "$sp", "16");
-    currentFrameSize += 16;
+    newInstr = newI(INST_ADDI, "$fp", "$sp", std::to_string(2 * VERSION));
+    currentFrameSize += 2 * VERSION;
     addInstList(newInstr);
     offset.clear();
     isGlobal = false;
@@ -335,9 +336,9 @@ void selectReturn(InterCodeList interCode) {
     std::string ret = interCode->code->u.oneop.op->name;
     instrSelectedList newInstr = newM(INST_MOVE, "$sp", "$fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$ra", "-8", "$fp");
+    newInstr = newL(INST_LW, "$ra", "-" + std::to_string(VERSION), "$fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$fp", "-16", "$fp");
+    newInstr = newL(INST_LW, "$fp", "-" + std::to_string(2 * VERSION), "$fp");
     addInstList(newInstr);
     newInstr = newM(INST_MOVE, "$v0", ret);
     addInstList(newInstr);
@@ -417,23 +418,23 @@ void selectInstr(InterCodeList interCode){
                 interCode = interCode->next;
             }
             interCode = interCode->prev;
-            int size = 8 * (paramNum + 1);
+            int size = VERSION * (paramNum + 1);
             instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
             addInstList(newInstr);
             if (paramNum >= 0) {
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - 8), "$sp");
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - VERSION), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 1) {
-                newInstr = newS(INST_SW, "$a1", std::to_string(size - 16), "$sp");
+                newInstr = newS(INST_SW, "$a1", std::to_string(size - 2 * VERSION), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 2) {
-                newInstr = newS(INST_SW, "$a2", std::to_string(size - 24), "$sp");
+                newInstr = newS(INST_SW, "$a2", std::to_string(size - 3 * VERSION), "$sp");
                 addInstList(newInstr);
             }
             if (paramNum >= 3) {
-                newInstr = newS(INST_SW, "$a3", std::to_string(size - 32), "$sp");
+                newInstr = newS(INST_SW, "$a3", std::to_string(size - 4 * VERSION), "$sp");
                 addInstList(newInstr);
             }
 
@@ -682,9 +683,23 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
             out << "    " << array.first << ":" << std::endl;
             out << "        .space " << array.second << std::endl;
         }
+        out << "       _prompt: .asciiz \"Enter an integer:\"" << std::endl;
     }
-    out << ".global main" << std::endl;
+
+    out << ".globl main" << std::endl;
     out << ".text" << std::endl;
+    out <<"read:" << std::endl
+        <<"    li $v0, 4" << std::endl
+        <<"    la $a0, _prompt" << std::endl
+        <<"    syscall" << std::endl
+        <<"    li $v0, 5" << std::endl
+        <<"    syscall" << std::endl
+        <<"    jr $ra" << std::endl;
+    out <<"write:" << std::endl
+        <<"    li $v0, 1" << std::endl
+        <<"    syscall" << std::endl
+        <<"    jr $ra" << std::endl;
+
     while (instrs != nullptr) {
         switch(instrs->instr->kind){
             case INST_ADD:{
