@@ -270,6 +270,7 @@ Operand newOperand(Kind_op kind, std::string val)
 {
     Operand op = new Operand_();
     op->kind = kind;
+    op->loc = 1;
     switch(kind)
     {
         case OP_CONSTANT:
@@ -321,8 +322,6 @@ void setOperand(Operand op, Kind_op kind, std::string val)
     switch (kind)
     {
     case OP_CONSTANT:
-        op->value = atoi(val.c_str());
-        break;
     case OP_VARIABLE:
     case OP_ADDRESS:
     case OP_LABEL:
@@ -638,10 +637,19 @@ void translate_Exp(tree node, Operand place)
             translate_Exp(node->children[0], t3);  
             if(node->children[0]->childCnt==1)
             {
-                Operand new_place = newOperand(OP_WRITE_ADDRESS,place->name);
-                x = newBinop(IC_ADD, place, t3, t2);
-                add_ICList(head, x);
-                add_ICList(head,newAssign(IC_ASSIGN,new_place,place));
+
+                if(place->loc == 0)
+                {
+                    Operand new_place = newOperand(OP_VARIABLE, place->name);
+                    add_ICList(head, newBinop(IC_ADD, new_place, t3, t2));
+                    place->kind = OP_WRITE_ADDRESS;
+                }
+                else
+                {
+                    Operand new_place = newOperand(OP_WRITE_ADDRESS, place->name);
+                    add_ICList(head, newBinop(IC_ADD, place, t3, t2));
+                    add_ICList(head, newAssign(IC_ASSIGN, new_place, place));
+                }
             }
             else
             {
@@ -692,6 +700,7 @@ void translate_Exp(tree node, Operand place)
             else
             {
                 Operand t2 = newtemp();
+                t2->loc = 0;
                 translate_Exp(node->children[0],t2);
                 add_ICList(head,newAssign(IC_ASSIGN, t1, t2));
                 if(place)
