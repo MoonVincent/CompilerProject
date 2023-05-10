@@ -44,7 +44,6 @@ int main() {
     int i = 0;
     while (i < n) {
         arr[i] = read();
-        write(arr[i]);
         i = i + 1;
     }
     QuickSort(0, n - 1);

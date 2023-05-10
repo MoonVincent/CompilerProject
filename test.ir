@@ -157,45 +157,38 @@ t87 := v0
 t83 := t87 + t85
 *t83 := t82
 t89 := v7
-t91 := #4
-t90 := t89 * t91
-t92 := v0
-t88 := t92 + t90
-t88 := *t88
-WRITE t88
-t94 := v7
-t95 := #1
-t93 := t94 + t95
-v7 := t93
+t90 := #1
+t88 := t89 + t90
+v7 := t88
 GOTO label17
 LABEL label19 :
-t96 := #0
-t98 := v6
-t99 := #1
-t97 := t98 - t99
-ARG t97
-ARG t96
+t91 := #0
+t93 := v6
+t94 := #1
+t92 := t93 - t94
+ARG t92
+ARG t91
 CALL QuickSort
-t100 := #0
-v7 := t100
+t95 := #0
+v7 := t95
 LABEL label20 :
-t101 := v7
-t102 := v6
-IF t101 < t102 GOTO label21
+t96 := v7
+t97 := v6
+IF t96 < t97 GOTO label21
 GOTO label22
 LABEL label21 :
+t99 := v7
+t101 := #4
+t100 := t99 * t101
+t102 := v0
+t98 := t102 + t100
+t98 := *t98
+WRITE t98
 t104 := v7
-t106 := #4
-t105 := t104 * t106
-t107 := v0
-t103 := t107 + t105
-t103 := *t103
-WRITE t103
-t109 := v7
-t110 := #1
-t108 := t109 + t110
-v7 := t108
+t105 := #1
+t103 := t104 + t105
+v7 := t103
 GOTO label20
 LABEL label22 :
-t111 := #0
-RETURN t111
+t106 := #0
+RETURN t106

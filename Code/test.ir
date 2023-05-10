@@ -62,8 +62,7 @@ t32 := #4
 t31 := t30 * t32
 t33 := v0
 t29 := t33 + t31
-t29 := *t29
-t29 := t24
+*t29 := t24
 t35 := v3
 t36 := #1
 t34 := t35 + t36
@@ -107,8 +106,7 @@ t58 := #4
 t57 := t56 * t58
 t59 := v0
 t55 := t59 + t57
-t55 := *t55
-t55 := t50
+*t55 := t50
 t61 := v4
 t62 := #1
 t60 := t61 - t62
@@ -122,8 +120,7 @@ t67 := #4
 t66 := t65 * t67
 t68 := v0
 t64 := t68 + t66
-t64 := *t64
-t64 := t63
+*t64 := t63
 t69 := v1
 t71 := v3
 t72 := #1
@@ -146,69 +143,52 @@ READ t78
 v6 := t78
 t79 := #0
 v7 := t79
-t83 := v7
-t84 := #1
-t81 := t83 + t84
-t85 := #4
-t82 := t81 * t85
-t86 := v0
-t80 := t86 + t82
-t80 := *t80
-t88 := v7
-t90 := #4
-t89 := t88 * t90
-t91 := v0
-t87 := t91 + t89
-t87 := *t87
-IF t80 < t87 GOTO label17
-GOTO label18
 LABEL label17 :
-t92 := #0
-v8 := t92
-LABEL label18 :
-LABEL label19 :
-t93 := v7
-t94 := v6
-IF t93 < t94 GOTO label20
-GOTO label21
-LABEL label20 :
-READ t95
-t97 := v7
-t99 := #4
-t98 := t97 * t99
-t100 := v0
-t96 := t100 + t98
-t96 := *t96
-t96 := t95
-t102 := v7
-t103 := #1
-t101 := t102 + t103
-v7 := t101
+t80 := v7
+t81 := v6
+IF t80 < t81 GOTO label18
 GOTO label19
-LABEL label21 :
-t104 := #0
-t106 := v6
-t107 := #1
-t105 := t106 - t107
-ARG t105
-ARG t104
+LABEL label18 :
+READ t82
+t84 := v7
+t86 := #4
+t85 := t84 * t86
+t87 := v0
+t83 := t87 + t85
+*t83 := t82
+t89 := v7
+t90 := #1
+t88 := t89 + t90
+v7 := t88
+GOTO label17
+LABEL label19 :
+t91 := #0
+t93 := v6
+t94 := #1
+t92 := t93 - t94
+ARG t92
+ARG t91
 CALL QuickSort
-t108 := #0
-v7 := t108
-LABEL label22 :
-t109 := v7
-t110 := v6
-IF t109 < t110 GOTO label23
-GOTO label24
-LABEL label23 :
-t112 := v7
-t114 := #4
-t113 := t112 * t114
-t115 := v0
-t111 := t115 + t113
-t111 := *t111
-WRITE t111
+t95 := #0
+v7 := t95
+LABEL label20 :
+t96 := v7
+t97 := v6
+IF t96 < t97 GOTO label21
 GOTO label22
-LABEL label24 :
-t116 := #0
-RETURN t116
+LABEL label21 :
+t99 := v7
+t101 := #4
+t100 := t99 * t101
+t102 := v0
+t98 := t102 + t100
+t98 := *t98
+WRITE t98
+t104 := v7
+t105 := #1
+t103 := t104 + t105
+v7 := t103
+GOTO label20
+LABEL label22 :
+t106 := #0
+RETURN t106

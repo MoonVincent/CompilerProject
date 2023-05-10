@@ -420,6 +420,7 @@ void selectInstr(InterCodeList interCode){
             interCode = interCode->prev;
             int size = VERSION * (paramNum + 1);
             instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
+            currentFrameSize += (size + 4);
             addInstList(newInstr);
             if (paramNum == 0) {
                 newInstr = newS(INST_SW, "$a0", std::to_string(size - VERSION), "$sp");
