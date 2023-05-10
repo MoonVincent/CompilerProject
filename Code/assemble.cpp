@@ -220,7 +220,7 @@ void selectSub(InterCodeList interCode) {
     if (interCode->code->u.binop.op2->kind == OP_CONSTANT) {    //subi用addi实现
         newInstr = newI(INST_ADDI, dst, src1, "-"+src2);
     } else {    //add
-        newInstr = newR(INST_ADD, dst, src1, src2);
+        newInstr = newR(INST_SUB, dst, src1, src2);
     }
     addInstList(newInstr);
 }
@@ -421,20 +421,32 @@ void selectInstr(InterCodeList interCode){
             int size = VERSION * (paramNum + 1);
             instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
             addInstList(newInstr);
-            if (paramNum >= 0) {
+            if (paramNum == 0) {
                 newInstr = newS(INST_SW, "$a0", std::to_string(size - VERSION), "$sp");
                 addInstList(newInstr);
             }
-            if (paramNum >= 1) {
+            if (paramNum == 1) {
+                newInstr = newS(INST_SW, "$a1", std::to_string(size - VERSION), "$sp");
+                addInstList(newInstr);
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - 2 * VERSION), "$sp");
+                addInstList(newInstr);
+            }
+            if (paramNum == 2) {
+                newInstr = newS(INST_SW, "$a2", std::to_string(size - VERSION), "$sp");
+                addInstList(newInstr);
                 newInstr = newS(INST_SW, "$a1", std::to_string(size - 2 * VERSION), "$sp");
                 addInstList(newInstr);
-            }
-            if (paramNum >= 2) {
-                newInstr = newS(INST_SW, "$a2", std::to_string(size - 3 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - 3 * VERSION), "$sp");
                 addInstList(newInstr);
             }
-            if (paramNum >= 3) {
-                newInstr = newS(INST_SW, "$a3", std::to_string(size - 4 * VERSION), "$sp");
+            if (paramNum == 3) {
+                newInstr = newS(INST_SW, "$a3", std::to_string(size - VERSION), "$sp");
+                addInstList(newInstr);
+                newInstr = newS(INST_SW, "$a2", std::to_string(size - 2 * VERSION), "$sp");
+                addInstList(newInstr);
+                newInstr = newS(INST_SW, "$a1", std::to_string(size - 3 * VERSION), "$sp");
+                addInstList(newInstr);
+                newInstr = newS(INST_SW, "$a0", std::to_string(size - 4 * VERSION), "$sp");
                 addInstList(newInstr);
             }
 
