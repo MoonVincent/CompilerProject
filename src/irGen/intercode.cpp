@@ -674,8 +674,12 @@ void translate_Exp(tree node, Operand place)
             }
             else
             {
-                Operand id = newOperand(OP_CALL,node->children[0]->value);
-                InterCode x = newAssign(IC_ASSIGN, id, place);
+                Operand id = newOperand(OP_CALL, node->children[0]->value);
+                InterCode x;
+                if (place)
+                    x = newAssign(IC_ASSIGN, id, place);
+                else
+                    x = newOneop(IC_CALL, id);
                 add_ICList(head, x);
             }
         }
