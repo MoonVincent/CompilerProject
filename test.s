@@ -1,7 +1,6 @@
 .data
     v0:
         .space 8000
-       _prompt: .asciiz "Enter an integer:"
 .globl main
 .text
 QuickSort:
@@ -208,9 +207,6 @@ label21:
     la t1, v0
     add t0, t1, t0
     lw t0, 0(t0)
-    addi sp, sp, -8
-    sw t0, -32(fp)
-    lw t0, -32(fp)
     mv a0, t0
     jal putint
     lw t0, -24(fp)

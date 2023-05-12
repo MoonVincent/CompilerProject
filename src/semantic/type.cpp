@@ -1,5 +1,5 @@
-#include "type.hpp"
-#include "global.hpp"
+#include "../include/type.hpp"
+#include "../include/global.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <vector>

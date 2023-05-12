@@ -1,7 +1,7 @@
-#include "assemble.hpp"
+#include "../include/assemble.hpp"
 #include <iostream>
 #include <unordered_map>
-#define VERSION 4
+#define VERSION 8
 instrSelectedList instrList;
 instrSelectedList instrListHead;
 int line = 0;
@@ -127,7 +127,7 @@ instrSelectedList newB(Kind_instr kind, std::string reg1, std::string reg2, std:
     return ret;
 }
 
-instrSelectedList newDIV(Kind_instr kind, std::string src1, std::string src2){
+/* instrSelectedList newDIV(Kind_instr kind, std::string src1, std::string src2){
     instrSelectedList ret = new instrSelectedList_();
     ret->instr = new instrSelected_();
     ret->instr->kind = kind;
@@ -137,17 +137,7 @@ instrSelectedList newDIV(Kind_instr kind, std::string src1, std::string src2){
     updateActiveRecord(src1, line);
     updateActiveRecord(src2, line);
     return ret;
-}
-
-instrSelectedList newMflo(Kind_instr kind, std::string dst){
-    instrSelectedList ret = new instrSelectedList_();
-    ret->instr = new instrSelected_();
-    ret->instr->kind = kind;
-    ret->instr->u.MFLO.dst = new instrItem_(REG, dst);
-    ++line;
-    updateActiveRecord(dst, line);
-    return ret;
-}
+} */
 
 instrSelectedList newLabel(Kind_instr kind, std::string label){
     instrSelectedList ret = new instrSelectedList_();
@@ -155,6 +145,13 @@ instrSelectedList newLabel(Kind_instr kind, std::string label){
     ret->instr->kind = kind;
     ret->instr->u.Label.LABEL = new instrItem_(LABEL, label);
     ++line;
+    return ret;
+}
+
+instrSelectedList newRet(Kind_instr kind) {
+    instrSelectedList ret = new instrSelectedList_();
+    ret->instr = new instrSelected_();
+    ret->instr->kind = INST_RET;
     return ret;
 }
 
@@ -177,11 +174,11 @@ void selectAssign(InterCodeList interCode){
         std::string src = interCode->code->u.assign.right->name;
         if (dst[0] == 'v') {
             int off = getValueOffset(dst, VERSION);
-            newInstr = newS(INST_SW, src, "-" + std::to_string(off), "$fp");  //TODO:
+            newInstr = newS(INST_SW, src, "-" + std::to_string(off), "fp");  //TODO:
         } else if (src[0] == 'v') {
             if (globalArrays.find(src) == globalArrays.end()) {
                 int off = getValueOffset(src, VERSION);
-                newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "$fp");  //TODO:
+                newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "fp");  //TODO:
             } else {
                 newInstr = newLa(INST_LA, dst, src);
             }
@@ -193,7 +190,7 @@ void selectAssign(InterCodeList interCode){
         std::string funcName = interCode->code->u.assign.right->name;
         newInstr = newJ(INST_JAL, funcName);    // jal f
         addInstList(newInstr);
-        newInstr = newM(INST_MOVE, dst, "$v0");  //move x, $v0
+        newInstr = newM(INST_MOVE, dst, "a0");  //move x, $a0
         //newInstr->instr->u.M.src->reg_num = 2; 
     }
     addInstList(newInstr);
@@ -228,7 +225,7 @@ void selectSub(InterCodeList interCode) {
 void selectArg(InterCodeList interCode, int argNum){
     //TODO:栈帧的分配估计后续会在这里涉及到
     std::string argName = interCode->code->u.oneop.op->name;
-    instrSelectedList newInstr = newM(INST_MOVE, "$a" + std::to_string(argNum), argName);
+    instrSelectedList newInstr = newM(INST_MOVE, "a" + std::to_string(argNum), argName);
     addInstList(newInstr);
 
 }
@@ -257,10 +254,10 @@ void selectDiv(InterCodeList interCode) { // x:= y / z
     std::string dst = interCode->code->u.binop.result->name;
     std::string src1 = interCode->code->u.binop.op1->name;
     std::string src2 = interCode->code->u.binop.op2->name;
-    newInstr = newDIV(INST_DIV, src1, src2);
+    newInstr = newR(INST_DIV, dst, src1, src2);
     addInstList(newInstr);
-    newInstr = newMflo(INST_MFLO, dst);
-    addInstList(newInstr);
+/*     newInstr = newMflo(INST_MFLO, dst);
+    addInstList(newInstr); */
 }
 
 void selectFunction(InterCodeList interCode) {
@@ -268,13 +265,13 @@ void selectFunction(InterCodeList interCode) {
     std::string funcName = interCode->code->u.oneop.op->name;
     newInstr = newLabel(INST_LABEL, funcName);
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(2 * VERSION));
+    newInstr = newI(INST_ADDI, "sp", "sp", "-" + std::to_string(2 * VERSION));
     addInstList(newInstr);
-    newInstr = newS(INST_SW, "$ra", std::to_string(VERSION), "$sp");
+    newInstr = newS(INST_SW, "ra", std::to_string(VERSION), "sp");
     addInstList(newInstr);
-    newInstr = newS(INST_SW, "$fp", "0", "$sp");
+    newInstr = newS(INST_SW, "fp", "0", "sp");
     addInstList(newInstr);
-    newInstr = newI(INST_ADDI, "$fp", "$sp", std::to_string(2 * VERSION));
+    newInstr = newI(INST_ADDI, "fp", "sp", std::to_string(2 * VERSION));
     currentFrameSize += 2 * VERSION;
     addInstList(newInstr);
     offset.clear();
@@ -334,16 +331,16 @@ void selectParam(InterCodeList interCode, int paramNum) {
 
 void selectReturn(InterCodeList interCode) {
     std::string ret = interCode->code->u.oneop.op->name;
-    instrSelectedList newInstr = newM(INST_MOVE, "$sp", "$fp");
+    instrSelectedList newInstr = newM(INST_MOVE, "sp", "fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$ra", "-" + std::to_string(VERSION), "$fp");
+    newInstr = newL(INST_LW, "ra", "-" + std::to_string(VERSION), "fp");
     addInstList(newInstr);
-    newInstr = newL(INST_LW, "$fp", "-" + std::to_string(2 * VERSION), "$fp");
+    newInstr = newL(INST_LW, "fp", "-" + std::to_string(2 * VERSION), "fp");
     addInstList(newInstr);
-    newInstr = newM(INST_MOVE, "$v0", ret);
+    newInstr = newM(INST_MOVE, "a0", ret);
     addInstList(newInstr);
 
-    newInstr = newJ(INST_JR, "$ra");
+    newInstr = newRet(INST_RET);
     addInstList(newInstr);
     currentFrameSize = 0;
     isGlobal = true;
@@ -419,35 +416,35 @@ void selectInstr(InterCodeList interCode){
             }
             interCode = interCode->prev;
             int size = VERSION * (paramNum + 1);
-            instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
-            currentFrameSize += (size + 4);
+            instrSelectedList newInstr = newI(INST_ADDI, "sp", "sp", "-" + std::to_string(size));
+            currentFrameSize += (size + VERSION);
             addInstList(newInstr);
             if (paramNum == 0) {
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - VERSION), "$sp");
+                newInstr = newS(INST_SW, "a0", std::to_string(size - VERSION), "sp");
                 addInstList(newInstr);
             }
             if (paramNum == 1) {
-                newInstr = newS(INST_SW, "$a1", std::to_string(size - VERSION), "$sp");
+                newInstr = newS(INST_SW, "a1", std::to_string(size - VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - 2 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a0", std::to_string(size - 2 * VERSION), "sp");
                 addInstList(newInstr);
             }
             if (paramNum == 2) {
-                newInstr = newS(INST_SW, "$a2", std::to_string(size - VERSION), "$sp");
+                newInstr = newS(INST_SW, "a2", std::to_string(size - VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a1", std::to_string(size - 2 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a1", std::to_string(size - 2 * VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - 3 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a0", std::to_string(size - 3 * VERSION), "sp");
                 addInstList(newInstr);
             }
             if (paramNum == 3) {
-                newInstr = newS(INST_SW, "$a3", std::to_string(size - VERSION), "$sp");
+                newInstr = newS(INST_SW, "a3", std::to_string(size - VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a2", std::to_string(size - 2 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a2", std::to_string(size - 2 * VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a1", std::to_string(size - 3 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a1", std::to_string(size - 3 * VERSION), "sp");
                 addInstList(newInstr);
-                newInstr = newS(INST_SW, "$a0", std::to_string(size - 4 * VERSION), "$sp");
+                newInstr = newS(INST_SW, "a0", std::to_string(size - 4 * VERSION), "sp");
                 addInstList(newInstr);
             }
 
@@ -461,13 +458,13 @@ void selectInstr(InterCodeList interCode){
             std::string dst = interCode->code->u.oneop.op->name;
             instrSelectedList newInstr = newJ(INST_JAL, "read");
             addInstList(newInstr);
-            newInstr = newM(INST_MOVE, dst, "$v0");
+            newInstr = newM(INST_MOVE, dst, "a0");
             addInstList(newInstr);
             break;
         }
         case IC_WRITE:{
             std::string src = interCode->code->u.oneop.op->name;
-            instrSelectedList newInstr = newM(INST_MOVE, "$a0", src);
+            instrSelectedList newInstr = newM(INST_MOVE, "a0", src);
             addInstList(newInstr);
             newInstr = newJ(INST_JAL, "write");
             addInstList(newInstr);
@@ -485,7 +482,7 @@ void selectInstr(InterCodeList interCode){
     printActiveRecord();
     initializeRegs();
     allocateRegister();
-    std::ofstream rr("test.rr");
+    std::ofstream rr("test.s");
     printAllocatedInstr(rr, instrListHead);
 }
 
@@ -498,7 +495,8 @@ void allocateRegister() {
         switch(instrs->instr->kind){
             case INST_ADD:
             case INST_SUB:
-            case INST_MUL:{
+            case INST_MUL:
+            case INST_DIV:{
                 std::string dst = instrs->instr->u.R.dst->value;
                 std::string src1 = instrs->instr->u.R.src1->value;
                 std::string src2 = instrs->instr->u.R.src2->value;
@@ -551,12 +549,6 @@ void allocateRegister() {
                 instrs->instr->u.S.dst->value = regs[getRegister(dst)].name;
                 break;
             }
-            case INST_JR:{
-                std::string reg = instrs->instr->u.J.LABEL_REG->value;
-/*                 instrs->instr->u.J.LABEL_REG->regNum = getRegister(reg); */
-                instrs->instr->u.J.LABEL_REG->value = regs[getRegister(reg)].name;
-                break;
-            }
             case INST_BEQ:
             case INST_BGE:
             case INST_BGT:
@@ -571,33 +563,17 @@ void allocateRegister() {
                 instrs->instr->u.B.reg2->value = regs[getRegister(reg2)].name;
                 break;
             }
-            case INST_DIV:{
-                std::string src1 = instrs->instr->u.DIV.src1->value;
-                std::string src2 = instrs->instr->u.DIV.src2->value;
-/*                 instrs->instr->u.DIV.src1->regNum = getRegister(src1);
-                instrs->instr->u.DIV.src2->regNum = getRegister(src2); */
-                instrs->instr->u.DIV.src1->value = regs[getRegister(src1)].name;
-                instrs->instr->u.DIV.src2->value = regs[getRegister(src2)].name;
-                break;
-            }
-            case INST_MFLO:{
-                std::string dst = instrs->instr->u.MFLO.dst->value;
-/*                 instrs->instr->u.MFLO.dst->regNum = getRegister(dst); */
-                instrs->instr->u.MFLO.dst->value = regs[getRegister(dst)].name;
-                break;
-            }
-            case INST_LABEL:{
-                std::cout << "LABEL" << std::endl;
-                break;
-            }
+            case INST_LABEL:
             case INST_JAL:
             case INST_J:{
-                std::cout << "J and JAL" << std::endl;
                 break;
             }
             case INST_LA:{
                 std::string dst = instrs->instr->u.La.dst->value;
                 instrs->instr->u.La.dst->value = regs[getRegister(dst)].name;
+                break;
+            }
+            case INST_RET:{
                 break;
             }
             default:{
@@ -610,29 +586,26 @@ void allocateRegister() {
 }
 
 int getRegister(std::string regName) {
-    if (regName == "$sp") {
-        return 29;
-    }
-    if (regName == "$v0") {
+    if (regName == "sp") {
         return 2;
     }
-    if (regName == "$ra") {
-        return 31;
+    if (regName == "ra") {
+        return 1;
     }
-    if (regName == "$a0") {
-        return 4;
+    if (regName == "a0") {
+        return 10;
     }
-    if (regName == "$a1") {
-        return 5;
+    if (regName == "a1") {
+        return 11;
     }
-    if (regName == "$a2") {
-        return 6;
+    if (regName == "a2") {
+        return 12;
     }
-    if (regName == "$a3") {
-        return 7;
+    if (regName == "a3") {
+        return 13;
     }
-    if (regName == "$fp") {
-        return 30;
+    if (regName == "fp") {
+        return 8;
     }
     auto target = vrTranslation.find(regName);
     if (target == vrTranslation.end()) {
@@ -655,7 +628,15 @@ void updateActiveRecord(std::string regName, int lineNum) {
 }
 
 int getAvaiableReg(std::string vrName){
-    for (int i = 8; i <= 15; ++i) {
+    for (int i = 5; i <= 7; ++i) {
+        if (line > regs[i].avaliableLine) {
+            vrTranslation.insert({vrName, i});
+            regs[i].avaliableLine = activeRecord.find(vrName)->second.second;
+            return i;
+        }
+    }
+
+    for (int i = 28; i <= 31; ++i) {
         if (line > regs[i].avaliableLine) {
             vrTranslation.insert({vrName, i});
             regs[i].avaliableLine = activeRecord.find(vrName)->second.second;
@@ -673,7 +654,7 @@ int getValueOffset(std::string valueName, int size) {
         int off = currentFrameSize;
         offset.insert({valueName, currentFrameSize});
         currentFrameSize += size;
-        instrSelectedList newInstr = newI(INST_ADDI, "$sp", "$sp", "-" + std::to_string(size));
+        instrSelectedList newInstr = newI(INST_ADDI, "sp", "sp", "-" + std::to_string(size));
         addInstList(newInstr);
         return off;
     } else {
@@ -696,12 +677,11 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
             out << "    " << array.first << ":" << std::endl;
             out << "        .space " << array.second << std::endl;
         }
-        out << "       _prompt: .asciiz \"Enter an integer:\"" << std::endl;
     }
 
     out << ".globl main" << std::endl;
     out << ".text" << std::endl;
-    out <<"read:" << std::endl
+/*     out <<"read:" << std::endl
         <<"    li $v0, 4" << std::endl
         <<"    la $a0, _prompt" << std::endl
         <<"    syscall" << std::endl
@@ -711,7 +691,7 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
     out <<"write:" << std::endl
         <<"    li $v0, 1" << std::endl
         <<"    syscall" << std::endl
-        <<"    jr $ra" << std::endl;
+        <<"    jr $ra" << std::endl; */
 
     while (instrs != nullptr) {
         switch(instrs->instr->kind){
@@ -764,8 +744,9 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_DIV:{
-                out << "    div " << instrs->instr->u.DIV.src1->value << ", " 
-                    << instrs->instr->u.DIV.src2->value << "" << std::endl;
+                out << "    div " << instrs->instr->u.R.dst->value << ", " 
+                    << instrs->instr->u.R.src1->value << ", "
+                    << instrs->instr->u.R.src2->value << std::endl;
                 break;
             }
             case INST_J:{
@@ -776,8 +757,8 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                 out << "    jal " << instrs->instr->u.J.LABEL_REG->value << std::endl;
                 break;
             }
-            case INST_JR:{
-                out << "    jr " << instrs->instr->u.J.LABEL_REG->value << std::endl;
+            case INST_RET:{
+                out << "    ret " << std::endl;
                 break;
             }
             case INST_LABEL:{
@@ -795,12 +776,8 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                     << instrs->instr->u.L.src->value << ")" << std::endl;
                 break;
             }
-            case INST_MFLO:{
-                out << "    mflo " << instrs->instr->u.MFLO.dst->value << std::endl;
-                break;
-            }
             case INST_MOVE:{
-                out << "    move " << instrs->instr->u.M.dst->value << ", "
+                out << "    mv " << instrs->instr->u.M.dst->value << ", "
                     << instrs->instr->u.M.src->value << std::endl;
                 break;
             }
@@ -888,8 +865,9 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_DIV:{
-                out << "    div reg(" << instrs->instr->u.DIV.src1->value << "), reg(" 
-                    << instrs->instr->u.DIV.src2->value << ")" << std::endl;
+                out << "    div reg(" << instrs->instr->u.R.dst->value << "), reg(" 
+                    << instrs->instr->u.R.src1->value << "), reg("
+                    << instrs->instr->u.R.src2->value << ")" << std::endl;
                 break;
             }
             case INST_J:{
@@ -900,8 +878,8 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
                 out << "    jal " << instrs->instr->u.J.LABEL_REG->value << std::endl;
                 break;
             }
-            case INST_JR:{
-                out << "    jr " << instrs->instr->u.J.LABEL_REG->value << std::endl;
+            case INST_RET:{
+                out << "    ret" << std::endl;
                 break;
             }
             case INST_LABEL:{
@@ -919,12 +897,8 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
                     << instrs->instr->u.L.src->value << "))" << std::endl;
                 break;
             }
-            case INST_MFLO:{
-                out << "    mflo reg(" << instrs->instr->u.MFLO.dst->value << ")" << std::endl;
-                break;
-            }
             case INST_MOVE:{
-                out << "    move reg(" << instrs->instr->u.M.dst->value << "), reg("
+                out << "    mv reg(" << instrs->instr->u.M.dst->value << "), reg("
                     << instrs->instr->u.M.src->value << ")" << std::endl;
                 break;
             }
@@ -955,69 +929,69 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
 }
 
 void initializeRegs() {
-    regs[0].name = "$zero";
+    regs[0].name = "zero";
     regs[0].avaliableLine = -1;
-    regs[1].name = "$at";
+    regs[1].name = "ra";
     regs[1].avaliableLine = -1;
-    regs[2].name = "$v0";
+    regs[2].name = "sp";
     regs[2].avaliableLine = -1;
-    regs[3].name = "$v1";
+    regs[3].name = "gp";
     regs[3].avaliableLine = -1;
-    regs[4].name = "$a0";
+    regs[4].name = "tp";
     regs[4].avaliableLine = -1;
-    regs[5].name = "$a1";
+    regs[5].name = "t0";
     regs[5].avaliableLine = -1;
-    regs[6].name = "$a2";
+    regs[6].name = "t1";
     regs[6].avaliableLine = -1;
-    regs[7].name = "$a3";
+    regs[7].name = "t2";
     regs[7].avaliableLine = -1;
-    regs[8].name = "$t0";
+    regs[8].name = "fp";
     regs[8].avaliableLine = -1;
-    regs[9].name = "$t1";
+    regs[9].name = "s1";
     regs[9].avaliableLine = -1;
-    regs[10].name = "$t2";
+    regs[10].name = "a0";
     regs[10].avaliableLine = -1;
-    regs[11].name = "$t3";
+    regs[11].name = "a1";
     regs[11].avaliableLine = -1;
-    regs[12].name = "$t4";
+    regs[12].name = "a2";
     regs[12].avaliableLine = -1;
-    regs[13].name = "$t5";
+    regs[13].name = "a3";
     regs[13].avaliableLine = -1;
-    regs[14].name = "$t6";
+    regs[14].name = "a4";
     regs[14].avaliableLine = -1;
-    regs[15].name = "$t7";
+    regs[15].name = "a5";
     regs[15].avaliableLine = -1;
-    regs[16].name = "$s0";
+    regs[16].name = "a6";
     regs[16].avaliableLine = -1;
-    regs[17].name = "$s1";
+    regs[17].name = "a7";
     regs[17].avaliableLine = -1;
-    regs[18].name = "$s2";
+    regs[18].name = "s2";
     regs[18].avaliableLine = -1;
-    regs[19].name = "$s3";
+    regs[19].name = "s3";
     regs[19].avaliableLine = -1;
-    regs[20].name = "$s4";
+    regs[20].name = "s4";
     regs[20].avaliableLine = -1;
-    regs[21].name = "$s5";
+    regs[21].name = "s5";
     regs[21].avaliableLine = -1;
-    regs[22].name = "$s6";
+    regs[22].name = "s6";
     regs[22].avaliableLine = -1;
-    regs[23].name = "$s7";
+    regs[23].name = "s7";
     regs[23].avaliableLine = -1;
-    regs[24].name = "$t8";
+    regs[24].name = "s8";
     regs[24].avaliableLine = -1;
-    regs[25].name = "$t9";
+    regs[25].name = "s9";
     regs[25].avaliableLine = -1;
-    regs[26].name = "$k0";
+    regs[26].name = "s10";
     regs[26].avaliableLine = -1;
-    regs[27].name = "$k1";
+    regs[27].name = "s11";
     regs[27].avaliableLine = -1;
-    regs[28].name = "$gp";
+    regs[28].name = "t3";
     regs[28].avaliableLine = -1;
-    regs[29].name = "$sp";
+    regs[29].name = "t4";
     regs[29].avaliableLine = -1;
-    regs[30].name = "$fp";
+    regs[30].name = "t5";
     regs[30].avaliableLine = -1;
-    regs[31].name = "$ra";
+    regs[31].name = "t6";
     regs[31].avaliableLine = -1;
 }
 

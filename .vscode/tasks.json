@@ -8,17 +8,17 @@
             "command": "g++",
             "args": [
                 "-g",
-                "./Code/main.cpp",
-                "./Code/syntax.tab.cpp",
-                "./Code/semantic.cpp",
-                "./Code/type.cpp",
-                "./Code/global.cpp",
-                "./Code/syntaxNode.cpp",
-                "./Code/intercode.cpp",
-                "./Code/assemble.cpp",
+                "./main.cpp",
+                "./src/parser/syntax.tab.cpp",
+                "./src/semantic/semantic.cpp",
+                "./src/semantic/type.cpp",
+                "./src/global.cpp",
+                "./src/parser/syntaxNode.cpp",
+                "./src/irGen/intercode.cpp",
+                "./src/codeGen/assemble.cpp",
                 "-ly",
                 "-o",
-                "./Code/parser"
+                "./Compiler"
             ]
         }
     ]

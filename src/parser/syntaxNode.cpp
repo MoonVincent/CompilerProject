@@ -1,4 +1,4 @@
-#include "syntaxNode.hpp"
+#include "../include/syntaxNode.hpp"
 /**
  * @brief 新建一个子树
  * 

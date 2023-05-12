@@ -1,8 +1,8 @@
-#include "syntax.tab.hpp"
-#include "syntaxNode.hpp"
-#include "semantic.hpp"
-#include "intercode.hpp"
-#include "assemble.hpp"
+#include "./src/include/syntax.tab.hpp"
+#include "./src/include/syntaxNode.hpp"
+#include "./src/include/semantic.hpp"
+#include "./src/include/intercode.hpp"
+#include "./src/include/assemble.hpp"
 extern int yyparse();
 extern void yyrestart(FILE*);
 extern tree syntaxTree;

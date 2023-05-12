@@ -1,5 +1,5 @@
-#include "semantic.hpp"
-#include "global.hpp"
+#include "../include/semantic.hpp"
+#include "../include/global.hpp"
 
 
 void semantic(tree syntaxTree){

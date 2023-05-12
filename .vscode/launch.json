@@ -8,8 +8,8 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Code/parser",
-            "args": ["./Code/quick_sort.cmm"],
+            "program": "${workspaceFolder}/Compiler",
+            "args": ["./test_cases/quick_sort.cmm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -24,9 +24,9 @@
                 }
             ],
             "preLaunchTask": "build",
-            "sourceFileMap":{
+/*             "sourceFileMap":{
                 "./": "./Code"
-            }
+            } */
         }
     ]
 }
