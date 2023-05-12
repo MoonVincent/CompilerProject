@@ -6,6 +6,7 @@
 // Modified by MaxXing.
 
 // Input & output functions
+void putline();
 int getint(), getch(), getarray(int a[]);
 void putint(int num), putch(int ch), putarray(int n, int a[]);
 
