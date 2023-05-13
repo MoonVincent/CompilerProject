@@ -98,5 +98,8 @@ void translate_ExtDecList(tree node);
 Operand getValueItem(std::string key);
 void deleteValueItem(std::string key);
 bool insertValueItem(std::string key, Operand place);
+std::string getDimensionItem(std::string key);
+void deleteDimensionItem(std::string key);
+bool insertDimensionItem(std::string key, std::string size);
 
 extern InterCodeList head;

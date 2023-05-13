@@ -1,4 +1,4 @@
-int arr[1000];
+int arr[10000];
 int QuickSort(int low, int high)
 {
     if (low < high)
@@ -51,9 +51,7 @@ int main() {
     while (i < n) {
         putint(arr[i]);
         i = i + 1;
-        if (i != n) {
-            putLine();
-        }
+        putLine();
     }
     return 0;
 }
