@@ -567,7 +567,8 @@ void translate_VarDec(tree node,Operand place)
     // VarDec → ID
     //          | VarDec LB INT RB
     if (node->childCnt == 4) {
-            int size = 1;
+        std::string info = node->children[2]->value;
+        int size = 1;
         while(node->childCnt == 4) {
             size = size * std::stoi(node->children[2]->value);
             node = node->children[0];
@@ -575,6 +576,7 @@ void translate_VarDec(tree node,Operand place)
         size = size * 8;
         InterCode x = newDec(IC_DEC, place, size);
         add_ICList(head, x);
+        insertDimensionItem(node->children[0]->value,info);
     }
 
     insertValueItem(node->children[0]->value, place);
@@ -628,33 +630,35 @@ void translate_Exp(tree node, Operand place)
             Operand t2 = newtemp();
             translate_Exp(node->children[2], t1);
             Operand tmp = newtemp();
-            InterCode x = newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), tmp);
-            add_ICList(head, x);
-            x = newBinop(IC_MUL, t2, t1, tmp);
-            add_ICList(head, x);
+            add_ICList(head, newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), tmp));
+            add_ICList(head, newBinop(IC_MUL, t2, t1, tmp));
 
             Operand t3 = newtemp();
-            translate_Exp(node->children[0], t3);  
-            if(node->children[0]->childCnt==1)
+            if (node->children[0]->childCnt == 1)
+                translate_Exp(node->children[0], t3);
+            else
             {
-
-                if(place->loc == 0)
-                {
-                    Operand new_place = newOperand(OP_VARIABLE, place->name);
-                    add_ICList(head, newBinop(IC_ADD, new_place, t3, t2));
-                    place->kind = OP_WRITE_ADDRESS;
-                }
-                else
-                {
-                    Operand new_place = newOperand(OP_WRITE_ADDRESS, place->name);
-                    add_ICList(head, newBinop(IC_ADD, place, t3, t2));
-                    add_ICList(head, newAssign(IC_ASSIGN, new_place, place));
-                }
+                Operand t4 = newtemp();
+                translate_Exp(node->children[0]->children[2], t4);
+                add_ICList(head, newBinop(IC_MUL, t4, t4, tmp));
+                std::string arry_size = getDimensionItem(node->children[0]->children[0]->children[0]->value);
+                Operand tmp2 = newtemp();
+                add_ICList(head, newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, arry_size), tmp2));
+                add_ICList(head, newBinop(IC_MUL, t4, t4, tmp2));
+                add_ICList(head, newBinop(IC_ADD, t2, t4, t2));
+                translate_Exp(node->children[0]->children[0], t3);
+            }
+            if (place->loc == 0)
+            {
+                Operand new_place = newOperand(OP_VARIABLE, place->name);
+                add_ICList(head, newBinop(IC_ADD, new_place, t3, t2));
+                place->kind = OP_WRITE_ADDRESS;
             }
             else
             {
-                x = newBinop(IC_ADD, place, t3, t2);
-                add_ICList(head, x);
+                Operand new_place = newOperand(OP_WRITE_ADDRESS, place->name);
+                add_ICList(head, newBinop(IC_ADD, place, t3, t2));
+                add_ICList(head, newAssign(IC_ASSIGN, new_place, place));
             }
         }
     }
