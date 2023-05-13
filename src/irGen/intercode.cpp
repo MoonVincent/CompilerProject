@@ -567,7 +567,8 @@ void translate_VarDec(tree node,Operand place)
     // VarDec → ID
     //          | VarDec LB INT RB
     if (node->childCnt == 4) {
-            int size = 1;
+        std::string info = node->children[2]->value;
+        int size = 1;
         while(node->childCnt == 4) {
             size = size * std::stoi(node->children[2]->value);
             node = node->children[0];
@@ -575,6 +576,7 @@ void translate_VarDec(tree node,Operand place)
         size = size * 8;
         InterCode x = newDec(IC_DEC, place, size);
         add_ICList(head, x);
+        insertDimensionItem(node->children[0]->value,info);
     }
 
     insertValueItem(node->children[0]->value, place);
@@ -639,7 +641,7 @@ void translate_Exp(tree node, Operand place)
                 Operand t4 = newtemp();
                 translate_Exp(node->children[0]->children[2], t4);
                 add_ICList(head, newBinop(IC_MUL, t4, t4, tmp));
-                std::string arry_size = "100";
+                std::string arry_size = getDimensionItem(node->children[0]->children[0]->children[0]->value);
                 Operand tmp2 = newtemp();
                 add_ICList(head, newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, arry_size), tmp2));
                 add_ICList(head, newBinop(IC_MUL, t4, t4, tmp2));
