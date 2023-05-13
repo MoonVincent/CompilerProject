@@ -1,6 +1,8 @@
-
-int a[100][100];
 int main(){
-    a[1][2] = 1;
+    int a = getint();
+    int b = getint();
+    putint(a);
+    putint(b);
     return 0;
 }
+

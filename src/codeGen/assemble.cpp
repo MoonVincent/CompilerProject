@@ -152,6 +152,7 @@ instrSelectedList newRet(Kind_instr kind) {
     instrSelectedList ret = new instrSelectedList_();
     ret->instr = new instrSelected_();
     ret->instr->kind = INST_RET;
+    ++line;
     return ret;
 }
 
