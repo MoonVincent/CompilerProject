@@ -10,12 +10,14 @@ letter [_a-zA-Z]
 %option noyywrap
 
 %%
+"printf" {yylval.node = buildTree(0, yylineno, true, "PRINTF", yytext); return PRINTF;}
 "struct" {yylval.node = buildTree(0, yylineno, true, "STRUCT", yytext); return STRUCT; }
 "return" {yylval.node = buildTree(0, yylineno, true, "RETURN", yytext); return RETURN; }
 "if" {yylval.node = buildTree(0, yylineno, true, "IF", yytext); return IF; }
 "else" {yylval.node = buildTree(0, yylineno, true, "ELSE", yytext); return ELSE; }
 "while" {yylval.node = buildTree(0, yylineno, true, "WHILE", yytext); return WHILE; }
-"int"|"float" {yylval.node = buildTree(0, yylineno, true, "TYPE", yytext); return TYPE; }
+"int"|"float"|"string" {yylval.node = buildTree(0, yylineno, true, "TYPE", yytext); return TYPE; }
+\"(\\.|[^"\\])*\" {yylval.node = buildTree(0, yylineno, true, "STRING", yytext); return STRING;}
 [0-9]+ {yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
 [+-]?([0-9]*\.[0-9]+|[0-9]+\.) {yylval.node = buildTree(0, yylineno, true, "FLOAT", yytext); return FLOAT; }
 [_a-zA-Z][a-z0-9A-Z]* {yylval.node = buildTree(0, yylineno, true, "ID", yytext); return ID;}
