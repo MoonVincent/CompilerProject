@@ -3,20 +3,23 @@ main:
     sd reg(ra), 8(reg(sp))
     sd reg(fp), 0(reg(sp))
     addi reg(fp), reg(sp), 16
-    li reg(t0), 1
-    li reg(t2), 2
-    li reg(t4), 8
-    mul reg(t3), reg(t2), reg(t4)
-    li reg(t6), 1
-    li reg(t8), 8
-    mul reg(t7), reg(t6), reg(t8)
-    add reg(t5), reg(t9), reg(t7)
-    ld reg(t5), 0(reg(t5))
-    add reg(t1), reg(t5), reg(t3)
-    mv reg(t1), reg(t0)
-    li reg(t10), 0
+    jal getint
+    mv reg(t0), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t0), -16(reg(fp))
+    jal getint
+    mv reg(t1), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t1), -24(reg(fp))
+    ld reg(t2), -16(reg(fp))
+    mv reg(a0), reg(t2)
+    jal putint
+    ld reg(t3), -24(reg(fp))
+    mv reg(a0), reg(t3)
+    jal putint
+    li reg(t4), 0
     mv reg(sp), reg(fp)
     ld reg(ra), -8(reg(fp))
     ld reg(fp), -16(reg(fp))
-    mv reg(a0), reg(t10)
+    mv reg(a0), reg(t4)
     ret
