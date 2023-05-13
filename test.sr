@@ -11,15 +11,243 @@ main:
     mv reg(t1), reg(a0)
     addi reg(sp), reg(sp), -8
     sd reg(t1), -24(reg(fp))
-    ld reg(t2), -16(reg(fp))
-    mv reg(a0), reg(t2)
+    li reg(t2), 0
+    addi reg(sp), reg(sp), -8
+    sd reg(t2), -32(reg(fp))
+    li reg(t3), 0
+    addi reg(sp), reg(sp), -8
+    sd reg(t3), -40(reg(fp))
+label0:
+    ld reg(t4), -32(reg(fp))
+    ld reg(t5), -16(reg(fp))
+    blt reg(t4), reg(t5), label1
+    j label2
+label1:
+    li reg(t6), 0
+    sd reg(t6), -40(reg(fp))
+label3:
+    ld reg(t7), -40(reg(fp))
+    ld reg(t8), -24(reg(fp))
+    blt reg(t7), reg(t8), label4
+    j label5
+label4:
+    jal getint
+    mv reg(t9), reg(a0)
+    ld reg(t11), -40(reg(fp))
+    li reg(t13), 8
+    mul reg(t12), reg(t11), reg(t13)
+    ld reg(t15), -32(reg(fp))
+    mul reg(t15), reg(t15), reg(t13)
+    li reg(t16), 25
+    mul reg(t15), reg(t15), reg(t16)
+    add reg(t12), reg(t15), reg(t12)
+    add reg(t10), reg(t14), reg(t12)
+    sd reg(t9), 0(reg(t10))
+    ld reg(t18), -40(reg(fp))
+    li reg(t19), 1
+    add reg(t17), reg(t18), reg(t19)
+    sd reg(t17), -40(reg(fp))
+    j label3
+label5:
+    ld reg(t21), -32(reg(fp))
+    li reg(t22), 1
+    add reg(t20), reg(t21), reg(t22)
+    sd reg(t20), -32(reg(fp))
+    j label0
+label2:
+    jal getint
+    mv reg(t23), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t23), -48(reg(fp))
+    jal getint
+    mv reg(t24), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t24), -56(reg(fp))
+    li reg(t25), 0
+    sd reg(t25), -32(reg(fp))
+    li reg(t26), 0
+    sd reg(t26), -40(reg(fp))
+label6:
+    ld reg(t27), -32(reg(fp))
+    ld reg(t28), -48(reg(fp))
+    blt reg(t27), reg(t28), label7
+    j label8
+label7:
+    li reg(t29), 0
+    sd reg(t29), -40(reg(fp))
+label9:
+    ld reg(t30), -40(reg(fp))
+    ld reg(t31), -56(reg(fp))
+    blt reg(t30), reg(t31), label10
+    j label11
+label10:
+    jal getint
+    mv reg(t32), reg(a0)
+    ld reg(t34), -40(reg(fp))
+    li reg(t36), 8
+    mul reg(t35), reg(t34), reg(t36)
+    ld reg(t38), -32(reg(fp))
+    mul reg(t38), reg(t38), reg(t36)
+    li reg(t39), 25
+    mul reg(t38), reg(t38), reg(t39)
+    add reg(t35), reg(t38), reg(t35)
+    add reg(t33), reg(t37), reg(t35)
+    sd reg(t32), 0(reg(t33))
+    ld reg(t41), -40(reg(fp))
+    li reg(t42), 1
+    add reg(t40), reg(t41), reg(t42)
+    sd reg(t40), -40(reg(fp))
+    j label9
+label11:
+    ld reg(t44), -32(reg(fp))
+    li reg(t45), 1
+    add reg(t43), reg(t44), reg(t45)
+    sd reg(t43), -32(reg(fp))
+    j label6
+label8:
+    li reg(t46), 0
+    sd reg(t46), -32(reg(fp))
+    li reg(t47), 0
+    sd reg(t47), -40(reg(fp))
+label12:
+    ld reg(t48), -32(reg(fp))
+    ld reg(t49), -16(reg(fp))
+    blt reg(t48), reg(t49), label13
+    j label14
+label13:
+    li reg(t50), 0
+    sd reg(t50), -40(reg(fp))
+label15:
+    ld reg(t51), -40(reg(fp))
+    ld reg(t52), -56(reg(fp))
+    blt reg(t51), reg(t52), label16
+    j label17
+label16:
+    li reg(t53), 0
+    addi reg(sp), reg(sp), -8
+    sd reg(t53), -64(reg(fp))
+    li reg(t54), 0
+    ld reg(t56), -40(reg(fp))
+    li reg(t58), 8
+    mul reg(t57), reg(t56), reg(t58)
+    ld reg(t60), -32(reg(fp))
+    mul reg(t60), reg(t60), reg(t58)
+    li reg(t61), 25
+    mul reg(t60), reg(t60), reg(t61)
+    add reg(t57), reg(t60), reg(t57)
+    add reg(t55), reg(t59), reg(t57)
+    sd reg(t54), 0(reg(t55))
+label18:
+    ld reg(t62), -64(reg(fp))
+    ld reg(t63), -24(reg(fp))
+    blt reg(t62), reg(t63), label19
+    j label20
+label19:
+    ld reg(t67), -40(reg(fp))
+    li reg(t69), 8
+    mul reg(t68), reg(t67), reg(t69)
+    ld reg(t71), -32(reg(fp))
+    mul reg(t71), reg(t71), reg(t69)
+    li reg(t72), 25
+    mul reg(t71), reg(t71), reg(t72)
+    add reg(t68), reg(t71), reg(t68)
+    add reg(t65), reg(t70), reg(t68)
+    ld reg(t65), 0(reg(t65))
+    ld reg(t75), -64(reg(fp))
+    li reg(t77), 8
+    mul reg(t76), reg(t75), reg(t77)
+    ld reg(t79), -32(reg(fp))
+    mul reg(t79), reg(t79), reg(t77)
+    li reg(t80), 25
+    mul reg(t79), reg(t79), reg(t80)
+    add reg(t76), reg(t79), reg(t76)
+    add reg(t73), reg(t78), reg(t76)
+    ld reg(t73), 0(reg(t73))
+    ld reg(t81), -40(reg(fp))
+    li reg(t83), 8
+    mul reg(t82), reg(t81), reg(t83)
+    ld reg(t85), -64(reg(fp))
+    mul reg(t85), reg(t85), reg(t83)
+    li reg(t86), 25
+    mul reg(t85), reg(t85), reg(t86)
+    add reg(t82), reg(t85), reg(t82)
+    add reg(t74), reg(t84), reg(t82)
+    ld reg(t74), 0(reg(t74))
+    mul reg(t66), reg(t73), reg(t74)
+    add reg(t64), reg(t65), reg(t66)
+    ld reg(t88), -40(reg(fp))
+    li reg(t90), 8
+    mul reg(t89), reg(t88), reg(t90)
+    ld reg(t92), -32(reg(fp))
+    mul reg(t92), reg(t92), reg(t90)
+    li reg(t93), 25
+    mul reg(t92), reg(t92), reg(t93)
+    add reg(t89), reg(t92), reg(t89)
+    add reg(t87), reg(t91), reg(t89)
+    sd reg(t64), 0(reg(t87))
+    ld reg(t95), -64(reg(fp))
+    li reg(t96), 1
+    add reg(t94), reg(t95), reg(t96)
+    sd reg(t94), -64(reg(fp))
+    j label18
+label20:
+    ld reg(t98), -40(reg(fp))
+    li reg(t99), 1
+    add reg(t97), reg(t98), reg(t99)
+    sd reg(t97), -40(reg(fp))
+    j label15
+label17:
+    ld reg(t101), -32(reg(fp))
+    li reg(t102), 1
+    add reg(t100), reg(t101), reg(t102)
+    sd reg(t100), -32(reg(fp))
+    j label12
+label14:
+    li reg(t103), 0
+    sd reg(t103), -32(reg(fp))
+    li reg(t104), 0
+    sd reg(t104), -40(reg(fp))
+label21:
+    ld reg(t105), -32(reg(fp))
+    ld reg(t106), -16(reg(fp))
+    blt reg(t105), reg(t106), label22
+    j label23
+label22:
+    li reg(t107), 0
+    sd reg(t107), -40(reg(fp))
+label24:
+    ld reg(t108), -40(reg(fp))
+    ld reg(t109), -56(reg(fp))
+    blt reg(t108), reg(t109), label25
+    j label26
+label25:
+    ld reg(t111), -40(reg(fp))
+    li reg(t113), 8
+    mul reg(t112), reg(t111), reg(t113)
+    ld reg(t115), -32(reg(fp))
+    mul reg(t115), reg(t115), reg(t113)
+    li reg(t116), 25
+    mul reg(t115), reg(t115), reg(t116)
+    add reg(t112), reg(t115), reg(t112)
+    add reg(t110), reg(t114), reg(t112)
+    ld reg(t110), 0(reg(t110))
+    mv reg(a0), reg(t110)
     jal putint
-    ld reg(t3), -24(reg(fp))
-    mv reg(a0), reg(t3)
-    jal putint
-    li reg(t4), 0
+    ld reg(t118), -40(reg(fp))
+    li reg(t119), 1
+    add reg(t117), reg(t118), reg(t119)
+    sd reg(t117), -40(reg(fp))
+    j label24
+label26:
+    ld reg(t121), -32(reg(fp))
+    li reg(t122), 1
+    add reg(t120), reg(t121), reg(t122)
+    sd reg(t120), -32(reg(fp))
+    j label21
+label23:
+    li reg(t123), 0
     mv reg(sp), reg(fp)
     ld reg(ra), -8(reg(fp))
     ld reg(fp), -16(reg(fp))
-    mv reg(a0), reg(t4)
+    mv reg(a0), reg(t123)
     ret

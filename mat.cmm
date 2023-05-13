@@ -1,8 +1,56 @@
+int a[25][25];
+int b[25][25];
+int c[25][25];
 int main(){
-    int a = getint();
-    int b = getint();
-    putint(a);
-    putint(b);
+    int ma, na, mb, nb, i, j, k;
+    ma = getint();
+    na = getint();
+    i = 0;
+    j = 0;
+    while(i < ma) {
+        j = 0;
+        while(j < na) {
+            a[i][j] = getint();
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    mb = getint();
+    nb = getint();
+    i = 0;
+    j = 0;
+    while(i < mb) {
+        j = 0;
+        while(j < nb) {
+            b[i][j] = getint();
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    i = 0;
+    j = 0;
+    while(i < ma){
+        j = 0;
+        while(j < nb){
+            k = 0;
+            c[i][j] = 0;
+            while(k < na){
+                c[i][j] = c[i][j] + a[i][k] * b[k][j];
+                k = k + 1;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    i = 0;
+    j = 0;
+    while(i < ma){
+        j = 0;
+        while(j < nb){
+            putint(c[i][j]);
+            j = j + 1;
+        }
+        i = i + 1;
+    }
     return 0;
 }
-
