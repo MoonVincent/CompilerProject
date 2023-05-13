@@ -1065,3 +1065,22 @@ void deleteValueItem(std::string key) {
         }
     }
 }
+
+std::string getDimensionItem(std::string key) {
+    auto target = dimensionTable.find(key);
+    if (target == dimensionTable.end()) {
+        return "";
+    } else {
+        return target->second;
+    }
+}
+
+bool insertDimensionItem(std::string key, std::string size) {
+    auto target = dimensionTable.find(key);
+    if (target == dimensionTable.end()) {
+         dimensionTable.insert({key, size});
+    } else {
+        std::cout << "Error in insertDimensionItem" << std::endl;
+        return false;
+    }
+}
