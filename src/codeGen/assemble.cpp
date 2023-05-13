@@ -325,7 +325,7 @@ void selectMul(InterCodeList interCode) {
 void selectParam(InterCodeList interCode, int paramNum) {
 
     std::string param = interCode->code->u.oneop.op->name;
-    offset.insert({param, paramNum * 4 + 12});
+    offset.insert({param, paramNum * VERSION + 3 * VERSION});
 
 }
 
@@ -500,9 +500,6 @@ void allocateRegister() {
                 std::string dst = instrs->instr->u.R.dst->value;
                 std::string src1 = instrs->instr->u.R.src1->value;
                 std::string src2 = instrs->instr->u.R.src2->value;
-/*                 instrs->instr->u.R.dst->regNum = getRegister(dst);
-                instrs->instr->u.R.src1->regNum = getRegister(src1);
-                instrs->instr->u.R.src1->regNum = getRegister(src2); */
                 instrs->instr->u.R.dst->value = regs[getRegister(dst)].name;
                 instrs->instr->u.R.src1->value = regs[getRegister(src1)].name;
                 instrs->instr->u.R.src2->value = regs[getRegister(src2)].name;
@@ -511,8 +508,6 @@ void allocateRegister() {
             case INST_MOVE:{
                 std::string dst = instrs->instr->u.M.dst->value;
                 std::string src = instrs->instr->u.M.src->value;
-/*                 instrs->instr->u.M.dst->regNum = getRegister(dst);
-                instrs->instr->u.M.src->regNum = getRegister(src); */
                 instrs->instr->u.M.dst->value = regs[getRegister(dst)].name;
                 instrs->instr->u.M.src->value = regs[getRegister(src)].name;
                 break;
@@ -524,8 +519,7 @@ void allocateRegister() {
                 break;
             }
             case INST_ADDI:{
-                std::string dst = instrs->instr->u.I.dst->value;
-/*                 instrs->instr->u.I.dst->regNum = getRegister(dst);*/   
+                std::string dst = instrs->instr->u.I.dst->value; 
                 std::string src = instrs->instr->u.I.src->value;             
                 instrs->instr->u.I.dst->value = regs[getRegister(dst)].name;
                 instrs->instr->u.I.src->value = regs[getRegister(src)].name;
@@ -534,8 +528,6 @@ void allocateRegister() {
             case INST_LW:{
                 std::string dst = instrs->instr->u.L.dst->value;
                 std::string src = instrs->instr->u.L.src->value;
-/*                 instrs->instr->u.L.dst->regNum = getRegister(dst);
-                instrs->instr->u.L.src->regNum = getRegister(src); */
                 instrs->instr->u.L.dst->value = regs[getRegister(dst)].name;
                 instrs->instr->u.L.src->value = regs[getRegister(src)].name;
                 break;
@@ -543,8 +535,6 @@ void allocateRegister() {
             case INST_SW:{
                 std::string src = instrs->instr->u.S.src->value;
                 std::string dst = instrs->instr->u.S.dst->value;
-/*                 instrs->instr->u.S.src->regNum = getRegister(src);
-                instrs->instr->u.S.dst->regNum = getRegister(dst); */
                 instrs->instr->u.S.src->value = regs[getRegister(src)].name;
                 instrs->instr->u.S.dst->value = regs[getRegister(dst)].name;
                 break;
@@ -557,8 +547,6 @@ void allocateRegister() {
             case INST_BNE:{
                 std::string reg1 = instrs->instr->u.B.reg1->value;
                 std::string reg2 = instrs->instr->u.B.reg2->value;
-/*                 instrs->instr->u.B.reg1->regNum = getRegister(reg1);
-                instrs->instr->u.B.reg2->regNum = getRegister(reg2); */
                 instrs->instr->u.B.reg1->value = regs[getRegister(reg1)].name;
                 instrs->instr->u.B.reg2->value = regs[getRegister(reg2)].name;
                 break;
@@ -681,17 +669,6 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
 
     out << ".globl main" << std::endl;
     out << ".text" << std::endl;
-/*     out <<"read:" << std::endl
-        <<"    li $v0, 4" << std::endl
-        <<"    la $a0, _prompt" << std::endl
-        <<"    syscall" << std::endl
-        <<"    li $v0, 5" << std::endl
-        <<"    syscall" << std::endl
-        <<"    jr $ra" << std::endl;
-    out <<"write:" << std::endl
-        <<"    li $v0, 1" << std::endl
-        <<"    syscall" << std::endl
-        <<"    jr $ra" << std::endl; */
 
     while (instrs != nullptr) {
         switch(instrs->instr->kind){
@@ -771,7 +748,7 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_LW:{
-                out << "    lw " << instrs->instr->u.L.dst->value << ", "
+                out << "    ld " << instrs->instr->u.L.dst->value << ", "
                     << instrs->instr->u.L.imm->value << "("
                     << instrs->instr->u.L.src->value << ")" << std::endl;
                 break;
@@ -794,7 +771,7 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_SW:{
-                out << "    sw " << instrs->instr->u.S.src->value << ", "
+                out << "    sd " << instrs->instr->u.S.src->value << ", "
                     << instrs->instr->u.S.imm->value << "("
                     << instrs->instr->u.S.dst->value << ")" << std::endl;
                 break;
@@ -892,7 +869,7 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_LW:{
-                out << "    lw reg(" << instrs->instr->u.L.dst->value << "), "
+                out << "    ld reg(" << instrs->instr->u.L.dst->value << "), "
                     << instrs->instr->u.L.imm->value << "(reg("
                     << instrs->instr->u.L.src->value << "))" << std::endl;
                 break;
@@ -915,7 +892,7 @@ void printSelectedInstr(std::ofstream& out, instrSelectedList instrs){
                 break;
             }
             case INST_SW:{
-                out << "    sw reg(" << instrs->instr->u.S.src->value << "), "
+                out << "    sd reg(" << instrs->instr->u.S.src->value << "), "
                     << instrs->instr->u.S.imm->value << "(reg("
                     << instrs->instr->u.S.dst->value << "))" << std::endl;
                 break;

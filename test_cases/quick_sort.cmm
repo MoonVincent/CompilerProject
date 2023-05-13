@@ -51,6 +51,9 @@ int main() {
     while (i < n) {
         putint(arr[i]);
         i = i + 1;
+        if (i != n) {
+            putLine();
+        }
     }
     return 0;
 }
