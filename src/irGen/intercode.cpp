@@ -282,6 +282,7 @@ Operand newOperand(Kind_op kind, std::string val)
         case OP_READ_ADDRESS: 
         case OP_WRITE_ADDRESS:
         case OP_CALL:
+        case OP_STRING:
             op->name = val;
     }
     return op;
@@ -352,6 +353,7 @@ void printOperand(std::ofstream &out, Operand op)
         case OP_LABEL:
         case OP_FUNCTION:
         case OP_RELOP:
+        case OP_STRING:
             out << op->name;
             break;
         case OP_READ_ADDRESS:
@@ -552,9 +554,14 @@ void translate_Dec(tree node)
         }
         Operand v1 = newvalue();
         translate_VarDec(node->children[0], v1);
-        Operand t2 = newtemp();
-        translate_Exp(node->children[2], t2);
-        //to do
+        Operand t2;
+        if(node->children[2]->children[0]->key == "STRING")
+            t2 = newOperand(OP_STRING,node->children[2]->children[0]->value);
+        else
+        {
+            t2 = newtemp();
+            translate_Exp(node->children[2], t2);
+        }
         InterCode x = newAssign(IC_ASSIGN,t2,v1);
         add_ICList(head,x);
     }
@@ -695,23 +702,29 @@ void translate_Exp(tree node, Operand place)
         // | Exp ASSIGNOP Exp
         if(node->children[1]->key == "ASSIGNOP")
         {
-            Operand t1 = newtemp();
-            translate_Exp(node->children[2], t1);
+            Operand t1;
+            if(node->children[2]->children[0]->key == "STRING")
+                t1 = newOperand(OP_STRING, node->children[2]->children[0]->value);
+            else
+            {
+                t1 = newtemp();
+                translate_Exp(node->children[2], t1);
+            }
             if (node->children[0]->children[0]->key == "ID")
             {
                 Operand v = getValueItem(node->children[0]->children[0]->value);
-                add_ICList(head,newAssign(IC_ASSIGN,t1,v));
+                add_ICList(head, newAssign(IC_ASSIGN, t1, v));
 
-                if(place)
+                if (place)
                     add_ICList(head, newAssign(IC_ASSIGN, v, place));
             }
             else
             {
                 Operand t2 = newtemp();
                 t2->loc = 0;
-                translate_Exp(node->children[0],t2);
-                add_ICList(head,newAssign(IC_ASSIGN, t1, t2));
-                if(place)
+                translate_Exp(node->children[0], t2);
+                add_ICList(head, newAssign(IC_ASSIGN, t1, t2));
+                if (place)
                     add_ICList(head, newAssign(IC_ASSIGN, t2, place));
             }
         }
@@ -818,6 +831,13 @@ void translate_Exp(tree node, Operand place)
         {
             std::string value = node->children[0]->value;
             Operand val = getValueItem(value);
+            InterCode x = newAssign(IC_ASSIGN, val, place);
+            add_ICList(head, x);
+        }
+        else if(node->children[0]->key == "STRING")
+        {
+            std::string value = node->children[0]->value;
+            Operand val = newOperand(OP_STRING, value);
             InterCode x = newAssign(IC_ASSIGN, val, place);
             add_ICList(head, x);
         }
