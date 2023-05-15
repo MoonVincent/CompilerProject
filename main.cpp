@@ -16,9 +16,9 @@ int main(int argc, char** argv) {
     semantic(syntaxTree);
     translate_Program(syntaxTree);
     std::ofstream ir("test.ir");
-    printInterCodes(ir, head);
+    printInterCodes(ir, head); 
     selectInstr(head);
-    std::cout << "Hello" << std::endl;
+    std::cout << "Hello" << std::endl; 
     
     return 0;
 }

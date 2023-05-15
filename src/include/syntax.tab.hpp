@@ -39,7 +39,7 @@
 # define YY_YY_SYNTAX_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -64,23 +64,24 @@ extern int yydebug;
     PLUS = 265,                    /* PLUS  */
     MINUS = 266,                   /* MINUS  */
     STAR = 267,                    /* STAR  */
-    DIV = 268,                     /* DIV  */
-    AND = 269,                     /* AND  */
-    OR = 270,                      /* OR  */
-    DOT = 271,                     /* DOT  */
-    NOT = 272,                     /* NOT  */
-    TYPE = 273,                    /* TYPE  */
-    LP = 274,                      /* LP  */
-    RP = 275,                      /* RP  */
-    LB = 276,                      /* LB  */
-    RB = 277,                      /* RB  */
-    LC = 278,                      /* LC  */
-    RC = 279,                      /* RC  */
-    STRUCT = 280,                  /* STRUCT  */
-    RETURN = 281,                  /* RETURN  */
-    IF = 282,                      /* IF  */
-    ELSE = 283,                    /* ELSE  */
-    WHILE = 284                    /* WHILE  */
+    STRING = 268,                  /* STRING  */
+    DIV = 269,                     /* DIV  */
+    AND = 270,                     /* AND  */
+    OR = 271,                      /* OR  */
+    DOT = 272,                     /* DOT  */
+    NOT = 273,                     /* NOT  */
+    TYPE = 274,                    /* TYPE  */
+    LP = 275,                      /* LP  */
+    RP = 276,                      /* RP  */
+    LB = 277,                      /* LB  */
+    RB = 278,                      /* RB  */
+    LC = 279,                      /* LC  */
+    RC = 280,                      /* RC  */
+    STRUCT = 281,                  /* STRUCT  */
+    RETURN = 282,                  /* RETURN  */
+    IF = 283,                      /* IF  */
+    ELSE = 284,                    /* ELSE  */
+    WHILE = 285                    /* WHILE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -89,11 +90,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "syntax.ypp"
+#line 10 "./src/parser/syntax.ypp"
 
     struct treeNode* node;
 
-#line 97 "syntax.tab.hpp"
+#line 98 "syntax.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

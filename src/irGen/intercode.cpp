@@ -426,27 +426,29 @@ void translate_ExtDef(tree node)
     //          | Specifier SEMI 
     //          | Specifier FunDec CompSt
     if (node->children[1]->key == "FunDec") {
-        translate_FunDec(node->children[1]);
-        translate_CompSt(node->children[2]);
+        std::vector<std::string> valueRecord;
+        translate_FunDec(node->children[1], valueRecord);
+        translate_CompSt(node->children[2], valueRecord);
     } else if (node->children[1]->key == "ExtDecList") {
-        translate_ExtDecList(node->children[1]);
+        std::vector<std::string> valueRecord;
+        translate_ExtDecList(node->children[1], valueRecord);
     }
 }
 
-void translate_ExtDecList(tree node) {
+void translate_ExtDecList(tree node, std::vector<std::string>& valueRecord) {
     if (node == nullptr) {
         return ;
     }
     //ExtDecList -> VarDec
     //           -> VarDec COMMA ExtDecList
     Operand place = newvalue();
-    translate_VarDec(node->children[0], place);
+    translate_VarDec(node->children[0], place, valueRecord);
     if (node->childCnt == 3) {
-        translate_ExtDecList(node->children[2]);
+        translate_ExtDecList(node->children[2], valueRecord);
     }
 }
 
-void translate_FunDec(tree node)
+void translate_FunDec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -456,21 +458,21 @@ void translate_FunDec(tree node)
     InterCode x =  newOneop(IC_FUNCTION,newOperand(OP_FUNCTION,node->children[0]->value));
     add_ICList(head,x);
     if(node->childCnt == 4)
-        translate_VarList(node->children[2]);
+        translate_VarList(node->children[2], valueRecord);
 }
 
-void translate_VarList(tree node)
+void translate_VarList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
     // VarList → ParamDec COMMA VarList
     //          | ParamDec
-    translate_ParamDec(node->children[0]);
+    translate_ParamDec(node->children[0], valueRecord);
     if(node->childCnt == 3)
-        translate_VarList(node->children[2]);
+        translate_VarList(node->children[2], valueRecord);
 }
 
-void translate_ParamDec(tree node)
+void translate_ParamDec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -484,20 +486,25 @@ void translate_ParamDec(tree node)
     }
     Operand param = newvalue();
     insertValueItem(temp->children[0]->value, param);
+    valueRecord.push_back(temp->children[0]->value);
     InterCode x = newOneop(IC_PARAM, param);
     add_ICList(head,x);
 }
 
-void translate_CompSt(tree node)
+void translate_CompSt(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
     // CompSt → LC DefList StmtList RC
-    translate_DefList(node->children[1]);
+    translate_DefList(node->children[1], valueRecord);
     translate_StmtList(node->children[2]);
+    while (!valueRecord.empty()) {
+        deleteValueItem(valueRecord.back());
+        valueRecord.pop_back();
+    }
 }
 
-void translate_DefList(tree node)
+void translate_DefList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -505,20 +512,20 @@ void translate_DefList(tree node)
     //           |e
     while(node)
     {
-        translate_Def(node->children[0]);
+        translate_Def(node->children[0], valueRecord);
         node = node->children[1];
     }
 }
 
-void translate_Def(tree node)
+void translate_Def(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
     // Def → Specifier DecList SEMI
-    translate_DecList(node->children[1]);
+    translate_DecList(node->children[1], valueRecord);
 }
 
-void translate_DecList(tree node)
+void translate_DecList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -526,7 +533,7 @@ void translate_DecList(tree node)
     //          | Dec COMMA DecList
     while(node)
     {
-        translate_Dec(node->children[0]);
+        translate_Dec(node->children[0], valueRecord);
         if(node->childCnt == 3)
             node = node->children[2];
         else
@@ -534,7 +541,7 @@ void translate_DecList(tree node)
     }
 }
 
-void translate_Dec(tree node)
+void translate_Dec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -543,7 +550,7 @@ void translate_Dec(tree node)
 
     if (node->childCnt == 1){
         Operand v1 = newvalue();
-        translate_VarDec(node->children[0], v1);
+        translate_VarDec(node->children[0], v1, valueRecord);
     }
     // Dec -> VarDec ASSIGNOP Exp
     else
@@ -553,7 +560,7 @@ void translate_Dec(tree node)
             temp = temp->children[0];
         }
         Operand v1 = newvalue();
-        translate_VarDec(node->children[0], v1);
+        translate_VarDec(node->children[0], v1, valueRecord);
         Operand t2;
         if(node->children[2]->children[0]->key == "STRING")
             t2 = newOperand(OP_STRING,node->children[2]->children[0]->value);
@@ -567,7 +574,7 @@ void translate_Dec(tree node)
     }
 }
 
-void translate_VarDec(tree node,Operand place)
+void translate_VarDec(tree node,Operand place, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
         return;
@@ -587,6 +594,7 @@ void translate_VarDec(tree node,Operand place)
     }
 
     insertValueItem(node->children[0]->value, place);
+    valueRecord.push_back(node->children[0]->value);
 
 
 }
@@ -883,8 +891,8 @@ void translate_Stmt(tree node)
     }
     //       | CompSt
     if(node->children[0]->key == "CompSt")
-    {
-        translate_CompSt(node->children[0]);
+    {   std::vector<std::string> valueRecord;
+        translate_CompSt(node->children[0], valueRecord);
     }
     //       | RETURN Exp SEMI
     if(node->children[0]->key == "RETURN")

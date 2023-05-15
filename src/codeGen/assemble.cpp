@@ -11,6 +11,7 @@ std::unordered_map<std::string, std::pair<int, int>> activeRecord;
 std::unordered_map<std::string, int> vrTranslation;
 std::unordered_map<std::string, int> offset;
 std::unordered_map<std::string, int> globalArrays;
+std::unordered_map<std::string, std::string> strTable;
 struct regInfo regs[32];
 void addInstList(instrSelectedList new_node){
     instrList->next = new_node;
@@ -162,14 +163,21 @@ void selectAssign(InterCodeList interCode){
         std::string dst = interCode->code->u.assign.left->name;
         std::string src = interCode->code->u.assign.right->name;
         newInstr  = newL(INST_LW, dst, "0", src);
+        addInstList(newInstr);
     } else if (interCode->code->u.assign.left->kind == OP_WRITE_ADDRESS) { //*x = y
         std::string dst = interCode->code->u.assign.left->name;
         std::string src = interCode->code->u.assign.right->name;
         newInstr  = newS(INST_SW, src, "0", dst);
+        addInstList(newInstr);
     } else if (interCode->code->u.assign.right->kind == OP_CONSTANT) { //li
         std::string dst = interCode->code->u.assign.left->name;
         std::string imm = interCode->code->u.assign.right->name;
         newInstr = newM(INST_LI, dst, imm);
+        addInstList(newInstr);
+    } else if (interCode->code->u.assign.right->kind ==OP_STRING) { // v = "str"
+        std::string dst = interCode->code->u.assign.left->name;
+        std::string str = interCode->code->u.assign.right->name;
+        strTable.insert({dst, str});
     } else if (interCode->code->u.assign.right->kind == OP_VARIABLE) {    //mv
         std::string dst = interCode->code->u.assign.left->name;
         std::string src = interCode->code->u.assign.right->name;
@@ -177,7 +185,7 @@ void selectAssign(InterCodeList interCode){
             int off = getValueOffset(dst, VERSION);
             newInstr = newS(INST_SW, src, "-" + std::to_string(off), "fp");  //TODO:
         } else if (src[0] == 'v') {
-            if (globalArrays.find(src) == globalArrays.end()) {
+            if (globalArrays.find(src) == globalArrays.end() && strTable.find(src) == strTable.end()) {
                 int off = getValueOffset(src, VERSION);
                 newInstr = newL(INST_LW, dst, "-" + std::to_string(off), "fp");  //TODO:
             } else {
@@ -186,15 +194,15 @@ void selectAssign(InterCodeList interCode){
         } else {
             newInstr = newM(INST_MOVE, dst, src);
         }
+        addInstList(newInstr);
     } else if (interCode->code->u.assign.right->kind == OP_CALL) {  //x := CALL f
         std::string dst = interCode->code->u.assign.left->name;
         std::string funcName = interCode->code->u.assign.right->name;
         newInstr = newJ(INST_JAL, funcName);    // jal f
         addInstList(newInstr);
         newInstr = newM(INST_MOVE, dst, "a0");  //move x, $a0
-        //newInstr->instr->u.M.src->reg_num = 2; 
+        addInstList(newInstr);
     }
-    addInstList(newInstr);
 }
 
 void selectAdd(InterCodeList interCode) {
@@ -226,7 +234,13 @@ void selectSub(InterCodeList interCode) {
 void selectArg(InterCodeList interCode, int argNum){
     //TODO:栈帧的分配估计后续会在这里涉及到
     std::string argName = interCode->code->u.oneop.op->name;
-    instrSelectedList newInstr = newM(INST_MOVE, "a" + std::to_string(argNum), argName);
+    instrSelectedList newInstr;
+    if (strTable.find(argName) == strTable.end()) {
+        newInstr = newM(INST_MOVE, "a" + std::to_string(argNum), argName);
+    } else {
+        newInstr = newLa(INST_LA, "a" + std::to_string(argNum), argName);
+    }
+
     addInstList(newInstr);
 
 }
@@ -665,6 +679,15 @@ void printAllocatedInstr(std::ofstream& out, instrSelectedList instrs){
         for (auto array : globalArrays) {
             out << "    " << array.first << ":" << std::endl;
             out << "        .space " << array.second << std::endl;
+        }
+    }
+
+    if (strTable.size() > 0) {
+        if (globalArrays.size() == 0) {
+            out << ".data" << std::endl;
+        }
+        for (auto str : strTable) {
+            out << "    " << str.first << ": .string " << str.second << std::endl;
         }
     }
 

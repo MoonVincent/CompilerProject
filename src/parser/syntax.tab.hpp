@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -30,6 +31,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
+
 #ifndef YY_YY_SYNTAX_TAB_HPP_INCLUDED
 # define YY_YY_SYNTAX_TAB_HPP_INCLUDED
 /* Debug traces.  */
@@ -40,54 +45,58 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INT = 258,
-    FLOAT = 259,
-    ID = 260,
-    SEMI = 261,
-    COMMA = 262,
-    ASSIGNOP = 263,
-    RELOP = 264,
-    PLUS = 265,
-    MINUS = 266,
-    STAR = 267,
-    STRING = 268,
-    DIV = 269,
-    AND = 270,
-    OR = 271,
-    DOT = 272,
-    NOT = 273,
-    TYPE = 274,
-    LP = 275,
-    RP = 276,
-    LB = 277,
-    RB = 278,
-    LC = 279,
-    RC = 280,
-    STRUCT = 281,
-    RETURN = 282,
-    IF = 283,
-    ELSE = 284,
-    WHILE = 285
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    INT = 258,                     /* INT  */
+    FLOAT = 259,                   /* FLOAT  */
+    ID = 260,                      /* ID  */
+    SEMI = 261,                    /* SEMI  */
+    COMMA = 262,                   /* COMMA  */
+    ASSIGNOP = 263,                /* ASSIGNOP  */
+    RELOP = 264,                   /* RELOP  */
+    PLUS = 265,                    /* PLUS  */
+    MINUS = 266,                   /* MINUS  */
+    STAR = 267,                    /* STAR  */
+    STRING = 268,                  /* STRING  */
+    DIV = 269,                     /* DIV  */
+    AND = 270,                     /* AND  */
+    OR = 271,                      /* OR  */
+    DOT = 272,                     /* DOT  */
+    NOT = 273,                     /* NOT  */
+    TYPE = 274,                    /* TYPE  */
+    LP = 275,                      /* LP  */
+    RP = 276,                      /* RP  */
+    LB = 277,                      /* LB  */
+    RB = 278,                      /* RB  */
+    LC = 279,                      /* LC  */
+    RC = 280,                      /* RC  */
+    STRUCT = 281,                  /* STRUCT  */
+    RETURN = 282,                  /* RETURN  */
+    IF = 283,                      /* IF  */
+    ELSE = 284,                    /* ELSE  */
+    WHILE = 285                    /* WHILE  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-#line 10 "syntax.ypp" /* yacc.c:1909  */
+#line 10 "./src/parser/syntax.ypp"
 
     struct treeNode* node;
 
-#line 89 "syntax.tab.hpp" /* yacc.c:1909  */
-};
+#line 98 "syntax.tab.hpp"
 
+};
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -96,6 +105,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_SYNTAX_TAB_HPP_INCLUDED  */

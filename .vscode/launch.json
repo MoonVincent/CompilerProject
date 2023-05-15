@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Compiler",
-            "args": ["./test_cases/quick_sort.cmm"],
+            "args": ["./string.cmm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

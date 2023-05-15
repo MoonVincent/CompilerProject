@@ -1,3 +1,6 @@
-bison -d -t -v syntax.ypp
-flex lexical.l
-g++ main.cpp syntax.tab.cpp syntaxNode.cpp semantic.cpp type.cpp global.cpp -ly -o parser -std=c++11
+bison -d ./src/parser/syntax.ypp
+flex ./src/parser/lexical.l
+mv ./syntax.tab.cpp ./src/parser/
+cp ./syntax.tab.hpp ./src/parser/
+mv ./syntax.tab.hpp ./src/include/
+mv ./lex.yy.c ./src/parser/

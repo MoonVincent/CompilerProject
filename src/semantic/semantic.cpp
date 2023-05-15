@@ -33,7 +33,7 @@ void ExtDef(tree root, std::list<std::string>& record_struct){
 
 void ExtDecList(Type type, tree root, std::list<std::string>& record) {
     VarDec(type, root->children[0], record);
-    if (root->children[1]) {
+    if (root->childCnt == 3) {
         ExtDecList(type, root->children[2], record);
     }
 }
@@ -135,7 +135,7 @@ void VarList(std::vector<Type>& paramList, tree root, std::list<std::string>& re
 
     ParamDec(paramList, root->children[0], record, record_struct);
 
-    if (root->children[1]) {
+    if (root->childCnt == 3) {
         VarList(paramList, root->children[2], record, record_struct);
     }
 }
@@ -209,7 +209,7 @@ void Def(tree root, std::list<std::string>& record, std::list<std::string>& reco
 
 void DecList(Type type, tree root, std::list<std::string>& record) {
     Dec(type, root->children[0], record);
-    if (root->children[2]){
+    if (root->childCnt == 3){
         DecList(type, root->children[2], record);
     }
 }
@@ -217,7 +217,7 @@ void DecList(Type type, tree root, std::list<std::string>& record) {
 void Dec(Type type, tree root, std::list<std::string>& record) {
     
     int line = VarDec(type, root->children[0], record);
-    if (root->children[2]) {    //存在ASSIGNOP, VarDec其后必为左值，因此此处的ASSIGNOP无需判断是否为左值
+    if (root->childCnt == 3) {    //存在ASSIGNOP, VarDec其后必为左值，因此此处的ASSIGNOP无需判断是否为左值
         Type right = Exp(root->children[2]).first;
         if (!isEquivalent(type, right)) {
             std::cout << "[line " << line <<" semantic error] "

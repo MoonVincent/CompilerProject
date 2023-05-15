@@ -1,0 +1,14 @@
+int main(){
+    string a = "hahahahah\n";
+    printString(a);
+    return 0;
+}
+
+int printString(string a){
+    int i = 0;
+    while(a[i] != 0) {
+        i = i + 1;
+    }
+    write(1, a, i);
+    return 0;
+}
