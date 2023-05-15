@@ -284,6 +284,7 @@ Operand newOperand(Kind_op kind, std::string val)
         case OP_CALL:
         case OP_STRING:
         case OP_V_STRING:
+        case OP_WRITE_ADDRESS_BYTE:
             op->name = val;
     }
     return op;
@@ -331,6 +332,7 @@ void setOperand(Operand op, Kind_op kind, std::string val)
     case OP_RELOP:
     case OP_READ_ADDRESS:
     case OP_WRITE_ADDRESS:
+    case OP_WRITE_ADDRESS_BYTE:
         op->name = val;
     }
 }
@@ -362,6 +364,7 @@ void printOperand(std::ofstream &out, Operand op)
             out << "&" << op->name;
             break;
         case OP_WRITE_ADDRESS:
+        case OP_WRITE_ADDRESS_BYTE:
             out << "*" << op->name;
             break;
     }
@@ -681,11 +684,18 @@ void translate_Exp(tree node, Operand place)
             {
                 Operand new_place = newOperand(OP_VARIABLE, place->name);
                 add_ICList(head, newBinop(IC_ADD, new_place, t3, t2));
-                place->kind = OP_WRITE_ADDRESS;
+                if (v->kind == OP_V_STRING){
+                    place->kind = OP_WRITE_ADDRESS_BYTE;
+                } else {
+                    place->kind = OP_WRITE_ADDRESS;
+                }
             }
             else
             {
                 Operand new_place = newOperand(OP_WRITE_ADDRESS, place->name);
+                if (v->kind == OP_V_STRING) {
+                    new_place->kind = OP_WRITE_ADDRESS_BYTE;
+                }
                 add_ICList(head, newBinop(IC_ADD, place, t3, t2));
                 add_ICList(head, newAssign(IC_ASSIGN, new_place, place));
             }
