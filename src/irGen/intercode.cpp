@@ -4,403 +4,11 @@
 #include <iostream>
 InterCodeList head = newICList();
 
-InterCodeList newICList()
-{
-    InterCodeList p = new InterCodes();
-    p->code = nullptr; // head pointer's content is null
-    p->prev = p->next = nullptr;
-    return p;
-}
-
-void delICList(InterCodeList p)
-{
-    InterCodeList q = p;
-    while(p != nullptr)
-    {
-        p = p->next;
-        free(q);
-        q = p;
-    }
-}
-
-void add_ICList(InterCodeList p, InterCode q)
-{
-    InterCodeList temp = p->next;
-    InterCodeList tail = p;
-    while(temp != nullptr)
-    {
-        tail = temp;
-        temp = temp->next;
-    }
-    temp = new InterCodes();
-    tail->next = temp;
-    temp->code = q;
-    temp->prev = tail;
-    temp->next = nullptr;
-}
-
-InterCode newAssign(Kind_IC kind, Operand right, Operand left)
-{
-    InterCode temp = new InterCode_();
-    switch(kind)
-    {
-        case IC_ASSIGN:
-            temp->kind = IC_ASSIGN;
-            temp->u.assign.right = right;
-            temp->u.assign.left = left;
-            break;
-        default: break;
-    }
-    return temp;
-}
-
-InterCode newBinop(Kind_IC kind, Operand res, Operand op1, Operand op2)
-{
-    InterCode temp = new InterCode_();
-    switch(kind)
-    {
-        case IC_ADD:
-            temp->kind = IC_ADD;
-            temp->u.binop.result = res;
-            temp->u.binop.op1 = op1;
-            temp->u.binop.op2 = op2;
-            break;
-        case IC_SUB:
-            temp->kind = IC_SUB;
-            temp->u.binop.result = res;
-            temp->u.binop.op1 = op1;
-            temp->u.binop.op2 = op2;
-            break;
-        case IC_MUL:
-            temp->kind = IC_MUL;
-            temp->u.binop.result = res;
-            temp->u.binop.op1 = op1;
-            temp->u.binop.op2 = op2;
-            break;
-        case IC_DIV:
-            temp->kind = IC_DIV;
-            temp->u.binop.result = res;
-            temp->u.binop.op1 = op1;
-            temp->u.binop.op2 = op2;
-            break;
-        default: break;
-    }
-    return temp;
-}
-
-InterCode newOneop(Kind_IC kind, Operand op)
-{
-    InterCode temp = new InterCode_();
-    switch(kind)
-    {
-        case IC_LABEL:
-            temp->kind = IC_LABEL;
-            temp->u.oneop.op = op;
-            break;
-        case IC_FUNCTION:
-            temp->kind = IC_FUNCTION;
-            temp->u.oneop.op = op;
-            break;
-        case IC_PARAM:
-            temp->kind = IC_PARAM;
-            temp->u.oneop.op = op;
-            break;
-        case IC_RETURN:
-            temp->kind = IC_RETURN;
-            temp->u.oneop.op = op;
-            break;
-        case IC_GOTO:
-            temp->kind = IC_GOTO;
-            temp->u.oneop.op = op;
-            break;
-        case IC_ARG:
-            temp->kind = IC_ARG;
-            temp->u.oneop.op = op;
-            break;
-        case IC_CALL:
-            temp->kind = IC_CALL;
-            temp->u.oneop.op = op;
-            break;
-        case IC_READ:
-            temp->kind = IC_READ;
-            temp->u.oneop.op = op;
-            break;
-        case IC_WRITE:
-            temp->kind = IC_WRITE;
-            temp->u.oneop.op = op;
-            break;
-        default: break;
-    }
-    return temp;
-}
-
-InterCode newIf_goto(Kind_IC kind, Operand x, Operand relop, Operand y, Operand t)
-{
-    InterCode temp = new InterCode_();
-    switch(kind)
-    {
-        case IC_IF_GOTO:
-            temp->kind = IC_IF_GOTO;
-            temp->u.if_goto.x = x;
-            temp->u.if_goto.relop = relop;
-            temp->u.if_goto.y = y;
-            temp->u.if_goto.t = t;
-            break;
-        default: break;
-    }
-    return temp;
-}
-
-InterCode newDec(Kind_IC kind, Operand x, int size)
-{
-    InterCode temp = new InterCode_();
-    switch(kind)
-    {
-        case IC_DEC:
-            temp->kind = IC_DEC;
-            temp->u.dec.x = x;
-            temp->u.dec.size = size;
-            break;
-        default: break;
-    }
-    return temp;
-}
-
-void printInterCodes(std::ofstream &out, InterCodeList head)
-{
-    InterCodeList cur = head->next;
-    while(cur)
-    {
-        switch (cur->code->kind)
-        {
-        case IC_LABEL:
-            out << "LABEL ";
-            printOperand(out, cur->code->u.oneop.op);
-            out << " :";
-            break;
-        case IC_FUNCTION:
-            out << "FUNCTION ";
-            printOperand(out, cur->code->u.oneop.op);
-            out << " :";
-            break;
-        case IC_ASSIGN:
-            printOperand(out, cur->code->u.assign.left);
-            out << " := ";
-            printOperand(out, cur->code->u.assign.right);
-            break;
-        case IC_ADD:
-            printOperand(out, cur->code->u.binop.result);
-            out << " := ";
-            printOperand(out, cur->code->u.binop.op1);
-            out << " + ";
-            printOperand(out, cur->code->u.binop.op2);
-            break;
-        case IC_SUB:
-            printOperand(out, cur->code->u.binop.result);
-            out << " := ";
-            printOperand(out, cur->code->u.binop.op1);
-            out << " - ";
-            printOperand(out, cur->code->u.binop.op2);
-            break;
-        case IC_MUL:
-            printOperand(out, cur->code->u.binop.result);
-            out << " := ";
-            printOperand(out, cur->code->u.binop.op1);
-            out << " * ";
-            printOperand(out, cur->code->u.binop.op2);
-            break;
-        case IC_DIV:
-            printOperand(out, cur->code->u.binop.result);
-            out << " := ";
-            printOperand(out, cur->code->u.binop.op1);
-            out << " / ";
-            printOperand(out, cur->code->u.binop.op2);
-            break;
-        case IC_GOTO:
-            out << "GOTO ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        case IC_IF_GOTO:
-            out << "IF ";
-            printOperand(out, cur->code->u.if_goto.x);
-            out << " ";
-            printOperand(out, cur->code->u.if_goto.relop);
-            out << " ";
-            printOperand(out, cur->code->u.if_goto.y);
-            out << " GOTO ";
-            printOperand(out, cur->code->u.if_goto.t);
-            break;
-        case IC_RETURN:
-            out << "RETURN ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        case IC_DEC:
-            out << "DEC ";
-            printOperand(out, cur->code->u.dec.x);
-            out << " ";
-            out << cur->code->u.dec.size;
-            break;
-        case IC_ARG:
-            out << "ARG ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        case IC_CALL:
-            printOperand(out, cur->code->u.assign.right);
-            break;
-        case IC_PARAM:
-            out << "PARAM ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        case IC_READ:
-            out << "READ ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        case IC_WRITE:
-            out << "WRITE ";
-            printOperand(out, cur->code->u.oneop.op);
-            break;
-        }
-        out << "\n";
-        cur = cur->next;
-    }
-}
-
-
-Operand newOperand(Kind_op kind, std::string val)
-{
-    Operand op = new Operand_();
-    op->kind = kind;
-    op->loc = 1;
-    switch(kind)
-    {
-        case OP_CONSTANT:
-        case OP_VARIABLE:
-        case OP_ADDRESS: 
-        case OP_LABEL:
-        case OP_FUNCTION:
-        case OP_RELOP:
-        case OP_READ_ADDRESS: 
-        case OP_WRITE_ADDRESS:
-        case OP_CALL:
-        case OP_STRING:
-        case OP_V_STRING:
-        case OP_WRITE_ADDRESS_BYTE:
-            op->name = val;
-    }
-    return op;
-}
-
-int num_temp = 0;
-int num_label = 0;
-int num_value = 0;
-Operand newtemp()
-{
-    std::string name = "t" + std::to_string(num_temp);
-    ++num_temp;
-    Operand op = newOperand(OP_VARIABLE, name);
-    return op;
-}
-
-Operand newlabel()
-{
-    std::string name = "label" + std::to_string(num_label);
-    ++num_label;
-    Operand op = newOperand(OP_LABEL, name);
-    return op;
-}
-
-Operand newvalue()
-{
-    std::string name = "v" + std::to_string(num_value);
-    ++num_value;
-    Operand op = newOperand(OP_VARIABLE, name);
-    return op;
-}
-/*
-将op所对应的值赋值为kind和val
-*/
-void setOperand(Operand op, Kind_op kind, std::string val)
-{
-    op->kind = kind;
-    switch (kind)
-    {
-    case OP_CONSTANT:
-    case OP_VARIABLE:
-    case OP_ADDRESS:
-    case OP_LABEL:
-    case OP_FUNCTION:
-    case OP_RELOP:
-    case OP_READ_ADDRESS:
-    case OP_WRITE_ADDRESS:
-    case OP_WRITE_ADDRESS_BYTE:
-        op->name = val;
-    }
-}
-/*
-打印一个操作数到out中
-*/
-void printOperand(std::ofstream &out, Operand op)
-{
-    if(!op)
-        return;
-    switch(op->kind)
-    {
-        case OP_CONSTANT:
-            out << "#" << op->name;
-            break;
-        case OP_CALL:
-            out << "CALL "<<op->name;
-            break;
-        case OP_VARIABLE:
-        case OP_ADDRESS:
-        case OP_LABEL:
-        case OP_FUNCTION:
-        case OP_RELOP:
-        case OP_STRING:
-        case OP_V_STRING:
-            out << op->name;
-            break;
-        case OP_READ_ADDRESS:
-            out << "&" << op->name;
-            break;
-        case OP_WRITE_ADDRESS:
-        case OP_WRITE_ADDRESS_BYTE:
-            out << "*" << op->name;
-            break;
-    }
-}
-
-/*
-传入一个符号表item,输出该item需要分配的空间大小,以字节为单位
-*/
-int compute_size(Type item)
-{
-    if (item == NULL)
-            return 0;
-    switch(item->kind)
-    {
-    case INT_SEMA:
-    case FLOAT_SEMA:
-            return 4;
-    case ARRAY_SEMA:
-            return item->u.array.elemSize*compute_size(item->u.array.elemType);
-    case STRUCTURE_SEMA:
-    {
-            int size = 0;
-            FieldList temp = item->u.structure;
-            while (temp)
-            {
-                size += compute_size(temp->type);
-                temp = temp->tail;
-            }
-            return size;
-        }
-    }
-}
-
-/*
-产生中间代码主入口
-*/
+/**
+ * @brief 产生中间代码主入口
+ *
+ * @param root 当前要输出的树根节点
+ */
 void translate_Program(tree root)
 {
     if (root == NULL)
@@ -410,6 +18,11 @@ void translate_Program(tree root)
         translate_ExtDefList(root->children[0]);
 }
 
+/**
+ * @brief 当前节点为ExtDefList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为ExtDefList)
+ */
 void translate_ExtDefList(tree node)
 {
     if(node == NULL)
@@ -422,7 +35,11 @@ void translate_ExtDefList(tree node)
         node = node->children[1];
     }
 }
-
+/**
+ * @brief 当前节点为ExtDef的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为ExtDef)
+ */
 void translate_ExtDef(tree node)
 {
     if(node == NULL)
@@ -439,7 +56,12 @@ void translate_ExtDef(tree node)
         translate_ExtDecList(node->children[1], valueRecord);
     }
 }
-
+/**
+ * @brief 当前节点为ExtDecList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为ExtDecList)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_ExtDecList(tree node, std::vector<std::string>& valueRecord) {
     if (node == nullptr) {
         return ;
@@ -452,7 +74,12 @@ void translate_ExtDecList(tree node, std::vector<std::string>& valueRecord) {
         translate_ExtDecList(node->children[2], valueRecord);
     }
 }
-
+/**
+ * @brief 当前节点为FunDec的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为FunDec)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_FunDec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -465,7 +92,12 @@ void translate_FunDec(tree node, std::vector<std::string>& valueRecord)
     if(node->childCnt == 4)
         translate_VarList(node->children[2], valueRecord);
 }
-
+/**
+ * @brief 当前节点为VarList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为VarList)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_VarList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -476,7 +108,12 @@ void translate_VarList(tree node, std::vector<std::string>& valueRecord)
     if(node->childCnt == 3)
         translate_VarList(node->children[2], valueRecord);
 }
-
+/**
+ * @brief 当前节点为ParamDec的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为ParamDec)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_ParamDec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -497,7 +134,12 @@ void translate_ParamDec(tree node, std::vector<std::string>& valueRecord)
     InterCode x = newOneop(IC_PARAM, param);
     add_ICList(head,x);
 }
-
+/**
+ * @brief 当前节点为CompSt的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为CompSt)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_CompSt(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -510,7 +152,12 @@ void translate_CompSt(tree node, std::vector<std::string>& valueRecord)
         valueRecord.pop_back();
     }
 }
-
+/**
+ * @brief 当前节点为DefList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为DefList)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_DefList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -523,7 +170,12 @@ void translate_DefList(tree node, std::vector<std::string>& valueRecord)
         node = node->children[1];
     }
 }
-
+/**
+ * @brief 当前节点为Def的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Def)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_Def(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -531,7 +183,12 @@ void translate_Def(tree node, std::vector<std::string>& valueRecord)
     // Def → Specifier DecList SEMI
     translate_DecList(node->children[1], valueRecord);
 }
-
+/**
+ * @brief 当前节点为DecList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为DecList)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_DecList(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -547,7 +204,12 @@ void translate_DecList(tree node, std::vector<std::string>& valueRecord)
             break;
     }
 }
-
+/**
+ * @brief 当前节点为Dec的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Dec)
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_Dec(tree node, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -583,7 +245,13 @@ void translate_Dec(tree node, std::vector<std::string>& valueRecord)
         add_ICList(head,x);
     }
 }
-
+/**
+ * @brief 当前节点为VarDec的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为VarDec)
+ * @param place 储存以当前节点为根的子树返回值
+ * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
+ */
 void translate_VarDec(tree node,Operand place, std::vector<std::string>& valueRecord)
 {
     if (node == NULL)
@@ -608,7 +276,12 @@ void translate_VarDec(tree node,Operand place, std::vector<std::string>& valueRe
 
 
 }
-
+/**
+ * @brief 当前节点为Exp的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Exp)
+ * @param place 储存以当前节点为根的子树返回值
+ */
 void translate_Exp(tree node, Operand place)
 {
     if (node == NULL)
@@ -892,7 +565,11 @@ void translate_Exp(tree node, Operand place)
         }
     }
 }
-
+/**
+ * @brief 当前节点为StmtList的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为StmtList)
+ */
 void translate_StmtList(tree node)
 {
     if (node == NULL)
@@ -905,7 +582,11 @@ void translate_StmtList(tree node)
         node = node->children[1];
     }
 }
-
+/**
+ * @brief 当前节点为Stmt的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Stmt)
+ */
 void translate_Stmt(tree node)
 {
     if (node == NULL)
@@ -978,7 +659,13 @@ void translate_Stmt(tree node)
         add_ICList(head, x);
     }
 }
-
+/**
+ * @brief 当前节点为Cond的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Cond)
+ * @param label_true 条件为true时的跳转label
+ * @param label_false 条件为false时的跳转label
+ */
 void translate_Cond(tree node, Operand label_true, Operand label_false)
 {
     if (node == NULL)
@@ -1033,38 +720,12 @@ void translate_Cond(tree node, Operand label_true, Operand label_false)
     }
 }
 
-
-Arglist newArglist()
-{
-    Arglist head = new Arglist_();
-    head->head = NULL;
-    head->cur = NULL;
-    return head;
-}
-
-Arg newArg(Operand op)
-{
-    Arg temp = new Arg_();
-    temp->op = op;
-    temp->next = NULL;
-    return temp;
-}
-
-void addArg(Arglist argList, Arg arg)
-{
-    if (argList->head == NULL)
-    {
-        argList->head = arg;
-        argList->cur = arg;
-    }
-    else
-    {
-        argList->head = arg;
-        argList->head->next = argList->cur;
-        argList->cur = arg;
-    }
-}
-
+/**
+ * @brief 当前节点为Args的中间代码翻译
+ *
+ * @param node 当前要输出的子树根节点(key为Args)
+ * @param argList 需要返回的参数链表
+ */
 void translate_Args(tree node, Arglist argList)
 {
     if (node == NULL)
@@ -1085,6 +746,461 @@ void translate_Args(tree node, Arglist argList)
     }
 }
 
+/**
+ * @brief 初始化参数链表
+ * 
+ * @return 参数链表
+ */
+Arglist newArglist()
+{
+    Arglist head = new Arglist_();
+    head->head = NULL;
+    head->cur = NULL;
+    return head;
+}
+/**
+ * @brief 产生一个新参数
+ * 
+ * @param op 参数对应的操作数
+ */
+Arg newArg(Operand op)
+{
+    Arg temp = new Arg_();
+    temp->op = op;
+    temp->next = NULL;
+    return temp;
+}
+/**
+ * @brief 向参数链表新增参数
+ *
+ * @param argList 参数链表
+ * @param arg 添加的参数
+ */
+void addArg(Arglist argList, Arg arg)
+{
+    if (argList->head == NULL)
+    {
+        argList->head = arg;
+        argList->cur = arg;
+    }
+    else
+    {
+        argList->head = arg;
+        argList->head->next = argList->cur;
+        argList->cur = arg;
+    }
+}
+/**
+ * @brief 初始化中间代码链表
+ */
+InterCodeList newICList()
+{
+    InterCodeList p = new InterCodes();
+    p->code = nullptr; // head pointer's content is null
+    p->prev = p->next = nullptr;
+    return p;
+}
+/**
+ * @brief 向中间代码链表新增中间代码
+ *
+ * @param p 中间代码链表
+ * @param q 添加的中间代码
+ */
+void add_ICList(InterCodeList p, InterCode q)
+{
+    InterCodeList temp = p->next;
+    InterCodeList tail = p;
+    while (temp != nullptr)
+    {
+        tail = temp;
+        temp = temp->next;
+    }
+    temp = new InterCodes();
+    tail->next = temp;
+    temp->code = q;
+    temp->prev = tail;
+    temp->next = nullptr;
+}
+
+/**
+ * @brief 产生一条Assign中间代码
+ *
+ * @param kind 中间代码类型
+ * @param right assign右值
+ * @param left assign左值
+ *
+ * @return 一条kind为IC_ASSIGN的中间代码
+ */
+InterCode newAssign(Kind_IC kind, Operand right, Operand left)
+{
+    InterCode temp = new InterCode_();
+    switch (kind)
+    {
+    case IC_ASSIGN:
+        temp->kind = IC_ASSIGN;
+        temp->u.assign.right = right;
+        temp->u.assign.left = left;
+        break;
+    default:
+        break;
+    }
+    return temp;
+}
+/**
+ * @brief 产生一条二元运算中间代码
+ *
+ * @param kind 中间代码类型
+ * @param result 结果
+ * @param op1 第一个操作数
+ * @param op2 第二个操作数
+ *
+ * @return 一条二元运算中间代码
+ */
+InterCode newBinop(Kind_IC kind, Operand res, Operand op1, Operand op2)
+{
+    InterCode temp = new InterCode_();
+    switch (kind)
+    {
+    case IC_ADD:
+        temp->kind = IC_ADD;
+        temp->u.binop.result = res;
+        temp->u.binop.op1 = op1;
+        temp->u.binop.op2 = op2;
+        break;
+    case IC_SUB:
+        temp->kind = IC_SUB;
+        temp->u.binop.result = res;
+        temp->u.binop.op1 = op1;
+        temp->u.binop.op2 = op2;
+        break;
+    case IC_MUL:
+        temp->kind = IC_MUL;
+        temp->u.binop.result = res;
+        temp->u.binop.op1 = op1;
+        temp->u.binop.op2 = op2;
+        break;
+    case IC_DIV:
+        temp->kind = IC_DIV;
+        temp->u.binop.result = res;
+        temp->u.binop.op1 = op1;
+        temp->u.binop.op2 = op2;
+        break;
+    default:
+        break;
+    }
+    return temp;
+}
+/**
+ * @brief 产生一条单操作数中间代码
+ *
+ * @param kind 中间代码类型
+ * @param op 操作数
+ *
+ * @return 一条单操作数中间代码
+ */
+InterCode newOneop(Kind_IC kind, Operand op)
+{
+    InterCode temp = new InterCode_();
+    switch (kind)
+    {
+    case IC_LABEL:
+        temp->kind = IC_LABEL;
+        temp->u.oneop.op = op;
+        break;
+    case IC_FUNCTION:
+        temp->kind = IC_FUNCTION;
+        temp->u.oneop.op = op;
+        break;
+    case IC_PARAM:
+        temp->kind = IC_PARAM;
+        temp->u.oneop.op = op;
+        break;
+    case IC_RETURN:
+        temp->kind = IC_RETURN;
+        temp->u.oneop.op = op;
+        break;
+    case IC_GOTO:
+        temp->kind = IC_GOTO;
+        temp->u.oneop.op = op;
+        break;
+    case IC_ARG:
+        temp->kind = IC_ARG;
+        temp->u.oneop.op = op;
+        break;
+    case IC_CALL:
+        temp->kind = IC_CALL;
+        temp->u.oneop.op = op;
+        break;
+    case IC_READ:
+        temp->kind = IC_READ;
+        temp->u.oneop.op = op;
+        break;
+    case IC_WRITE:
+        temp->kind = IC_WRITE;
+        temp->u.oneop.op = op;
+        break;
+    default:
+        break;
+    }
+    return temp;
+}
+/**
+ * @brief 产生一条if_goto中间代码
+ *
+ * @param kind 中间代码类型
+ * @param x 比较符左值
+ * @param relop 比较符
+ * @param y 比较符右值
+ * @param t 条件为真跳转label
+ * 
+ * @return 一条if_goto中间代码
+ */
+InterCode newIf_goto(Kind_IC kind, Operand x, Operand relop, Operand y, Operand t)
+{
+    InterCode temp = new InterCode_();
+    switch (kind)
+    {
+    case IC_IF_GOTO:
+        temp->kind = IC_IF_GOTO;
+        temp->u.if_goto.x = x;
+        temp->u.if_goto.relop = relop;
+        temp->u.if_goto.y = y;
+        temp->u.if_goto.t = t;
+        break;
+    default:
+        break;
+    }
+    return temp;
+}
+/**
+ * @brief 产生一条DEC中间代码
+ *
+ * @param kind 中间代码类型
+ * @param x DEC的操作数
+ * @param size DEC大小
+ *
+ * @return 一条DEC中间代码
+ */
+InterCode newDec(Kind_IC kind, Operand x, int size)
+{
+    InterCode temp = new InterCode_();
+    switch (kind)
+    {
+    case IC_DEC:
+        temp->kind = IC_DEC;
+        temp->u.dec.x = x;
+        temp->u.dec.size = size;
+        break;
+    default:
+        break;
+    }
+    return temp;
+}
+/**
+ * @brief 打印中间代码
+ *
+ * @param out 输出流
+ * @param head 中间代码链表头指针
+ */
+void printInterCodes(std::ofstream &out, InterCodeList head)
+{
+    InterCodeList cur = head->next;
+    while (cur)
+    {
+        switch (cur->code->kind)
+        {
+        case IC_LABEL:
+            out << "LABEL ";
+            printOperand(out, cur->code->u.oneop.op);
+            out << " :";
+            break;
+        case IC_FUNCTION:
+            out << "FUNCTION ";
+            printOperand(out, cur->code->u.oneop.op);
+            out << " :";
+            break;
+        case IC_ASSIGN:
+            printOperand(out, cur->code->u.assign.left);
+            out << " := ";
+            printOperand(out, cur->code->u.assign.right);
+            break;
+        case IC_ADD:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " + ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case IC_SUB:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " - ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case IC_MUL:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " * ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case IC_DIV:
+            printOperand(out, cur->code->u.binop.result);
+            out << " := ";
+            printOperand(out, cur->code->u.binop.op1);
+            out << " / ";
+            printOperand(out, cur->code->u.binop.op2);
+            break;
+        case IC_GOTO:
+            out << "GOTO ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IC_IF_GOTO:
+            out << "IF ";
+            printOperand(out, cur->code->u.if_goto.x);
+            out << " ";
+            printOperand(out, cur->code->u.if_goto.relop);
+            out << " ";
+            printOperand(out, cur->code->u.if_goto.y);
+            out << " GOTO ";
+            printOperand(out, cur->code->u.if_goto.t);
+            break;
+        case IC_RETURN:
+            out << "RETURN ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IC_DEC:
+            out << "DEC ";
+            printOperand(out, cur->code->u.dec.x);
+            out << " ";
+            out << cur->code->u.dec.size;
+            break;
+        case IC_ARG:
+            out << "ARG ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IC_CALL:
+            printOperand(out, cur->code->u.assign.right);
+            break;
+        case IC_PARAM:
+            out << "PARAM ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IC_READ:
+            out << "READ ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        case IC_WRITE:
+            out << "WRITE ";
+            printOperand(out, cur->code->u.oneop.op);
+            break;
+        }
+        out << "\n";
+        cur = cur->next;
+    }
+}
+
+/**
+ * @brief 产生一个操作数
+ *
+ * @param kind 操作数类型
+ * @param val 操作数ID
+ * 
+ * @return 操作数
+ */
+Operand newOperand(Kind_op kind, std::string val)
+{
+    Operand op = new Operand_();
+    op->kind = kind;
+    op->loc = 1;
+    op->name = val;
+    return op;
+}
+
+int num_temp = 0;
+int num_label = 0;
+int num_value = 0;
+
+/**
+ * @brief 产生一个临时寄存器操作数
+ *
+ * @return 临时寄存器操作数,如t0,t1等
+ */
+Operand newtemp()
+{
+    std::string name = "t" + std::to_string(num_temp);
+    ++num_temp;
+    Operand op = newOperand(OP_VARIABLE, name);
+    return op;
+}
+/**
+ * @brief 产生一个标识符操作数
+ *
+ * @return 标识符操作数,如label0,label1等
+ */
+Operand newlabel()
+{
+    std::string name = "label" + std::to_string(num_label);
+    ++num_label;
+    Operand op = newOperand(OP_LABEL, name);
+    return op;
+}
+/**
+ * @brief 产生一个值操作数
+ *
+ * @return 值操作数,如v0,v1等
+ */
+Operand newvalue()
+{
+    std::string name = "v" + std::to_string(num_value);
+    ++num_value;
+    Operand op = newOperand(OP_VARIABLE, name);
+    return op;
+}
+
+/**
+ * @brief 打印操作数
+ *
+ * @param out 输出流
+ * @param op 操作数
+ */
+void printOperand(std::ofstream &out, Operand op)
+{
+    if (!op)
+        return;
+    switch (op->kind)
+    {
+    case OP_CONSTANT:
+        out << "#" << op->name;
+        break;
+    case OP_CALL:
+        out << "CALL " << op->name;
+        break;
+    case OP_VARIABLE:
+    case OP_LABEL:
+    case OP_FUNCTION:
+    case OP_RELOP:
+    case OP_STRING:
+    case OP_V_STRING:
+        out << op->name;
+        break;
+    case OP_READ_ADDRESS:
+        out << "&" << op->name;
+        break;
+    case OP_WRITE_ADDRESS:
+    case OP_WRITE_ADDRESS_BYTE:
+        out << "*" << op->name;
+        break;
+    }
+}
+/**
+ * @brief 从符号表获取ID对应的操作数
+ *
+ * @param key 需要查询的ID
+ * 
+ * @return 查询到的操作数
+ */
 Operand getValueItem(std::string key) {
     auto target = valueTable.find(key);
     if (target == valueTable.end()) {
@@ -1097,7 +1213,14 @@ Operand getValueItem(std::string key) {
         }
     }
 }
-
+/**
+ * @brief 添加符号表元素
+ *
+ * @param key key
+ * @param place value
+ * 
+ * @return 插入是否成功
+ */
 bool insertValueItem(std::string key, Operand place) {
     auto target = valueTable.find(key);
     if (target == valueTable.end()) {
@@ -1110,7 +1233,11 @@ bool insertValueItem(std::string key, Operand place) {
 
     return true;
 }
-
+/**
+ * @brief 删除符号表元素
+ *
+ * @param key 元素ID
+ */
 void deleteValueItem(std::string key) {
     auto target = valueTable.find(key);
     if (target == valueTable.end()) {
@@ -1123,7 +1250,13 @@ void deleteValueItem(std::string key) {
         }
     }
 }
-
+/**
+ * @brief 获取二维数组第二个维度
+ *
+ * @param key 二维数组ID
+ * 
+ * @return 二维数组对应的第二个维度信息
+ */
 std::string getDimensionItem(std::string key) {
     auto target = dimensionTable.find(key);
     if (target == dimensionTable.end()) {
@@ -1132,7 +1265,13 @@ std::string getDimensionItem(std::string key) {
         return target->second;
     }
 }
-
+/**
+ * @brief 插入二维数组ID与其第二个维度信息
+ *
+ * @param key 二维数组ID
+ * @param size 二维数组第二个维度信息
+ * @return 插入是否成功
+ */
 bool insertDimensionItem(std::string key, std::string size) {
     auto target = dimensionTable.find(key);
     if (target == dimensionTable.end()) {
