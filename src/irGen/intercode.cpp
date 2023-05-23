@@ -13,10 +13,13 @@ InterCodeList head = newICList();
  * @param root 当前要输出的树根节点
  */
 void translate_Program(tree root) {
-  if (root == NULL) return;
+  if (root == NULL) {
+    return;
+  }
   // Program → ExtDefList
-  if (root->children[0]->key == "ExtDefList")
+  if (root->children[0]->key == "ExtDefList") {
     translate_ExtDefList(root->children[0]);
+  }
 }
 
 /**
@@ -25,7 +28,9 @@ void translate_Program(tree root) {
  * @param node 当前要输出的子树根节点(key为ExtDefList)
  */
 void translate_ExtDefList(tree node) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // ExtDefList -> ExtDef ExtDefList
   //             | e
   while (node) {
@@ -39,7 +44,9 @@ void translate_ExtDefList(tree node) {
  * @param node 当前要输出的子树根节点(key为ExtDef)
  */
 void translate_ExtDef(tree node) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // ExtDef → Specifier ExtDecList SEMI
   //          | Specifier SEMI
   //          | Specifier FunDec CompSt
@@ -77,14 +84,18 @@ void translate_ExtDecList(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_FunDec(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // to do
   // FunDec -> ID LP VarList RP
   //         | ID LP RP
   InterCode x =
       newOneop(IC_FUNCTION, newOperand(OP_FUNCTION, node->children[0]->value));
   add_ICList(head, x);
-  if (node->childCnt == 4) translate_VarList(node->children[2], valueRecord);
+  if (node->childCnt == 4) {
+    translate_VarList(node->children[2], valueRecord);
+  }
 }
 /**
  * @brief 当前节点为VarList的中间代码翻译
@@ -93,11 +104,15 @@ void translate_FunDec(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_VarList(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // VarList → ParamDec COMMA VarList
   //          | ParamDec
   translate_ParamDec(node->children[0], valueRecord);
-  if (node->childCnt == 3) translate_VarList(node->children[2], valueRecord);
+  if (node->childCnt == 3) {
+    translate_VarList(node->children[2], valueRecord);
+  }
 }
 /**
  * @brief 当前节点为ParamDec的中间代码翻译
@@ -106,7 +121,9 @@ void translate_VarList(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_ParamDec(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // ParamDec → Specifier VarDec
   // VarDec → ID
   //          | VarDec LB INT RB
@@ -116,8 +133,9 @@ void translate_ParamDec(tree node, std::vector<std::string>& valueRecord) {
     temp = temp->children[0];
   }
   Operand param = newvalue();
-  if (node->children[0]->children[0]->value == "string")
+  if (node->children[0]->children[0]->value == "string") {
     param->kind = OP_V_STRING;
+  }
   insertValueItem(temp->children[0]->value, param);
   valueRecord.push_back(temp->children[0]->value);
   InterCode x = newOneop(IC_PARAM, param);
@@ -130,7 +148,9 @@ void translate_ParamDec(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_CompSt(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // CompSt → LC DefList StmtList RC
   translate_DefList(node->children[1], valueRecord);
   translate_StmtList(node->children[2]);
@@ -146,7 +166,9 @@ void translate_CompSt(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_DefList(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // DefList → Def DefList
   //           |e
   while (node) {
@@ -161,7 +183,9 @@ void translate_DefList(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_Def(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // Def → Specifier DecList SEMI
   translate_DecList(node->children[1], valueRecord);
 }
@@ -172,15 +196,18 @@ void translate_Def(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_DecList(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // DecList → Dec
   //          | Dec COMMA DecList
   while (node) {
     translate_Dec(node->children[0], valueRecord);
-    if (node->childCnt == 3)
+    if (node->childCnt == 3) {
       node = node->children[2];
-    else
+    } else {
       break;
+    }
   }
 }
 /**
@@ -190,7 +217,9 @@ void translate_DecList(tree node, std::vector<std::string>& valueRecord) {
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
 void translate_Dec(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // Dec → VarDec
   //      | VarDec ASSIGNOP Exp
 
@@ -227,7 +256,9 @@ void translate_Dec(tree node, std::vector<std::string>& valueRecord) {
  */
 void translate_VarDec(tree node, Operand place,
                       std::vector<std::string>& valueRecord) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // VarDec → ID
   //          | VarDec LB INT RB
   if (node->childCnt == 4) {
@@ -253,7 +284,9 @@ void translate_VarDec(tree node, Operand place,
  * @param place 储存以当前节点为根的子树返回值
  */
 void translate_Exp(tree node, Operand place) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   if (node->childCnt == 4) {
     // Exp → ID LP Args RP
     if (node->children[0]->key == "ID") {
@@ -278,10 +311,11 @@ void translate_Exp(tree node, Operand place) {
       }
       Operand id = newOperand(OP_CALL, node->children[0]->value);
       InterCode x;
-      if (place)
+      if (place) {
         x = newAssign(IC_ASSIGN, id, place);
-      else
+      } else {
         x = newOneop(IC_CALL, id);
+      }
       add_ICList(head, x);
       return;
     }
@@ -294,18 +328,19 @@ void translate_Exp(tree node, Operand place) {
       tree tmp_node = node;
       while (tmp_node->childCnt != 1) tmp_node = tmp_node->children[0];
       Operand v = getValueItem(tmp_node->children[0]->value);
-      if (v->kind == OP_V_STRING)
+      if (v->kind == OP_V_STRING) {
         add_ICList(head,
                    newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "1"), tmp));
-      else
+      } else {
         add_ICList(head,
                    newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), tmp));
+      }
       add_ICList(head, newBinop(IC_MUL, t2, t1, tmp));
 
       Operand t3 = newtemp();
-      if (node->children[0]->childCnt == 1)
+      if (node->children[0]->childCnt == 1) {
         translate_Exp(node->children[0], t3);
-      else {
+      } else {
         Operand t4 = newtemp();
         translate_Exp(node->children[0]->children[2], t4);
         add_ICList(head, newBinop(IC_MUL, t4, t4, tmp));
@@ -349,10 +384,11 @@ void translate_Exp(tree node, Operand place) {
       } else {
         Operand id = newOperand(OP_CALL, node->children[0]->value);
         InterCode x;
-        if (place)
+        if (place) {
           x = newAssign(IC_ASSIGN, id, place);
-        else
+        } else {
           x = newOneop(IC_CALL, id);
+        }
         add_ICList(head, x);
       }
     }
@@ -363,24 +399,30 @@ void translate_Exp(tree node, Operand place) {
     // | Exp ASSIGNOP Exp
     if (node->children[1]->key == "ASSIGNOP") {
       Operand t1;
-      if (node->children[2]->children[0]->key == "STRING")
+      if (node->children[2]->children[0]->key == "STRING") {
         t1 = newOperand(OP_STRING, node->children[2]->children[0]->value);
-      else {
+      } else {
         t1 = newtemp();
         translate_Exp(node->children[2], t1);
       }
       if (node->children[0]->children[0]->key == "ID") {
         Operand v = getValueItem(node->children[0]->children[0]->value);
-        if (t1->kind == OP_STRING) v->kind = OP_V_STRING;
+        if (t1->kind == OP_STRING) {
+          v->kind = OP_V_STRING;
+        }
         add_ICList(head, newAssign(IC_ASSIGN, t1, v));
 
-        if (place) add_ICList(head, newAssign(IC_ASSIGN, v, place));
+        if (place) {
+          add_ICList(head, newAssign(IC_ASSIGN, v, place));
+        }
       } else {
         Operand t2 = newtemp();
         t2->loc = 0;
         translate_Exp(node->children[0], t2);
         add_ICList(head, newAssign(IC_ASSIGN, t1, t2));
-        if (place) add_ICList(head, newAssign(IC_ASSIGN, t2, place));
+        if (place) {
+          add_ICList(head, newAssign(IC_ASSIGN, t2, place));
+        }
       }
     }
     // | Exp AND Exp
@@ -506,7 +548,9 @@ void translate_Exp(tree node, Operand place) {
  * @param node 当前要输出的子树根节点(key为StmtList)
  */
 void translate_StmtList(tree node) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // StmtList -> Stmt StmtList
   //           | e
   while (node) {
@@ -520,7 +564,9 @@ void translate_StmtList(tree node) {
  * @param node 当前要输出的子树根节点(key为Stmt)
  */
 void translate_Stmt(tree node) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // Stmt -> Exp SEMI
   if (node->children[0]->key == "Exp") {
     translate_Exp(node->children[0], nullptr);
@@ -592,7 +638,9 @@ void translate_Stmt(tree node) {
  * @param label_false 条件为false时的跳转label
  */
 void translate_Cond(tree node, Operand label_true, Operand label_false) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // Exp -> Exp AND Exp
   //      | Exp OR Exp
   //      | Exp RELOP Exp
@@ -612,8 +660,9 @@ void translate_Cond(tree node, Operand label_true, Operand label_false) {
     add_ICList(head, newOneop(IC_GOTO, label_false));
   }
   // Exp -> NOT Exp
-  else if (node->children[0]->key == "NOT")
+  else if (node->children[0]->key == "NOT") {
     translate_Cond(node->children[1], label_false, label_true);
+  }
   // Exp -> Exp AND Exp
   else if (node->children[1]->key == "AND") {
     Operand label1 = newlabel();
@@ -647,7 +696,9 @@ void translate_Cond(tree node, Operand label_true, Operand label_false) {
  * @param argList 需要返回的参数链表
  */
 void translate_Args(tree node, Arglist argList) {
-  if (node == NULL) return;
+  if (node == NULL) {
+    return;
+  }
   // Args -> Exp COMMA Args
   //       | Exp
 
@@ -1058,7 +1109,9 @@ Operand newvalue() {
  * @param op 操作数
  */
 void printOperand(std::ofstream& out, Operand op) {
-  if (!op) return;
+  if (!op) {
+    return;
+  }
   switch (op->kind) {
     case OP_CONSTANT:
       out << "#" << op->name;
