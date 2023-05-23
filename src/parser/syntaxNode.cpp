@@ -70,12 +70,13 @@ void printDFS(tree root, std::ofstream &out) {
       if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z')) {
         out << "\\";
       }
-      if (ch == '[')
+      if (ch == '[') {
         out << "-";
-      else if (ch == ']')
+      } else if (ch == ']') {
         out << "+";
-      else
+      } else {
         out << ch;
+      }
     }
     out << "]";
     return;

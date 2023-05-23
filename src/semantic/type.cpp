@@ -134,7 +134,9 @@ void deleteFieldList(FieldList fieldList) {
 }
 
 FieldList copyFieldList(FieldList fieldList) {
-  if (fieldList == nullptr) return nullptr;
+  if (fieldList == nullptr) {
+    return nullptr;
+  }
   FieldList newList = new FieldList_();
   newList->name = fieldList->name;
   newList->type = fieldList->type;
@@ -244,12 +246,15 @@ Type getArrayElemType(Type type, int level) {  // EXP-> EXP LB EXP RB level = 1
   while (type->kind == ARRAY_SEMA) {
     type = type->u.array.elemType;
     ++count;
-    if (count == level) break;
+    if (count == level) {
+      break;
+    }
   }
-  if (count < level)
+  if (count < level) {
     return nullptr;
-  else
+  } else {
     return type;
+  }
 }
 
 Type getArrayType(tree root, int& array_depth) {

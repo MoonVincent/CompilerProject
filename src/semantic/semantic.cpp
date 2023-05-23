@@ -8,7 +8,9 @@ void semantic(tree syntaxTree) {
 }
 
 void ExtDefList(tree root, std::list<std::string>& record_struct) {
-  if (root == nullptr) return;
+  if (root == nullptr) {
+    return;
+  }
   ExtDef(root->children[0], record_struct);
   ExtDefList(root->children[1], record_struct);
 }
@@ -90,10 +92,11 @@ Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
 }
 
 std::string OptTag(tree root) {
-  if (root == nullptr)
+  if (root == nullptr) {
     return "";
-  else
+  } else {
     return root->children[0]->value;
+  }
 }
 
 std::string Tag(tree root) { return root->children[0]->value; }
@@ -174,7 +177,9 @@ void CompSt(tree root, std::list<std::string>& record, Type& ret,
 }
 
 void StmtList(tree root, Type& ret) {
-  if (root == nullptr) return;
+  if (root == nullptr) {
+    return;
+  }
   Stmt(root->children[0], ret);
   StmtList(root->children[1], ret);
 }
@@ -203,7 +208,9 @@ void Stmt(tree root, Type& ret) {
 
 void DefList(tree root, std::list<std::string>& record,
              std::list<std::string>& record_struct) {
-  if (root == nullptr) return;
+  if (root == nullptr) {
+    return;
+  }
   Def(root->children[0], record, record_struct);
   DefList(root->children[1], record, record_struct);
 }
@@ -223,9 +230,9 @@ void DecList(Type type, tree root, std::list<std::string>& record) {
 
 void Dec(Type type, tree root, std::list<std::string>& record) {
   int line = VarDec(type, root->children[0], record);
-  if (root->childCnt ==
-      3) {  //存在ASSIGNOP,
-            // VarDec其后必为左值，因此此处的ASSIGNOP无需判断是否为左值
+  if (root->childCnt == 3) {
+    //存在ASSIGNOP,
+    // VarDec其后必为左值，因此此处的ASSIGNOP无需判断是否为左值
     Type right = Exp(root->children[2]).first;
     if (!isEquivalent(type, right)) {
       std::cout << "[line " << line << " semantic error] "
@@ -276,7 +283,9 @@ std::pair<Type, bool> Exp(tree root) {
 
       } else if (root->children[1]->key == "DOT") {  // Exp DOT ID
         std::pair<Type, bool> typeExp = Exp(root->children[0]);
-        if (typeExp.first == nullptr) return {nullptr, false};
+        if (typeExp.first == nullptr) {
+          return {nullptr, false};
+        }
         if (typeExp.first->kind != STRUCTURE_SEMA) {
           std::cout << "[line " << root->children[1]->lineNo
                     << " semantic error] "
@@ -420,8 +429,12 @@ std::pair<Type, bool> Exp(tree root) {
 }
 
 bool Args(tree root, Type func_type, int paramNo) {
-  if (root == nullptr && paramNo == func_type->u.func.paraNum) return true;
-  if (root == nullptr) return false;
+  if (root == nullptr && paramNo == func_type->u.func.paraNum) {
+    return true;
+  }
+  if (root == nullptr) {
+    return false;
+  }
   std::pair<Type, bool> exp = Exp(root->children[0]);
   if (!isEquivalent(exp.first, func_type->u.func.paramList[paramNo])) {
     return false;
