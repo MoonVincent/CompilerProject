@@ -2,8 +2,10 @@
 #define _NODE_
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string>
+
 #include <fstream>
+#include <string>
+
 #define NO_VALUE ""
 typedef struct treeNode* tree;
 
@@ -17,24 +19,24 @@ typedef struct treeNode* tree;
  * key:当前节点对应的名称，如INT、Program...
  * value:节点内存储的值，只有isToken为true时，才会存储value
  */
-struct treeNode{
-    int lineNo;
-    int childCnt;
-    std::string key;
-    std::string value;
-    bool isToken;
-    struct treeNode** children;
-    treeNode() {
-        lineNo = 0;
-        childCnt = 0;
-        children = nullptr;
-        isToken = false;
-    }
+struct treeNode {
+  int lineNo;
+  int childCnt;
+  std::string key;
+  std::string value;
+  bool isToken;
+  struct treeNode** children;
+  treeNode() {
+    lineNo = 0;
+    childCnt = 0;
+    children = nullptr;
+    isToken = false;
+  }
 };
 
 /**
  * @brief 新建一个子树
- * 
+ *
  * @param childCnt 根节点的子节点数量
  * @param lineNo token所处的行号，如果要返回的根节点不存储token，则赋值为-1
  * @param isToken 根节点存储的是否是token
@@ -44,29 +46,24 @@ struct treeNode{
  * @return tree 返回新子树的根节点
  */
 
-tree buildTree(int childCnt, int lineNo, bool isToken, std::string key, std::string value, ...);
+tree buildTree(int childCnt, int lineNo, bool isToken, std::string key,
+               std::string value, ...);
 
 /**
  * @brief 深度优先，输出每个子节点到tree.txt中
- * 
+ *
  * @param root 当前要输出的子树根节点
  * @param out tree.txt的输出流
  */
 
-void printDFS(tree root, std::ofstream &out);
+void printDFS(tree root, std::ofstream& out);
 
 /**
  * @brief 将给定的树按一定格式输出至tree.txt,用于树的可视化
- * 
+ *
  * @param root:指定树的根节点
  */
 
 void printTree(tree root);
 
 #endif
-
-
-
-
-
-
