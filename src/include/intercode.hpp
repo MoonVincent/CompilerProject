@@ -30,9 +30,7 @@ typedef enum {
   IC_IF_GOTO,
   IC_GOTO,
   IC_ARG,
-  IC_CALL,
-  IC_READ,
-  IC_WRITE
+  IC_CALL
 } Kind_IC;
 
 //操作数相关数据结构

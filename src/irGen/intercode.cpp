@@ -292,17 +292,6 @@ void translate_Exp(tree node, Operand place) {
     if (node->children[0]->key == "ID") {
       Arglist list = newArglist();
       translate_Args(node->children[2], list);
-      if (node->children[0]->value == "write") {
-        InterCode x = newOneop(IC_WRITE, list->head->op);
-        add_ICList(head, x);
-        Operand zero = newOperand(OP_CONSTANT, "0");
-
-        if (place) {
-          x = newAssign(IC_ASSIGN, zero, place);
-          add_ICList(head, x);
-        }
-        return;
-      }
       Arg p = list->head;
       while (p != nullptr) {
         InterCode x = newOneop(IC_ARG, p->op);
@@ -377,18 +366,13 @@ void translate_Exp(tree node, Operand place) {
   else if (node->childCnt == 3) {
     // | ID LP RP
     if (node->children[0]->key == "ID") {
-      if (node->children[0]->value == "read") {
-        InterCode x = newOneop(IC_READ, place);
-        add_ICList(head, x);
-        return;
+      Operand id = newOperand(OP_CALL, node->children[0]->value);
+      InterCode x;
+      if (place) {
+        x = newAssign(IC_ASSIGN, id, place);
       } else {
-        Operand id = newOperand(OP_CALL, node->children[0]->value);
-        InterCode x;
-        if (place) {
-          x = newAssign(IC_ASSIGN, id, place);
-        } else {
-          x = newOneop(IC_CALL, id);
-        }
+        x = newOneop(IC_CALL, id);
+
         add_ICList(head, x);
       }
     }
@@ -898,16 +882,6 @@ InterCode newOneop(Kind_IC kind, Operand op) {
       temp->u.oneop.op = op;
       break;
     }
-    case IC_READ: {
-      temp->kind = IC_READ;
-      temp->u.oneop.op = op;
-      break;
-    }
-    case IC_WRITE: {
-      temp->kind = IC_WRITE;
-      temp->u.oneop.op = op;
-      break;
-    }
     default: {
       break;
     }
@@ -1066,16 +1040,6 @@ void printInterCodes(std::ofstream& out, InterCodeList head) {
       }
       case IC_PARAM: {
         out << "PARAM ";
-        printOperand(out, cur->code->u.oneop.op);
-        break;
-      }
-      case IC_READ: {
-        out << "READ ";
-        printOperand(out, cur->code->u.oneop.op);
-        break;
-      }
-      case IC_WRITE: {
-        out << "WRITE ";
         printOperand(out, cur->code->u.oneop.op);
         break;
       }

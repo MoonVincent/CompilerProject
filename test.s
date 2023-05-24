@@ -108,12 +108,8 @@ main:
     sd ra, 8(sp)
     sd fp, 0(sp)
     addi fp, sp, 16
-    jal getint
-    mv t0, a0
     addi sp, sp, -8
     sd t0, -16(fp)
-    jal getint
-    mv t0, a0
     addi sp, sp, -8
     sd t0, -24(fp)
     li t0, 0
@@ -136,19 +132,17 @@ label13:
     blt t0, t1, label14
     j label15
 label14:
-    jal getint
-    mv t0, a0
-    ld t1, -40(fp)
-    li t2, 8
-    mul t3, t1, t2
-    ld t1, -32(fp)
-    mul t1, t1, t2
-    li t2, 25
-    mul t1, t1, t2
-    add t3, t1, t3
-    la t1, v0
-    add t2, t1, t3
-    sd t0, 0(t2)
+    ld t0, -40(fp)
+    li t1, 8
+    mul t2, t0, t1
+    ld t0, -32(fp)
+    mul t0, t0, t1
+    li t1, 25
+    mul t0, t0, t1
+    add t2, t0, t2
+    la t0, v0
+    add t1, t0, t2
+    sd t0, 0(t1)
     ld t0, -40(fp)
     li t1, 1
     add t2, t0, t1
@@ -161,12 +155,8 @@ label15:
     sd t2, -32(fp)
     j label10
 label12:
-    jal getint
-    mv t0, a0
     addi sp, sp, -8
     sd t0, -48(fp)
-    jal getint
-    mv t0, a0
     addi sp, sp, -8
     sd t0, -56(fp)
     li t0, 0
@@ -187,19 +177,17 @@ label19:
     blt t0, t1, label20
     j label21
 label20:
-    jal getint
-    mv t0, a0
-    ld t1, -40(fp)
-    li t2, 8
-    mul t3, t1, t2
-    ld t1, -32(fp)
-    mul t1, t1, t2
-    li t2, 25
-    mul t1, t1, t2
-    add t3, t1, t3
-    la t1, v1
-    add t2, t1, t3
-    sd t0, 0(t2)
+    ld t0, -40(fp)
+    li t1, 8
+    mul t2, t0, t1
+    ld t0, -32(fp)
+    mul t0, t0, t1
+    li t1, 25
+    mul t0, t0, t1
+    add t2, t0, t2
+    la t0, v1
+    add t1, t0, t2
+    sd t0, 0(t1)
     ld t0, -40(fp)
     li t1, 1
     add t2, t0, t1

@@ -74,9 +74,7 @@ FUNCTION main :
 v15 := " "
 v16 := "\n"
 v17 := "Incompatible Dimensions\n"
-t32 := CALL getint
 v7 := t32
-t33 := CALL getint
 v8 := t33
 t34 := #0
 v11 := t34
@@ -96,7 +94,6 @@ t40 := v8
 IF t39 < t40 GOTO label14
 GOTO label15
 LABEL label14 :
-t41 := CALL getint
 t43 := v12
 t45 := #8
 t44 := t43 * t45
@@ -120,9 +117,7 @@ t52 := t53 + t54
 v11 := t52
 GOTO label10
 LABEL label12 :
-t55 := CALL getint
 v9 := t55
-t56 := CALL getint
 v10 := t56
 t57 := #0
 v11 := t57
@@ -142,7 +137,6 @@ t63 := v10
 IF t62 < t63 GOTO label20
 GOTO label21
 LABEL label20 :
-t64 := CALL getint
 t66 := v12
 t68 := #8
 t67 := t66 * t68

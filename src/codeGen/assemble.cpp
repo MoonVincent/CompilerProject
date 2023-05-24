@@ -508,22 +508,6 @@ void selectInstr(InterCodeList interCode) {
         selectReturn(interCode);
         break;
       }
-      case IC_READ: {
-        std::string dst = interCode->code->u.oneop.op->name;
-        instrSelectedList newInstr = newJ(INST_JAL, "read");
-        addInstList(newInstr);
-        newInstr = newM(INST_MOVE, dst, "a0");
-        addInstList(newInstr);
-        break;
-      }
-      case IC_WRITE: {
-        std::string src = interCode->code->u.oneop.op->name;
-        instrSelectedList newInstr = newM(INST_MOVE, "a0", src);
-        addInstList(newInstr);
-        newInstr = newJ(INST_JAL, "write");
-        addInstList(newInstr);
-        break;
-      }
       default: {
         std::cout << "Error" << std::endl;
         break;
