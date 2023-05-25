@@ -370,9 +370,9 @@ void translate_Exp(tree node, Operand place) {
       InterCode x;
       if (place) {
         x = newAssign(IC_ASSIGN, id, place);
+        add_ICList(head, x);
       } else {
         x = newOneop(IC_CALL, id);
-
         add_ICList(head, x);
       }
     }
@@ -473,8 +473,12 @@ void translate_Exp(tree node, Operand place) {
     if (node->children[0]->key == "MINUS") {
       Operand t1 = newtemp();
       translate_Exp(node->children[1], t1);
+      Operand t2 = newtemp();
       Operand zero = newOperand(OP_CONSTANT, "0");
-      InterCode x = newBinop(IC_SUB, place, zero, t1);
+      InterCode x = newAssign(IC_ASSIGN, zero, t2);
+      add_ICList(head, x);
+      // Operand zero = newOperand(OP_CONSTANT, "0");
+      x = newBinop(IC_SUB, place, t2, t1);
       add_ICList(head, x);
     }
     // | NOT Exp
