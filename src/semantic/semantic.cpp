@@ -2,11 +2,21 @@
 
 #include "../include/global.hpp"
 
+/**
+ * @brief 语义分析入口
+ * 
+ * @param syntaxTree 语法树根节点
+ */
 void semantic(tree syntaxTree) {
   std::list<std::string> record_struct;
   ExtDefList(syntaxTree->children[0], record_struct);
 }
-
+/**
+ * @brief ExtDefList语义分析
+ * 
+ * @param root 子树根节点
+ * @param record_struct 当前作用域内定义的struct的name集合
+ */
 void ExtDefList(tree root, std::list<std::string>& record_struct) {
   if (root == nullptr) {
     return;
@@ -14,7 +24,12 @@ void ExtDefList(tree root, std::list<std::string>& record_struct) {
   ExtDef(root->children[0], record_struct);
   ExtDefList(root->children[1], record_struct);
 }
-
+/**
+ * @brief ExtDef语义分析
+ * 
+ * @param root 子树根节点
+ * @param record_struct 当前作用域内定义的struct的name集合
+ */
 void ExtDef(tree root, std::list<std::string>& record_struct) {
   Type type = Specifier(root->children[0], record_struct);
   if (root->children[1]->key == "ExtDecList") {
@@ -34,6 +49,13 @@ void ExtDef(tree root, std::list<std::string>& record_struct) {
     }
   }
 }
+/**
+ * @brief ExtDecList语义分析
+ * 
+ * @param type 属性文法传递的属性信息
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量name
+ */
 
 void ExtDecList(Type type, tree root, std::list<std::string>& record) {
   VarDec(type, root->children[0], record);
@@ -41,6 +63,14 @@ void ExtDecList(Type type, tree root, std::list<std::string>& record) {
     ExtDecList(type, root->children[2], record);
   }
 }
+
+/**
+ * @brief 获得Specifier表示的类型
+ * 
+ * @param root 子树根节点
+ * @param record_struct 定义的struct的name集合
+ * @return Type 
+ */
 
 Type Specifier(tree root, std::list<std::string>& record_struct) {
   Type type;
@@ -55,7 +85,13 @@ Type Specifier(tree root, std::list<std::string>& record_struct) {
   }
   return type;
 }
-
+/**
+ * @brief 获取struct定义的类型信息
+ * 
+ * @param root 子树根节点
+ * @param record_struct 定义的struct的name集合
+ * @return Type 
+ */
 Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
   Type type;
   if (root->childCnt == 5) {
@@ -90,7 +126,12 @@ Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
   }
   return type;
 }
-
+/**
+ * @brief 获得struct的OptTag struct T{int a;}; 其中T即为OptTag
+ * 
+ * @param root 
+ * @return std::string 
+ */
 std::string OptTag(tree root) {
   if (root == nullptr) {
     return "";
@@ -98,9 +139,22 @@ std::string OptTag(tree root) {
     return root->children[0]->value;
   }
 }
-
+/**
+ * @brief 获取struct的tag名称 如 struct T t; 其中T则为tag
+ * 
+ * @param root 
+ * @return std::string 
+ */
 std::string Tag(tree root) { return root->children[0]->value; }
 
+/**
+ * @brief 对VarDec文法进行语义分析
+ * 
+ * @param type 属性文法传递的属性信息
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量name
+ * @return int 
+ */
 int VarDec(Type type, tree root, std::list<std::string>& record) {
   if (root->children[0]->key == "ID") {
     //检查当前域内是否已经对该变量有过定义
@@ -123,7 +177,14 @@ int VarDec(Type type, tree root, std::list<std::string>& record) {
     return VarDec(innerType, root->children[0], record);
   }
 }
-
+/**
+ * @brief 对FunDec进行语义分析
+ * 
+ * @param rv_type 返回值类型
+ * @param root 子树节点
+ * @param record 作用域内定义的变量的name集合
+ * @param record_struct 作用域内定义的struct的name集合
+ */
 void FunDec(Type rv_type, tree root, std::list<std::string>& record,
             std::list<std::string>& record_struct) {
   std::string func_name = root->children[0]->value;
@@ -137,7 +198,14 @@ void FunDec(Type rv_type, tree root, std::list<std::string>& record,
               << "Multiple definition of function " << func_name << std::endl;
   }
 }
-
+/**
+ * @brief VarList的语义分析
+ * 
+ * @param paramList 参数列表（函数定义时使用）
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ * @param record_struct 作用域内定义的struct的name集合
+ */
 void VarList(std::vector<Type>& paramList, tree root,
              std::list<std::string>& record,
              std::list<std::string>& record_struct) {
@@ -147,7 +215,14 @@ void VarList(std::vector<Type>& paramList, tree root,
     VarList(paramList, root->children[2], record, record_struct);
   }
 }
-
+/**
+ * @brief ParamDec的语义分析
+ * 
+ * @param paramList 参数列表（函数定义时使用）
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ * @param record_struct 作用域内定义的struct的name集合
+ */
 void ParamDec(std::vector<Type>& paramList, tree root,
               std::list<std::string>& record,
               std::list<std::string>& record_struct) {
@@ -157,9 +232,13 @@ void ParamDec(std::vector<Type>& paramList, tree root,
 }
 
 /**
- * record:主要用于处理因定义函数而产生的域，因为参数列表里的参数在扫描时已经加入符号表
+ * @brief ComSt进行语义分析
+ * 
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ * @param ret 返回值类型
+ * @param record_struct 作用域内定义的struct的name集合
  */
-
 void CompSt(tree root, std::list<std::string>& record, Type& ret,
             std::list<std::string>& record_struct) {
   DefList(root->children[1], record, record_struct);
@@ -176,6 +255,12 @@ void CompSt(tree root, std::list<std::string>& record, Type& ret,
   }
 }
 
+/**
+ * @brief StmtList语义分析
+ * 
+ * @param root 子树根节点
+ * @param ret 返回值类型
+ */
 void StmtList(tree root, Type& ret) {
   if (root == nullptr) {
     return;
@@ -183,7 +268,12 @@ void StmtList(tree root, Type& ret) {
   Stmt(root->children[0], ret);
   StmtList(root->children[1], ret);
 }
-
+/**
+ * @brief Stmt语义分析
+ * 
+ * @param root 子树根节点
+ * @param ret 返回值类型
+ */
 void Stmt(tree root, Type& ret) {
   if (root->children[0]->key == "Exp") {
     Exp(root->children[0]);
@@ -205,7 +295,13 @@ void Stmt(tree root, Type& ret) {
     }
   }
 }
-
+/**
+ * @brief DefList语义分析
+ * 
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ * @param record_struct 作用域内定义的struct的name集合
+ */
 void DefList(tree root, std::list<std::string>& record,
              std::list<std::string>& record_struct) {
   if (root == nullptr) {
@@ -214,20 +310,38 @@ void DefList(tree root, std::list<std::string>& record,
   Def(root->children[0], record, record_struct);
   DefList(root->children[1], record, record_struct);
 }
-
+/**
+ * @brief Def语义分析
+ * 
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ * @param record_struct 作用域内定义的struct的name集合
+ */
 void Def(tree root, std::list<std::string>& record,
          std::list<std::string>& record_struct) {
   Type type = Specifier(root->children[0], record_struct);
   DecList(type, root->children[1], record);
 }
-
+/**
+ * @brief DecList语义分析
+ * 
+ * @param type 属性文法传递的类型信息
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ */
 void DecList(Type type, tree root, std::list<std::string>& record) {
   Dec(type, root->children[0], record);
   if (root->childCnt == 3) {
     DecList(type, root->children[2], record);
   }
 }
-
+/**
+ * @brief Dec语义分析
+ * 
+ * @param type 属性文法传递的类型信息
+ * @param root 子树根节点
+ * @param record 作用域内定义的变量的name集合
+ */
 void Dec(Type type, tree root, std::list<std::string>& record) {
   int line = VarDec(type, root->children[0], record);
   if (root->childCnt == 3) {
@@ -241,7 +355,12 @@ void Dec(Type type, tree root, std::list<std::string>& record) {
     }
   }
 }
-
+/**
+ * @brief Exp进行语义分析
+ * 
+ * @param root 子树根节点
+ * @return std::pair<Type, bool> Type为Exp对应的类型，bool表示是否为左值
+ */
 std::pair<Type, bool> Exp(tree root) {
   if (root->childCnt == 1) {  // Exp->ID INT FLOAT
     if (root->children[0]->key == "ID") {
@@ -427,7 +546,15 @@ std::pair<Type, bool> Exp(tree root) {
     }
   }
 }
-
+/**
+ * @brief 对Args进行语义分析
+ * 
+ * @param root 子树根节点
+ * @param func_type 函数返回值类型
+ * @param paramNo 参数个数
+ * @return true 
+ * @return false 
+ */
 bool Args(tree root, Type func_type, int paramNo) {
   if (root == nullptr && paramNo == func_type->u.func.paraNum) {
     return true;

@@ -96,8 +96,12 @@ main:
     sd reg(ra), 8(reg(sp))
     sd reg(fp), 0(reg(sp))
     addi reg(fp), reg(sp), 16
+    jal getint
+    mv reg(t32), reg(a0)
     addi reg(sp), reg(sp), -8
     sd reg(t32), -16(reg(fp))
+    jal getint
+    mv reg(t33), reg(a0)
     addi reg(sp), reg(sp), -8
     sd reg(t33), -24(reg(fp))
     li reg(t34), 0
@@ -120,6 +124,8 @@ label13:
     blt reg(t39), reg(t40), label14
     j label15
 label14:
+    jal getint
+    mv reg(t41), reg(a0)
     ld reg(t43), -40(reg(fp))
     li reg(t45), 8
     mul reg(t44), reg(t43), reg(t45)
@@ -142,8 +148,12 @@ label15:
     sd reg(t52), -32(reg(fp))
     j label10
 label12:
+    jal getint
+    mv reg(t55), reg(a0)
     addi reg(sp), reg(sp), -8
     sd reg(t55), -48(reg(fp))
+    jal getint
+    mv reg(t56), reg(a0)
     addi reg(sp), reg(sp), -8
     sd reg(t56), -56(reg(fp))
     li reg(t57), 0
@@ -164,6 +174,8 @@ label19:
     blt reg(t62), reg(t63), label20
     j label21
 label20:
+    jal getint
+    mv reg(t64), reg(a0)
     ld reg(t66), -40(reg(fp))
     li reg(t68), 8
     mul reg(t67), reg(t66), reg(t68)

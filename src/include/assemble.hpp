@@ -33,45 +33,15 @@ typedef enum { REG, LABEL, IMM } Kind_item;
 struct instrSelected_ {
   Kind_instr kind;
   union {
-    struct {
-      instrItem dst;
-      instrItem src1;
-      instrItem src2;
-    } R;
-    struct {
-      instrItem dst;
-      instrItem src;
-    } M;
-    struct {
-      instrItem dst;
-      instrItem src;
-      instrItem imm;
-    } I;
-    struct {
-      instrItem dst;
-      instrItem imm;
-      instrItem src;
-    } L;
-    struct {
-      instrItem src;
-      instrItem imm;
-      instrItem dst;
-    } S;
-    struct {
-      instrItem LABEL_REG;
-    } J;
-    struct {
-      instrItem reg1;
-      instrItem reg2;
-      instrItem LABEL;
-    } B;
-    struct {
-      instrItem LABEL;
-    } Label;
-    struct {
-      instrItem dst;
-      instrItem tag;
-    } La;
+    struct { instrItem dst; instrItem src1;instrItem src2; } R;
+    struct { instrItem dst; instrItem src; } M;
+    struct { instrItem dst; instrItem src; instrItem imm; } I;
+    struct { instrItem dst; instrItem imm; instrItem src; } L;
+    struct { instrItem src; instrItem imm; instrItem dst; } S;
+    struct { instrItem LABEL_REG; } J;
+    struct { instrItem reg1; instrItem reg2; instrItem LABEL;} B;
+    struct { instrItem LABEL;} Label;
+    struct { instrItem dst; instrItem tag;} La;
   } u;
 };
 
