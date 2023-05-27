@@ -1,4 +1,4 @@
-int main(){
-    putint(-1);
-    return 0;
+int main() {
+  putint(-1);
+  return 0;
 }
