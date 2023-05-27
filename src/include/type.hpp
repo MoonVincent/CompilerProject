@@ -25,6 +25,7 @@ typedef struct FieldList_* FieldList;
 typedef enum Kind_ {
   INT_SEMA,
   FLOAT_SEMA,
+  STRING_SEMA,
   ARRAY_SEMA,
   STRUCTURE_SEMA,
   FUNC_SEMA
@@ -60,7 +61,7 @@ struct FieldList_ {
 
 Type newBasic(Kind_SEMA kind);
 Type newArray(Type elemType, int elemSize);
-Type newStructure(std::unordered_map<std::string, Type> members);
+Type newStructure(std::vector<std::pair<std::string, Type>> members);
 Type newFunc(Type rv, std::vector<Type>& paramTypes);
 Type copyType(Type src);
 FieldList newFieldList(std::string name, Type type);

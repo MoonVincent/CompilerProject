@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Compiler",
-            "args": ["./mat.cmm"],
+            "args": ["./test.cmm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

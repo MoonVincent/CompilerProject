@@ -4,11 +4,30 @@
 bool semanticError = false;
 
 /**
+ * @brief 在函数符号表中插入IO函数，防止语义分析因为IO函数未定义而报错
+ * 
+ */
+void insertIOFunction(){
+  Type rvType = new Type_();
+  rvType->kind = INT_SEMA;
+  Type paramType = new Type_();
+  paramType->kind = INT_SEMA;
+  std::vector<Type> paramList;
+  paramList.push_back(paramType);
+  Type funcType = newFunc(rvType, paramList);
+  insertFuncItem("putint", funcType);
+  insertFuncItem("putch", funcType);
+  paramList.clear();
+  funcType = newFunc(rvType, paramList);
+  insertFuncItem("getint", funcType);
+}
+/**
  * @brief 语义分析入口
  * 
  * @param syntaxTree 语法树根节点
  */
 void semantic(tree syntaxTree) {
+  insertIOFunction();
   std::list<std::string> record_struct;
   ExtDefList(syntaxTree->children[0], record_struct);
 }
@@ -99,11 +118,11 @@ Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
   if (root->childCnt == 5) {
     std::string optag = OptTag(root->children[1]);
     std::list<std::string> names;
-    std::unordered_map<std::string, Type> s_field;
+    std::vector<std::pair<std::string, Type>> s_field;
     DefList(root->children[3], names, record_struct);
     for (auto name : names) {
       Type cur_type = getItem(name);
-      s_field.insert({name, cur_type});
+      s_field.push_back({name, cur_type});
       deleteItem(name);
     }
     type = newStructure(s_field);

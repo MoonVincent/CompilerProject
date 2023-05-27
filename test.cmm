@@ -1,5 +1,14 @@
+struct T{
+    int a;
+    int b;
+};
 int main(){
-    
-    b = 1;
+    struct T t;
+    int p;
+    t.a = 1;
+    t.b = 2;
+    putint(t.a);
+    p = t.b;
+    putint(p);
     return 0;
 }

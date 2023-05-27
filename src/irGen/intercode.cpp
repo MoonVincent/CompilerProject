@@ -6,6 +6,7 @@
 
 #include "../include/global.hpp"
 InterCodeList head = newICList();
+std::unordered_map<std::string, std::string> structMap;
 
 /**
  * @brief 产生中间代码主入口
@@ -196,17 +197,23 @@ void translate_Def(tree node, std::vector<std::string>& valueRecord)
         while (temp)
         {
             Operand v = newvalue();
-            insertValueItem(temp->children[0]->value,v);
-            valueRecord.push_back(temp->children[0]->value);
+            std::cout << temp->children[0]->value << std::endl;
+            std::string valueName = temp->children[0]->children[0]->children[0]->value;
+            insertValueItem(valueName, v);
+            structMap.insert({valueName, Tag});
+            valueRecord.push_back(valueName);
             add_ICList(head, newDec(IC_DEC, v, size));
-            if (temp->childCnt == 3)
+            if (temp->childCnt == 3){
                 temp = temp->children[2];
-            else
+            } else {
                 break;
+            }
         }
     }
-    else
+    else{
         translate_DecList(node->children[1], valueRecord);
+    }
+
 }
 /**
  * @brief 计算item的大小便于DEC
@@ -412,8 +419,10 @@ void translate_Exp(tree node, Operand place) {
     if (node->children[1]->key == "DOT") {
       tree tmp_node = node;
       while (tmp_node->childCnt != 1) tmp_node = tmp_node->children[0];
-      Type v = getStructItem(tmp_node->children[0]->value);
-      Operand val = getValueItem(tmp_node->children[0]->value);
+      std::string valueName = tmp_node->children[0]->value;
+      Operand val = getValueItem(valueName);
+      auto target = structMap.find(valueName);
+      Type v = getStructItem(target->second);
       std::string name = node->children[2]->value;
       int offset = 0;
       FieldList structure = v->u.structure;
@@ -422,21 +431,19 @@ void translate_Exp(tree node, Operand place) {
         offset++;
       }
       Operand size = newtemp();
-      add_ICList(head,
-                 newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), size));
+      add_ICList(head, newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, "8"), size));
       Operand off = newtemp();
-      add_ICList(
-          head,
-          newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, std::to_string(offset)),
-                    off));
+      add_ICList(head, newAssign(IC_ASSIGN, newOperand(OP_CONSTANT, std::to_string(offset)), off));
       add_ICList(head, newBinop(IC_MUL, off, off, size));
+      Operand baseAddress = newtemp();
+      add_ICList(head, newAssign(IC_ASSIGN, val, baseAddress));
       if (place->loc == 0) {
         Operand new_place = newOperand(OP_VARIABLE, place->name);
-        add_ICList(head, newBinop(IC_ADD, new_place, val, off));
+        add_ICList(head, newBinop(IC_ADD, new_place, baseAddress, off));
         place->kind = OP_WRITE_ADDRESS;
       } else {
         Operand new_place = newOperand(OP_WRITE_ADDRESS, place->name);
-        add_ICList(head, newBinop(IC_ADD, place, val, off));
+        add_ICList(head, newBinop(IC_ADD, place, baseAddress, off));
         add_ICList(head, newAssign(IC_ASSIGN, new_place, place));
       }
     }

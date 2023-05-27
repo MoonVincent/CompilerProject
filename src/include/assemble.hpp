@@ -27,7 +27,8 @@ typedef enum {
   INST_LABEL,
   INST_LA,
   INST_LB,
-  INST_SB
+  INST_SB,
+  INST_SUBI
 } Kind_instr;
 typedef enum { REG, LABEL, IMM } Kind_item;
 struct instrSelected_ {

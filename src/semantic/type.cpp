@@ -36,7 +36,7 @@ Type newArray(Type elemType, int elemSize) {
  * @param members 一个域名和域类型的对应表
  * @return Type 指向该结构体类型的指针
  */
-Type newStructure(std::unordered_map<std::string, Type> members) {
+Type newStructure(std::vector<std::pair<std::string, Type>> members) {
   Type type = new Type_();
   type->kind = STRUCTURE_SEMA;
 

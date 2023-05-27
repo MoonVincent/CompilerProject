@@ -1,5 +1,5 @@
 #include "../include/assemble.hpp"
-
+#include <algorithm>
 #include <iostream>
 #include <unordered_map>
 #define VERSION 8 //64位架构
@@ -12,6 +12,7 @@ std::unordered_map<std::string, std::pair<int, int>> activeRecord;  //活跃记�
 std::unordered_map<std::string, int> vrTranslation; //IR变量与寄存器转换表
 std::unordered_map<std::string, int> offset;  //变量在栈帧中的offset
 std::unordered_map<std::string, int> globalArrays;  //全局变量定义信息
+std::vector<std::string> localArrayOrStruct;
 std::unordered_map<std::string, std::string> strTable;  //定义的字符串信息
 struct regInfo regs[32];  //RISC-V中32个寄存器信息
 /**
@@ -289,12 +290,16 @@ void selectAssign(InterCodeList interCode) {
     std::string src = interCode->code->u.assign.right->name;
     if (dst[0] == 'v') {
       int off = getValueOffset(dst, VERSION);
-      newInstr = newS(INST_SD, src, "-" + std::to_string(off), "fp");  // TODO:
+      newInstr = newS(INST_SD, src, "-" + std::to_string(off), "fp");
     } else if (src[0] == 'v') {
       if (globalArrays.find(src) == globalArrays.end()) {
         int off = getValueOffset(src, VERSION);
-        newInstr =
-            newL(INST_LD, dst, "-" + std::to_string(off), "fp");  // TODO:
+        if (std::find(localArrayOrStruct.begin(), localArrayOrStruct.end(), src) == localArrayOrStruct.end()) {
+          newInstr = newL(INST_LD, dst, "-" + std::to_string(off), "fp");
+        } else {
+          newInstr = newI(INST_ADDI, dst, "fp", "-" + std::to_string(off));
+        }
+
       } else {
         newInstr = newLa(INST_LA, dst, src);
       }
@@ -393,14 +398,13 @@ void selectCall(InterCodeList interCode) {  //无返回值的函数CALL CALL f
  * @param interCode 一条IR代码
  */
 void selectDec(InterCodeList interCode) {
+  std::string name = interCode->code->u.dec.x->name;
+  int size = interCode->code->u.dec.size;
   if (isGlobal) {
-    std::string name = interCode->code->u.dec.x->name;
-    int size = interCode->code->u.dec.size;
     globalArrays.insert({name, size});
   } else {
-    std::string name = interCode->code->u.dec.x->name;
-    int size = interCode->code->u.dec.size;
     getValueOffset(name, size);
+    localArrayOrStruct.push_back(name);
   }
 }
 
@@ -439,7 +443,7 @@ void selectFunction(InterCodeList interCode) {
   newInstr = newS(INST_SD, "fp", "0", "sp");
   addInstList(newInstr);
   newInstr = newI(INST_ADDI, "fp", "sp", std::to_string(2 * VERSION));
-  currentFrameSize += 2 * VERSION;
+  currentFrameSize += 3 * VERSION;
   addInstList(newInstr);
   offset.clear();
   isGlobal = false;
@@ -731,7 +735,8 @@ void allocateRegister() {
         instrs->instr->u.M.dst->value = regs[getRegister(dst)].name;
         break;
       }
-      case INST_ADDI: {
+      case INST_ADDI:
+      case INST_SUBI: {
         std::string dst = instrs->instr->u.I.dst->value;
         std::string src = instrs->instr->u.I.src->value;
         instrs->instr->u.I.dst->value = regs[getRegister(dst)].name;
@@ -953,6 +958,12 @@ void printAllocatedInstr(std::ofstream &out, instrSelectedList instrs) {
             << instrs->instr->u.I.imm->value << std::endl;
         break;
       }
+      case INST_SUBI: {
+        out << "    subi " << instrs->instr->u.I.dst->value << ", "
+            << instrs->instr->u.I.src->value << ", "
+            << instrs->instr->u.I.imm->value << std::endl;
+        break;
+      }
       case INST_BEQ: {
         out << "    beq " << instrs->instr->u.B.reg1->value << ", "
             << instrs->instr->u.B.reg2->value << ", "
@@ -1087,6 +1098,12 @@ void printSelectedInstr(std::ofstream &out, instrSelectedList instrs) {
       }
       case INST_ADDI: {
         out << "    addi reg(" << instrs->instr->u.I.dst->value << "), reg("
+            << instrs->instr->u.I.src->value << "), "
+            << instrs->instr->u.I.imm->value << std::endl;
+        break;
+      }
+      case INST_SUBI: {
+        out << "    subi reg(" << instrs->instr->u.I.dst->value << "), reg("
             << instrs->instr->u.I.src->value << "), "
             << instrs->instr->u.I.imm->value << std::endl;
         break;
