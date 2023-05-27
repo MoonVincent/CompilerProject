@@ -243,6 +243,11 @@ bool isLeftValue(Type type) {
 
 Type getArrayElemType(Type type, int level) {  // EXP-> EXP LB EXP RB level = 1
   int count = 0;
+  if (type->kind == STRING_SEMA) {
+    Type tmpType = new Type_();
+    tmpType->kind = INT_SEMA;
+    return tmpType;
+  }
   while (type->kind == ARRAY_SEMA) {
     type = type->u.array.elemType;
     ++count;
@@ -316,6 +321,13 @@ bool isEquivalent(Type type1, Type type2) {
           return false;
         }
         return true;
+      }
+      case STRING_SEMA: {
+        if (type2->kind == STRING_SEMA){
+          return true;
+        } else {
+          return false;
+        }
       }
     }
   } else {

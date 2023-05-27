@@ -317,7 +317,6 @@ void selectAssign(InterCodeList interCode) {
   } else if (interCode->code->u.assign.right->kind == OP_V_STRING) {
     std::string dst = interCode->code->u.assign.left->name;
     std::string src = interCode->code->u.assign.right->name;
-    std::cout << dst << " " << src << std::endl;
     if (strTable.find(src) != strTable.end()) {
       newInstr = newLa(INST_LA, dst, src);
     } else {
@@ -421,8 +420,6 @@ void selectDiv(InterCodeList interCode) {  // x:= y / z
   std::string src2 = interCode->code->u.binop.op2->name;
   newInstr = newR(INST_DIV, dst, src1, src2);
   addInstList(newInstr);
-  /*     newInstr = newMflo(INST_MFLO, dst);
-      addInstList(newInstr); */
 }
 
 /**
@@ -639,7 +636,7 @@ void selectInstr(InterCodeList interCode) {
         int size = VERSION * (paramNum + 1);
         instrSelectedList newInstr =
             newI(INST_ADDI, "sp", "sp", "-" + std::to_string(size));
-        currentFrameSize += (size + VERSION);
+        currentFrameSize += size;
         addInstList(newInstr);
         if (paramNum == 0) {
           newInstr = newS(INST_SD, "a0", std::to_string(size - VERSION), "sp");
@@ -680,10 +677,6 @@ void selectInstr(InterCodeList interCode) {
       }
       case IC_RETURN: {
         selectReturn(interCode);
-        break;
-      }
-      default: {
-        std::cout << "Error" << std::endl;
         break;
       }
     }
@@ -796,9 +789,6 @@ void allocateRegister() {
       case INST_RET: {
         break;
       }
-      default: {
-        std::cout << "Error in select" << std::endl;
-      }
     }
     instrs = instrs->next;
   }
@@ -877,7 +867,6 @@ int getAvaiableReg(std::string vrName) {
       return i;
     }
   }
-  std::cout << "In getAvaliableReg" << std::endl;
   exit(-1);
   return -1;
 }
@@ -1074,7 +1063,7 @@ void printAllocatedInstr(std::ofstream &out, instrSelectedList instrs) {
         break;
       }
       default: {
-        std::cout << "Error in print" << std::endl;
+        std::cout << "Error in print allocate" << std::endl;
       }
     }
     instrs = instrs->next;
@@ -1212,8 +1201,10 @@ void printSelectedInstr(std::ofstream &out, instrSelectedList instrs) {
             << instrs->instr->u.S.dst->value << "))" << std::endl;
         break;
       }
-      default: {
-        std::cout << "Error in print" << std::endl;
+      case INST_LA: {
+        out << "    la reg(" << instrs->instr->u.La.dst->value <<"), "
+            << instrs->instr->u.La.tag << std::endl;
+            break;
       }
     }
     instrs = instrs->next;

@@ -98,8 +98,10 @@ Type Specifier(tree root, std::list<std::string>& record_struct) {
   if (root->children[0]->key == "TYPE") {
     if (root->children[0]->value == "int") {
       type = newBasic(INT_SEMA);
-    } else {
+    } else if (root->children[0]->value == "float"){
       type = newBasic(FLOAT_SEMA);
+    } else {
+      type = newBasic(STRING_SEMA);
     }
   } else {
     type = StructSpecifier(root->children[0], record_struct);
@@ -402,8 +404,10 @@ std::pair<Type, bool> Exp(tree root) {
       return {type, true};
     } else if (root->children[0]->key == "INT") {
       return {newBasic(INT_SEMA), false};
-    } else {
+    } else if (root->children[0]->key == "FLOAT"){
       return {newBasic(FLOAT_SEMA), false};
+    } else {
+      return {newBasic(STRING_SEMA), false};
     }
   } else if (root->childCnt == 3) {  //
     if (root->children[0]->key == "Exp") {
@@ -559,7 +563,7 @@ std::pair<Type, bool> Exp(tree root) {
       Type array_type = getArrayType(root, array_depth);
       std::pair<Type, bool> exp = Exp(root->children[2]);
 
-      if (array_type == nullptr || array_type->kind != ARRAY_SEMA) {
+      if (array_type == nullptr || (array_type->kind != ARRAY_SEMA && array_type->kind != STRING_SEMA)) {
         semanticError = true;
         std::cout << "[line " << root->children[1]->lineNo
                   << " semantic error] "
