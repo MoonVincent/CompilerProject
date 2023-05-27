@@ -2,25 +2,36 @@
 
 #include <iostream>
 #include <unordered_map>
-#define VERSION 8
-instrSelectedList instrList;
-instrSelectedList instrListHead;
-int line = 0;
-int currentFrameSize =
-    0;  //当前栈帧的大小，因为一定会存储ra和fp，因此初始大小为16
-bool isGlobal = true;
-std::unordered_map<std::string, std::pair<int, int>> activeRecord;
-std::unordered_map<std::string, int> vrTranslation;
-std::unordered_map<std::string, int> offset;
-std::unordered_map<std::string, int> globalArrays;
-std::unordered_map<std::string, std::string> strTable;
-struct regInfo regs[32];
+#define VERSION 8 //64位架构
+instrSelectedList instrList;  //指令序列
+instrSelectedList instrListHead;  //指令序列的头节点
+int line = 0; //遍历指令时，当前指令所处行数
+int currentFrameSize = 0;  //当前栈帧的大小，因为一定会存储ra和fp，因此初始大小为16
+bool isGlobal = true; //全局变量标识
+std::unordered_map<std::string, std::pair<int, int>> activeRecord;  //活跃记录
+std::unordered_map<std::string, int> vrTranslation; //IR变量与寄存器转换表
+std::unordered_map<std::string, int> offset;  //变量在栈帧中的offset
+std::unordered_map<std::string, int> globalArrays;  //全局变量定义信息
+std::unordered_map<std::string, std::string> strTable;  //定义的字符串信息
+struct regInfo regs[32];  //RISC-V中32个寄存器信息
+/**
+ * @brief 向指令链表里加入新指令
+ * 
+ * @param new_node 指向新指令的指针
+ */
 void addInstList(instrSelectedList new_node) {
   instrList->next = new_node;
   instrList->next->prev = instrList;
   instrList = instrList->next;
 }
-
+/**
+ * @brief 新建一个M型命令
+ * 
+ * @param kind INST_MOVE/INST_LI
+ * @param dstName 目的寄存器
+ * @param srcName 源寄存器
+ * @return instrSelectedList 
+ */
 instrSelectedList newM(Kind_instr kind, std::string dstName,
                        std::string srcName) {
   instrSelectedList ret = new instrSelectedList_();
@@ -38,7 +49,15 @@ instrSelectedList newM(Kind_instr kind, std::string dstName,
 
   return ret;
 }
-
+/**
+ * @brief 新建R型指令
+ * 
+ * @param kind INST_ADD/INST_SUB/INST_DIV ...
+ * @param dst 目的寄存器
+ * @param src1 源寄存器
+ * @param src2 源寄存器
+ * @return instrSelectedList 
+ */
 instrSelectedList newR(Kind_instr kind, std::string dst, std::string src1,
                        std::string src2) {
   instrSelectedList ret = new instrSelectedList_();
@@ -53,6 +72,15 @@ instrSelectedList newR(Kind_instr kind, std::string dst, std::string src1,
   updateActiveRecord(src2, line);
   return ret;
 }
+/**
+ * @brief 新建I型指令
+ * 
+ * @param kind INST_SUBI/ADDI ...
+ * @param dst 目的寄存器
+ * @param src 源寄存器
+ * @param imm 立即数
+ * @return instrSelectedList 
+ */
 
 instrSelectedList newI(Kind_instr kind, std::string dst, std::string src,
                        std::string imm) {
@@ -68,6 +96,16 @@ instrSelectedList newI(Kind_instr kind, std::string dst, std::string src,
   return ret;
 }
 
+/**
+ * @brief 新建L型指令
+ * 
+ * @param kind INST_LW/INST_LB
+ * @param dst 目的寄存器
+ * @param imm 立即数偏移量
+ * @param src 源寄存器，存储地址
+ * @return instrSelectedList 
+ */
+
 instrSelectedList newL(Kind_instr kind, std::string dst, std::string imm,
                        std::string src) {
   instrSelectedList ret = new instrSelectedList_();
@@ -82,6 +120,15 @@ instrSelectedList newL(Kind_instr kind, std::string dst, std::string imm,
   return ret;
 }
 
+/**
+ * @brief 新建La指令
+ * 
+ * @param kind INST_LA
+ * @param dst 目的寄存器
+ * @param tag 地址标签
+ * @return instrSelectedList 
+ */
+
 instrSelectedList newLa(Kind_instr kind, std::string dst, std::string tag) {
   instrSelectedList ret = new instrSelectedList_();
   ret->instr = new instrSelected_();
@@ -92,6 +139,16 @@ instrSelectedList newLa(Kind_instr kind, std::string dst, std::string tag) {
   updateActiveRecord(dst, line);
   return ret;
 }
+
+/**
+ * @brief 新建S型指令
+ * 
+ * @param kind INST_SW/INST_SB
+ * @param src 源寄存器
+ * @param imm 立即数
+ * @param dst 目的寄存器
+ * @return instrSelectedList 
+ */
 
 instrSelectedList newS(Kind_instr kind, std::string src, std::string imm,
                        std::string dst) {
@@ -106,6 +163,14 @@ instrSelectedList newS(Kind_instr kind, std::string src, std::string imm,
   updateActiveRecord(dst, line);
   return ret;
 }
+
+/**
+ * @brief 新建J型指令
+ * 
+ * @param kind INST_JAL/INST_J
+ * @param LABEL_REG 寄存器/目的标签
+ * @return instrSelectedList 
+ */
 
 instrSelectedList newJ(Kind_instr kind, std::string LABEL_REG) {
   instrSelectedList ret = new instrSelectedList_();
@@ -122,6 +187,16 @@ instrSelectedList newJ(Kind_instr kind, std::string LABEL_REG) {
   return ret;
 }
 
+/**
+ * @brief 新建B型指令
+ * 
+ * @param kind INST_BEQ/INST_BNE ...
+ * @param reg1 用于对比的第一个寄存器
+ * @param reg2 用于对比的第二个寄存器
+ * @param LABEL_ 跳转目标标签
+ * @return instrSelectedList 
+ */
+
 instrSelectedList newB(Kind_instr kind, std::string reg1, std::string reg2,
                        std::string LABEL_) {
   instrSelectedList ret = new instrSelectedList_();
@@ -136,6 +211,14 @@ instrSelectedList newB(Kind_instr kind, std::string reg1, std::string reg2,
   return ret;
 }
 
+/**
+ * @brief 新建标签
+ * 
+ * @param kind INST_LABEL
+ * @param label label名称
+ * @return instrSelectedList 
+ */
+
 instrSelectedList newLabel(Kind_instr kind, std::string label) {
   instrSelectedList ret = new instrSelectedList_();
   ret->instr = new instrSelected_();
@@ -145,6 +228,13 @@ instrSelectedList newLabel(Kind_instr kind, std::string label) {
   return ret;
 }
 
+/**
+ * @brief 新建ret指令
+ * 
+ * @param kind INST_RET
+ * @return instrSelectedList 
+ */
+
 instrSelectedList newRet(Kind_instr kind) {
   instrSelectedList ret = new instrSelectedList_();
   ret->instr = new instrSelected_();
@@ -152,6 +242,12 @@ instrSelectedList newRet(Kind_instr kind) {
   ++line;
   return ret;
 }
+
+/**
+ * @brief 为IR中的赋值语句选择指令
+ * 
+ * @param interCode 一条IR指令
+ */
 
 void selectAssign(InterCodeList interCode) {
   instrSelectedList newInstr;
@@ -227,7 +323,11 @@ void selectAssign(InterCodeList interCode) {
     addInstList(newInstr);
   }
 }
-
+/**
+ * @brief 为IR中的加法选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 void selectAdd(InterCodeList interCode) {
   instrSelectedList newInstr;
   std::string dst = interCode->code->u.binop.result->name;
@@ -240,7 +340,11 @@ void selectAdd(InterCodeList interCode) {
   }
   addInstList(newInstr);
 }
-
+/**
+ * @brief 为IR中的减法选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 void selectSub(InterCodeList interCode) {
   instrSelectedList newInstr;
   std::string dst = interCode->code->u.binop.result->name;
@@ -253,7 +357,12 @@ void selectSub(InterCodeList interCode) {
   }
   addInstList(newInstr);
 }
-
+/**
+ * @brief 为IR中函数传参选择指令
+ * 
+ * @param interCode 一条代码
+ * @param argNum 参数个数
+ */
 void selectArg(InterCodeList interCode, int argNum) {
   // TODO:栈帧的分配估计后续会在这里涉及到
   std::string argName = interCode->code->u.oneop.op->name;
@@ -266,6 +375,11 @@ void selectArg(InterCodeList interCode, int argNum) {
 
   addInstList(newInstr);
 }
+/**
+ * @brief 为IR中的call选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 
 void selectCall(InterCodeList interCode) {  //无返回值的函数CALL CALL f
   instrSelectedList newInstr;
@@ -273,7 +387,11 @@ void selectCall(InterCodeList interCode) {  //无返回值的函数CALL CALL f
   newInstr = newJ(INST_JAL, funcName);  // jal f
   addInstList(newInstr);
 }
-
+/**
+ * @brief 为IR中的DEC代码选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 void selectDec(InterCodeList interCode) {
   if (isGlobal) {
     std::string name = interCode->code->u.dec.x->name;
@@ -286,6 +404,12 @@ void selectDec(InterCodeList interCode) {
   }
 }
 
+/**
+ * @brief 为IR中的除法选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
+
 void selectDiv(InterCodeList interCode) {  // x:= y / z
   instrSelectedList newInstr;
   std::string dst = interCode->code->u.binop.result->name;
@@ -296,6 +420,12 @@ void selectDiv(InterCodeList interCode) {  // x:= y / z
   /*     newInstr = newMflo(INST_MFLO, dst);
       addInstList(newInstr); */
 }
+
+/**
+ * @brief 为IR中的函数定义选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 
 void selectFunction(InterCodeList interCode) {
   instrSelectedList newInstr;
@@ -315,12 +445,24 @@ void selectFunction(InterCodeList interCode) {
   isGlobal = false;
 }
 
+/**
+ * @brief 为IR中的GOTO选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
+
 void selectGoto(InterCodeList interCode) {
   instrSelectedList newInstr;
   std::string labelName = interCode->code->u.oneop.op->name;
   newInstr = newJ(INST_J, labelName);
   addInstList(newInstr);
 }
+
+/**
+ * @brief 为IR中的if选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 
 void selectIf(InterCodeList interCode) {
   Kind_instr kind;
@@ -345,11 +487,23 @@ void selectIf(InterCodeList interCode) {
   addInstList(newInstr);
 }
 
+/**
+ * @brief 为IR中的label选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
+
 void selectLabel(InterCodeList interCode) {
   std::string labelName = interCode->code->u.oneop.op->name;
   instrSelectedList newInstr = newLabel(INST_LABEL, labelName);
   addInstList(newInstr);
 }
+
+/**
+ * @brief 为IR中的乘法选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 
 void selectMul(InterCodeList interCode) {
   std::string dst = interCode->code->u.binop.result->name;
@@ -359,11 +513,23 @@ void selectMul(InterCodeList interCode) {
   addInstList(newInstr);
 }
 
+/**
+ * @brief 为IR中函数参数定义选择指令
+ * 
+ * @param interCode 一条IR代码
+ * @param paramNum 参数个数
+ */
+
 void selectParam(InterCodeList interCode, int paramNum) {
   std::string param = interCode->code->u.oneop.op->name;
   offset.insert({param, paramNum * VERSION + 3 * VERSION});
 }
 
+/**
+ * @brief 为IR中的return选择指令
+ * 
+ * @param interCode 一条IR代码
+ */
 void selectReturn(InterCodeList interCode) {
   std::string ret = interCode->code->u.oneop.op->name;
   instrSelectedList newInstr = newM(INST_MOVE, "sp", "fp");
@@ -393,7 +559,11 @@ void selectReturn(InterCodeList interCode) {
     isGlobal = true;
   }
 }
-
+/**
+ * @brief 指令选择入口
+ * 
+ * @param interCode 当前被执行指令选择的IR代码
+ */
 void selectInstr(InterCodeList interCode) {
   instrList = new instrSelectedList_();
   instrListHead = instrList;
@@ -524,6 +694,11 @@ void selectInstr(InterCodeList interCode) {
   printAllocatedInstr(rr, instrListHead);
 }
 
+/**
+ * @brief 寄存器分配入口
+ * 
+ */
+
 void allocateRegister() {
   instrSelectedList instrs = instrListHead;
   line = 0;
@@ -623,7 +798,12 @@ void allocateRegister() {
     instrs = instrs->next;
   }
 }
-
+/**
+ * @brief 为相应的中间代码中的t变量返回真实寄存器编号
+ * 
+ * @param regName 中间代码中t变量名称，如t156
+ * @return int 
+ */
 int getRegister(std::string regName) {
   if (regName == "sp") {
     return 2;
@@ -653,7 +833,12 @@ int getRegister(std::string regName) {
     return target->second;
   }
 }
-
+/**
+ * @brief 更新活跃记录
+ * 
+ * @param regName 被记录活跃记录的变量
+ * @param lineNum 当前所在行数
+ */
 void updateActiveRecord(std::string regName, int lineNum) {
   if (regName[0] != 't') {
     return;
@@ -665,7 +850,12 @@ void updateActiveRecord(std::string regName, int lineNum) {
     target->second.second = lineNum;
   }
 }
-
+/**
+ * @brief 为vrName对应的IR中的t变量分配寄存器
+ * 
+ * @param vrName IR中的t变量，如t156
+ * @return int 
+ */
 int getAvaiableReg(std::string vrName) {
   for (int i = 5; i <= 7; ++i) {
     if (line > regs[i].avaliableLine) {
@@ -687,6 +877,14 @@ int getAvaiableReg(std::string vrName) {
   return -1;
 }
 
+/**
+ * @brief 获得变量在栈帧中的offset
+ * 
+ * @param valueName 变量名称
+ * @param size 待分配的变量的大小
+ * @return int 
+ */
+
 int getValueOffset(std::string valueName, int size) {
   auto target = offset.find(valueName);
   if (target == offset.end()) {
@@ -702,6 +900,10 @@ int getValueOffset(std::string valueName, int size) {
   }
 }
 
+/**
+ * @brief 输出活跃记录到文件
+ * 
+ */
 void printActiveRecord() {
   std::ofstream record("record.i");
   for (auto iter = activeRecord.begin(); iter != activeRecord.end(); ++iter) {
@@ -709,7 +911,12 @@ void printActiveRecord() {
            << iter->second.second << ">" << std::endl;
   }
 }
-
+/**
+ * @brief 打印寄存器分配后的指令序列
+ * 
+ * @param out 待输出的文件
+ * @param instrs 指令选择后的指令序列
+ */
 void printAllocatedInstr(std::ofstream &out, instrSelectedList instrs) {
   instrs = instrs->next;
   if (globalArrays.size() > 0) {
@@ -862,7 +1069,12 @@ void printAllocatedInstr(std::ofstream &out, instrSelectedList instrs) {
     instrs = instrs->next;
   }
 }
-
+/**
+ * @brief 输出指令选择后的指令序列到文件
+ * 
+ * @param out 对应的输出文件
+ * @param instrs 指令选择后的指令序列
+ */
 void printSelectedInstr(std::ofstream &out, instrSelectedList instrs) {
   instrs = instrs->next;
   while (instrs != nullptr) {
@@ -990,7 +1202,10 @@ void printSelectedInstr(std::ofstream &out, instrSelectedList instrs) {
     instrs = instrs->next;
   }
 }
-
+/**
+ * @brief 初始化RISC-V的32个寄存器的信息
+ * 
+ */
 void initializeRegs() {
   regs[0].name = "zero";
   regs[0].avaliableLine = -1;

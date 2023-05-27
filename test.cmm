@@ -1,5 +1,13 @@
-int a[10];
 int main(){
-    a[1] = 2;
+
+    int a = 0;
+    int b = 1;
+    {
+        int a = 2;
+        putint(a);
+        putint(b);
+    }
+    putint(a);
+    putint(b);
     return 0;
 }
