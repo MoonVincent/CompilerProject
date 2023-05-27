@@ -519,12 +519,15 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "./src/parser/lexical.l"
 #line 2 "./src/parser/lexical.l"
-#include "stdio.h"
+#include <iostream>
 #include "syntax.tab.hpp"
 #include "syntaxNode.hpp"
+#include <vector>
 std::string preProcess(std::string str);
-#line 527 "lex.yy.c"
-#line 528 "lex.yy.c"
+std::vector<int> syntaxErrorLines;
+bool lexicalError = false;
+#line 530 "lex.yy.c"
+#line 531 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -741,9 +744,9 @@ YY_DECL
 		}
 
 	{
-#line 13 "./src/parser/lexical.l"
+#line 16 "./src/parser/lexical.l"
 
-#line 747 "lex.yy.c"
+#line 750 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -812,171 +815,171 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 14 "./src/parser/lexical.l"
+#line 17 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "STRUCT", yytext); return STRUCT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 15 "./src/parser/lexical.l"
+#line 18 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "RETURN", yytext); return RETURN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 16 "./src/parser/lexical.l"
+#line 19 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "IF", yytext); return IF; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 17 "./src/parser/lexical.l"
+#line 20 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "ELSE", yytext); return ELSE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 18 "./src/parser/lexical.l"
+#line 21 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "WHILE", yytext); return WHILE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 19 "./src/parser/lexical.l"
+#line 22 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "TYPE", yytext); return TYPE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 20 "./src/parser/lexical.l"
+#line 23 "./src/parser/lexical.l"
 {std::string x(yytext);yylval.node = buildTree(0, yylineno, true, "STRING", x.c_str()); return STRING;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 21 "./src/parser/lexical.l"
+#line 24 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "INT", yytext); return INT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 22 "./src/parser/lexical.l"
+#line 25 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "FLOAT", yytext); return FLOAT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 23 "./src/parser/lexical.l"
+#line 26 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "ID", yytext); return ID;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 24 "./src/parser/lexical.l"
+#line 27 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "SEMI", yytext); return SEMI; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 25 "./src/parser/lexical.l"
+#line 28 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "COMMA", yytext); return COMMA; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 26 "./src/parser/lexical.l"
+#line 29 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "ASSIGNOP", yytext); return ASSIGNOP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 27 "./src/parser/lexical.l"
+#line 30 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "RELOP", yytext); return RELOP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 28 "./src/parser/lexical.l"
+#line 31 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "PLUS", yytext); return PLUS; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 29 "./src/parser/lexical.l"
+#line 32 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "MINUS", yytext); return MINUS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 30 "./src/parser/lexical.l"
+#line 33 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "STAR", yytext); return STAR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 31 "./src/parser/lexical.l"
+#line 34 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "DIV", yytext); return DIV; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 32 "./src/parser/lexical.l"
+#line 35 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "AND", yytext); return AND; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 33 "./src/parser/lexical.l"
+#line 36 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "OR", yytext); return OR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 34 "./src/parser/lexical.l"
+#line 37 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "DOT", yytext); return DOT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 35 "./src/parser/lexical.l"
+#line 38 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "NOT", yytext); return NOT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 36 "./src/parser/lexical.l"
+#line 39 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "LP", yytext); return LP; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 37 "./src/parser/lexical.l"
+#line 40 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "RP", yytext); return RP; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 38 "./src/parser/lexical.l"
+#line 41 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "LB", yytext); return LB; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 39 "./src/parser/lexical.l"
+#line 42 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "RB", yytext); return RB; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 40 "./src/parser/lexical.l"
+#line 43 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "LC", yytext); return LC; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 41 "./src/parser/lexical.l"
+#line 44 "./src/parser/lexical.l"
 {yylval.node = buildTree(0, yylineno, true, "RC", yytext); return RC; }
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 42 "./src/parser/lexical.l"
+#line 45 "./src/parser/lexical.l"
 {}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 43 "./src/parser/lexical.l"
+#line 46 "./src/parser/lexical.l"
 {}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 44 "./src/parser/lexical.l"
+#line 47 "./src/parser/lexical.l"
 {}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 45 "./src/parser/lexical.l"
-{ printf("Error type A at Line %d: Mysterious characters \'%s\'\n",  yylineno,  yytext);  } 
+#line 48 "./src/parser/lexical.l"
+{ lexicalError = true; std::cout << "[line " << yylineno << " lexical error]" << yytext << std::endl;  } 
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 46 "./src/parser/lexical.l"
+#line 49 "./src/parser/lexical.l"
 ECHO;
 	YY_BREAK
-#line 980 "lex.yy.c"
+#line 983 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1993,7 +1996,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 46 "./src/parser/lexical.l"
+#line 49 "./src/parser/lexical.l"
 
 
 std::string preProcess(std::string str) {

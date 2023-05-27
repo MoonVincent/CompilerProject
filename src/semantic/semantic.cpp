@@ -1,6 +1,7 @@
 #include "../include/semantic.hpp"
 
 #include "../include/global.hpp"
+bool semanticError = false;
 
 /**
  * @brief 语义分析入口
@@ -42,6 +43,7 @@ void ExtDef(tree root, std::list<std::string>& record_struct) {
     Type ret;
     CompSt(root->children[2], record, ret, record_struct);
     if (!isEquivalent(type, ret)) {
+      semanticError = true;
       std::cout << "[line " << root->children[1]->children[0]->lineNo
                 << " semantic error] "
                 << "The type of return value doesn't match with definition"
@@ -107,6 +109,7 @@ Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
     type = newStructure(s_field);
     if (optag != "") {
       if (!insertStructItem(optag, type)) {
+        semanticError = true;
         std::cout << "[line " << root->children[2]->lineNo
                   << " semantic error] "
                   << "Multiple definition of struct " << optag << std::endl;
@@ -119,6 +122,7 @@ Type StructSpecifier(tree root, std::list<std::string>& record_struct) {
     std::string tag = Tag(root->children[1]);
     type = getStructItem(tag);
     if (type == nullptr) {
+      semanticError = true;
       std::cout << "[line " << root->children[1]->children[0]->lineNo
                 << " semantic error] "
                 << "Undefined reference to the struct " << tag << std::endl;
@@ -161,6 +165,7 @@ int VarDec(Type type, tree root, std::list<std::string>& record) {
     auto iter =
         std::find(record.begin(), record.end(), root->children[0]->value);
     if (iter != record.end()) {
+      semanticError = true;
       std::cout << "[line " << root->children[0]->lineNo << " semantic error] "
                 << "Multiple definition of variable "
                 << root->children[0]->value << std::endl;
@@ -194,6 +199,7 @@ void FunDec(Type rv_type, tree root, std::list<std::string>& record,
   }
   Type type = newFunc(rv_type, paramList);
   if (!insertFuncItem(func_name, type)) {
+    semanticError = true;
     std::cout << "[line " << root->children[0]->lineNo << " semantic error] "
               << "Multiple definition of function " << func_name << std::endl;
   }
@@ -349,6 +355,7 @@ void Dec(Type type, tree root, std::list<std::string>& record) {
     // VarDec其后必为左值，因此此处的ASSIGNOP无需判断是否为左值
     Type right = Exp(root->children[2]).first;
     if (!isEquivalent(type, right)) {
+      semanticError = true;
       std::cout << "[line " << line << " semantic error] "
                 << "This kind of value can't be assigned to " << record.back()
                 << std::endl;
@@ -366,6 +373,7 @@ std::pair<Type, bool> Exp(tree root) {
     if (root->children[0]->key == "ID") {
       Type type = getItem(root->children[0]->value);
       if (type == nullptr) {
+        semanticError = true;
         std::cout << "[line " << root->children[0]->lineNo
                   << " semantic error] "
                   << "Undefined reference to variable "
@@ -386,12 +394,14 @@ std::pair<Type, bool> Exp(tree root) {
 
         if (exp1.first && exp2.first) {
           if (!exp1.second) {
+            semanticError = true;
             std::cout << "[line " << root->children[1]->lineNo
                       << " semantic error] "
                       << "Can't assign value to a non-left value. "
                       << std::endl;
           }
           if (!isEquivalent(exp1.first, exp2.first)) {
+            semanticError = true;
             std::cout << "[line " << root->children[1]->lineNo
                       << " semantic error] "
                       << "Type doesn't match" << std::endl;
@@ -406,6 +416,7 @@ std::pair<Type, bool> Exp(tree root) {
           return {nullptr, false};
         }
         if (typeExp.first->kind != STRUCTURE_SEMA) {
+          semanticError = true;
           std::cout << "[line " << root->children[1]->lineNo
                     << " semantic error] "
                     << "Can't access use ." << std::endl;
@@ -414,6 +425,7 @@ std::pair<Type, bool> Exp(tree root) {
         std::string id = root->children[2]->value;
         Type typeID = getFieldType(typeExp.first->u.structure, id);
         if (typeID == nullptr) {
+          semanticError = true;
           std::cout << "[line " << root->children[1]->lineNo
                     << " semantic error] "
                     << "The structure doesn't has the member "
@@ -426,6 +438,7 @@ std::pair<Type, bool> Exp(tree root) {
         std::pair<Type, bool> exp1 = Exp(root->children[0]);
         std::pair<Type, bool> exp2 = Exp(root->children[2]);
         if (!isEquivalent(exp1.first, exp2.first)) {
+          semanticError = true;
           std::cout << "[line " << root->children[1]->lineNo
                     << " semantic error] "
                     << "Type doesn't match" << std::endl;
@@ -440,12 +453,14 @@ std::pair<Type, bool> Exp(tree root) {
       std::string id = root->children[0]->value;
       Type type = getFuncItem(id);
       if (type == nullptr) {
+        semanticError = true;
         std::cout << "[line " << root->children[0]->lineNo
                   << " semantic error] "
                   << "Undefined reference to function " << id << std::endl;
         return {nullptr, false};
       }
       if (type->u.func.paraNum != 0) {
+        semanticError = true;
         std::cout << "[line " << root->children[0]->lineNo
                   << " semantic error] "
                   << "There are too many params" << std::endl;
@@ -489,6 +504,7 @@ std::pair<Type, bool> Exp(tree root) {
         }
       }
     }
+    semanticError = true;
     std::cout << "[line " << root->children[0]->lineNo << " semantic error] "
               << "Illegal usage of ! and -" << std::endl;
     return {nullptr, false};
@@ -497,6 +513,7 @@ std::pair<Type, bool> Exp(tree root) {
       std::string func_name = root->children[0]->value;
       Type func_type = getFuncItem(func_name);
       if (func_type == nullptr) {
+        semanticError = true;
         std::cout << "[line " << root->children[0]->lineNo
                   << " semantic error] "
                   << "Undefined reference to function " << func_name
@@ -505,6 +522,7 @@ std::pair<Type, bool> Exp(tree root) {
       }
 
       if (func_type->u.func.paraNum == 0) {
+        semanticError = true;
         std::cout << "[line " << root->children[0]->lineNo
                   << " semantic error] "
                   << "The paramlist of function doesn't match" << std::endl;
@@ -513,6 +531,7 @@ std::pair<Type, bool> Exp(tree root) {
       if (Args(root->children[2], func_type, 0)) {
         return {func_type->u.func.rv, false};
       }
+      semanticError = true;
       std::cout << "[line " << root->children[0]->lineNo << " semantic error] "
                 << "The paramlist of function doesn't match" << std::endl;
       return {nullptr, false};
@@ -522,6 +541,7 @@ std::pair<Type, bool> Exp(tree root) {
       std::pair<Type, bool> exp = Exp(root->children[2]);
 
       if (array_type == nullptr || array_type->kind != ARRAY_SEMA) {
+        semanticError = true;
         std::cout << "[line " << root->children[1]->lineNo
                   << " semantic error] "
                   << "Can't access using index except array" << std::endl;
@@ -529,6 +549,7 @@ std::pair<Type, bool> Exp(tree root) {
       }
 
       if (exp.first->kind != INT_SEMA) {
+        semanticError = true;
         std::cout << "[line " << root->children[1]->lineNo
                   << " semantic error] "
                   << "Can't access using non-integer index" << std::endl;
@@ -536,6 +557,7 @@ std::pair<Type, bool> Exp(tree root) {
       }
       Type res = getArrayElemType(array_type, array_depth);
       if (res == nullptr) {
+        semanticError = true;
         std::cout << "[line " << root->children[1]->lineNo
                   << " semantic error] "
                   << "The access to array is out of range" << std::endl;

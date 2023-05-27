@@ -1,8 +1,11 @@
 %{
-#include "stdio.h"
+#include <iostream>
 #include "syntax.tab.hpp"
 #include "syntaxNode.hpp"
+#include <vector>
 std::string preProcess(std::string str);
+std::vector<int> syntaxErrorLines;
+bool lexicalError = false;
 %}
 
 digit [0-9]
@@ -42,7 +45,7 @@ letter [_a-zA-Z]
 "\n" {}
 "\t" {}
 " " {}
-. { printf("Error type A at Line %d: Mysterious characters \'%s\'\n",  yylineno,  yytext);  } 
+. { lexicalError = true; std::cout << "[line " << yylineno << " lexical error]" << yytext << std::endl;  } 
 %%
 
 std::string preProcess(std::string str) {

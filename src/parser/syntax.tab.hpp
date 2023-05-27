@@ -36,10 +36,10 @@
    private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_SYNTAX_TAB_HPP_INCLUDED
-#define YY_YY_SYNTAX_TAB_HPP_INCLUDED
+# define YY_YY_SYNTAX_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-#define YYDEBUG 0
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -47,60 +47,66 @@ extern int yydebug;
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
-#define YYTOKENTYPE
-enum yytokentype {
-  YYEMPTY = -2,
-  YYEOF = 0,      /* "end of file"  */
-  YYerror = 256,  /* error  */
-  YYUNDEF = 257,  /* "invalid token"  */
-  INT = 258,      /* INT  */
-  FLOAT = 259,    /* FLOAT  */
-  ID = 260,       /* ID  */
-  SEMI = 261,     /* SEMI  */
-  COMMA = 262,    /* COMMA  */
-  ASSIGNOP = 263, /* ASSIGNOP  */
-  RELOP = 264,    /* RELOP  */
-  PLUS = 265,     /* PLUS  */
-  MINUS = 266,    /* MINUS  */
-  STAR = 267,     /* STAR  */
-  STRING = 268,   /* STRING  */
-  DIV = 269,      /* DIV  */
-  AND = 270,      /* AND  */
-  OR = 271,       /* OR  */
-  DOT = 272,      /* DOT  */
-  NOT = 273,      /* NOT  */
-  TYPE = 274,     /* TYPE  */
-  LP = 275,       /* LP  */
-  RP = 276,       /* RP  */
-  LB = 277,       /* LB  */
-  RB = 278,       /* RB  */
-  LC = 279,       /* LC  */
-  RC = 280,       /* RC  */
-  STRUCT = 281,   /* STRUCT  */
-  RETURN = 282,   /* RETURN  */
-  IF = 283,       /* IF  */
-  ELSE = 284,     /* ELSE  */
-  WHILE = 285     /* WHILE  */
-};
-typedef enum yytokentype yytoken_kind_t;
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    INT = 258,                     /* INT  */
+    FLOAT = 259,                   /* FLOAT  */
+    ID = 260,                      /* ID  */
+    SEMI = 261,                    /* SEMI  */
+    COMMA = 262,                   /* COMMA  */
+    ASSIGNOP = 263,                /* ASSIGNOP  */
+    RELOP = 264,                   /* RELOP  */
+    PLUS = 265,                    /* PLUS  */
+    MINUS = 266,                   /* MINUS  */
+    STAR = 267,                    /* STAR  */
+    STRING = 268,                  /* STRING  */
+    DIV = 269,                     /* DIV  */
+    AND = 270,                     /* AND  */
+    OR = 271,                      /* OR  */
+    DOT = 272,                     /* DOT  */
+    NOT = 273,                     /* NOT  */
+    TYPE = 274,                    /* TYPE  */
+    LP = 275,                      /* LP  */
+    RP = 276,                      /* RP  */
+    LB = 277,                      /* LB  */
+    RB = 278,                      /* RB  */
+    LC = 279,                      /* LC  */
+    RC = 280,                      /* RC  */
+    STRUCT = 281,                  /* STRUCT  */
+    RETURN = 282,                  /* RETURN  */
+    IF = 283,                      /* IF  */
+    ELSE = 284,                    /* ELSE  */
+    WHILE = 285                    /* WHILE  */
+  };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-union YYSTYPE {
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+union YYSTYPE
+{
 #line 10 "./src/parser/syntax.ypp"
 
-  struct treeNode* node;
+    struct treeNode* node;
 
 #line 98 "syntax.tab.hpp"
+
 };
 typedef union YYSTYPE YYSTYPE;
-#define YYSTYPE_IS_TRIVIAL 1
-#define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
+
 
 extern YYSTYPE yylval;
 
-int yyparse(void);
+
+int yyparse (void);
+
 
 #endif /* !YY_YY_SYNTAX_TAB_HPP_INCLUDED  */

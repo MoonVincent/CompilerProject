@@ -30,7 +30,7 @@
 
 %%
 
-      Program: ExtDefList {syntaxTree = buildTree(1, NO_LINE, false, "Program", NO_VALUE, $1);}
+      Program: ExtDefList {if (lexicalError) exit(-1); syntaxTree = buildTree(1, NO_LINE, false, "Program", NO_VALUE, $1);}
             ;
     
       ExtDefList: ExtDef ExtDefList {$$ = buildTree(2, NO_LINE, false, "ExtDefList", NO_VALUE, $1, $2);}
@@ -77,6 +77,7 @@
             ;
 
       CompSt: LC DefList StmtList RC {$$ = buildTree(4, NO_LINE, false, "CompSt", NO_VALUE, $1, $2, $3, $4);}
+            | error RC { }
           ;
 
       StmtList: Stmt StmtList {$$ = buildTree(2, NO_LINE, false, "StmtList", NO_VALUE, $1, $2);}
@@ -89,6 +90,7 @@
   	  	  | IF LP Exp RP Stmt {$$ = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5);}
   	  	  | IF LP Exp RP Stmt ELSE Stmt {$$ = buildTree(7, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5, $6, $7);}
   	  	  | WHILE LP Exp RP Stmt {$$ = buildTree(5, NO_LINE, false, "Stmt", NO_VALUE, $1, $2, $3, $4, $5);}
+          | error SEMI { }
   	  	  ;
 
       DefList: Def DefList {$$ = buildTree(2, NO_LINE, false, "DefList", NO_VALUE, $1, $2);}
@@ -125,6 +127,7 @@
             | INT {$$ = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, $1);}
             | STRING {$$ = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, $1);}
             | FLOAT {$$ = buildTree(1, NO_LINE, false, "Exp", NO_VALUE, $1);}
+            | error RP { }
             ;
 
       Args: Exp COMMA Args {$$ = buildTree(3, NO_LINE, false, "Args", NO_VALUE, $1, $2, $3);}
@@ -134,7 +137,7 @@
 %%
 
 void yyerror(char* msg){
-    
+    syntaxErrorLines.push_back(yylineno);
 }
 
 

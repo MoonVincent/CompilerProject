@@ -37,3 +37,4 @@ void DecList(Type type, tree root, std::list<std::string>& record);
 void Dec(Type type, tree root, std::list<std::string>& record);
 std::pair<Type, bool> Exp(tree root);
 bool Args(tree root, Type func_type, int paramNo);
+extern bool semanticError;
