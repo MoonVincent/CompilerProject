@@ -73,7 +73,7 @@ void addArg(Arglist argList, Arg arg);
 Operand newtemp();
 Operand newlabel();
 Operand newvalue();
-
+int compute_size(Type item);
 // 符号表相关函数
 Operand getValueItem(std::string key);
 void deleteValueItem(std::string key);
