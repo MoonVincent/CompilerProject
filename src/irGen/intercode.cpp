@@ -182,12 +182,60 @@ void translate_DefList(tree node, std::vector<std::string>& valueRecord) {
  * @param node 当前要输出的子树根节点(key为Def)
  * @param valueRecord 储存当前作用域的变量，便于离开作用域时销毁
  */
-void translate_Def(tree node, std::vector<std::string>& valueRecord) {
-  if (node == NULL) {
-    return;
-  }
-  // Def → Specifier DecList SEMI
-  translate_DecList(node->children[1], valueRecord);
+void translate_Def(tree node, std::vector<std::string>& valueRecord)
+{
+    if (node == NULL)
+        return;
+    // Def → Specifier DecList SEMI
+    if (node->children[0]->children[0]->key == "StructSpecifier" && node->children[0]->children[0]->childCnt == 2)
+    {
+        std::string Tag = node->children[0]->children[0]->children[1]->children[0]->value;
+        Type type = getStructItem(Tag);
+        int size = compute_size(type);
+        tree temp = node->children[1];
+        while (temp)
+        {
+            Operand v = newvalue();
+            insertValueItem(temp->children[0]->value,v);
+            valueRecord.push_back(temp->children[0]->value);
+            add_ICList(head, newDec(IC_DEC, v, size));
+            if (temp->childCnt == 3)
+                temp = temp->children[2];
+            else
+                break;
+        }
+    }
+    else
+        translate_DecList(node->children[1], valueRecord);
+}
+/**
+ * @brief 计算item的大小便于DEC
+ *
+ * @param item 需要被计算的type
+ */
+int compute_size(Type item)
+{
+    if (item == NULL)
+        return 0;
+    switch (item->kind)
+    {
+        case INT_SEMA:
+        case FLOAT_SEMA:
+            return 8;
+        case ARRAY_SEMA:
+            return item->u.array.elemSize * compute_size(item->u.array.elemType);
+        case STRUCTURE_SEMA:
+        {
+            int size = 0;
+            FieldList temp = item->u.structure;
+            while (temp)
+            {
+                size += compute_size(temp->type);
+                temp = temp->tail;
+            }
+            return size;
+        }
+    }
 }
 /**
  * @brief 当前节点为DecList的中间代码翻译
