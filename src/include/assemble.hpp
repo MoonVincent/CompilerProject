@@ -105,7 +105,7 @@ void selectParam(InterCodeList interCode, int paramNum);
 void selectReturn(InterCodeList interCode);
 void printSelectedInstr(std::ofstream& out, instrSelectedList instrs);
 void updateActiveRecord(std::string regName, int lineNum);
-void printActiveRecord();
+void printActiveRecord(std::ofstream& record);
 void allocateRegister();
 int getRegister(std::string regName);
 int getAvaiableReg(std::string vrName);

@@ -1,0 +1,262 @@
+QuickSort:
+    addi reg(sp), reg(sp), -16
+    sd reg(ra), 8(reg(sp))
+    sd reg(fp), 0(reg(sp))
+    addi reg(fp), reg(sp), 16
+    addi reg(sp), reg(sp), -16
+    sd reg(a1), 8(reg(sp))
+    sd reg(a0), 0(reg(sp))
+    ld reg(t0), -24(reg(fp))
+    ld reg(t1), -32(reg(fp))
+    blt reg(t0), reg(t1), label0
+    j label1
+label0:
+    ld reg(t2), -24(reg(fp))
+    addi reg(sp), reg(sp), -8
+    sd reg(t2), -40(reg(fp))
+    ld reg(t3), -32(reg(fp))
+    addi reg(sp), reg(sp), -8
+    sd reg(t3), -48(reg(fp))
+    ld reg(t5), -24(reg(fp))
+    li reg(t7), 8
+    mul reg(t6), reg(t5), reg(t7)
+    la reg(t8), 0x564f5d4d8110
+    add reg(t4), reg(t8), reg(t6)
+    ld reg(t4), 0(reg(t4))
+    addi reg(sp), reg(sp), -8
+    sd reg(t4), -56(reg(fp))
+label2:
+    ld reg(t9), -40(reg(fp))
+    ld reg(t10), -48(reg(fp))
+    blt reg(t9), reg(t10), label3
+    j label4
+label3:
+label5:
+    ld reg(t11), -40(reg(fp))
+    ld reg(t12), -48(reg(fp))
+    blt reg(t11), reg(t12), label8
+    j label7
+label8:
+    ld reg(t14), -48(reg(fp))
+    li reg(t16), 8
+    mul reg(t15), reg(t14), reg(t16)
+    la reg(t17), 0x564f5d4d9640
+    add reg(t13), reg(t17), reg(t15)
+    ld reg(t13), 0(reg(t13))
+    ld reg(t18), -56(reg(fp))
+    bge reg(t13), reg(t18), label6
+    j label7
+label6:
+    ld reg(t20), -48(reg(fp))
+    li reg(t21), 1
+    sub reg(t19), reg(t20), reg(t21)
+    sd reg(t19), -48(reg(fp))
+    j label5
+label7:
+    ld reg(t22), -40(reg(fp))
+    ld reg(t23), -48(reg(fp))
+    blt reg(t22), reg(t23), label9
+    j label10
+label9:
+    ld reg(t25), -48(reg(fp))
+    li reg(t27), 8
+    mul reg(t26), reg(t25), reg(t27)
+    la reg(t28), 0x564f5d4dab90
+    add reg(t24), reg(t28), reg(t26)
+    ld reg(t24), 0(reg(t24))
+    ld reg(t30), -40(reg(fp))
+    li reg(t32), 8
+    mul reg(t31), reg(t30), reg(t32)
+    la reg(t33), 0x564f5d4db490
+    add reg(t29), reg(t33), reg(t31)
+    sd reg(t24), 0(reg(t29))
+    ld reg(t35), -40(reg(fp))
+    li reg(t36), 1
+    add reg(t34), reg(t35), reg(t36)
+    sd reg(t34), -40(reg(fp))
+label10:
+label11:
+    ld reg(t37), -40(reg(fp))
+    ld reg(t38), -48(reg(fp))
+    blt reg(t37), reg(t38), label14
+    j label13
+label14:
+    ld reg(t40), -40(reg(fp))
+    li reg(t42), 8
+    mul reg(t41), reg(t40), reg(t42)
+    la reg(t43), 0x564f5d4dc660
+    add reg(t39), reg(t43), reg(t41)
+    ld reg(t39), 0(reg(t39))
+    ld reg(t44), -56(reg(fp))
+    blt reg(t39), reg(t44), label12
+    j label13
+label12:
+    ld reg(t46), -40(reg(fp))
+    li reg(t47), 1
+    add reg(t45), reg(t46), reg(t47)
+    sd reg(t45), -40(reg(fp))
+    j label11
+label13:
+    ld reg(t48), -40(reg(fp))
+    ld reg(t49), -48(reg(fp))
+    blt reg(t48), reg(t49), label15
+    j label16
+label15:
+    ld reg(t51), -40(reg(fp))
+    li reg(t53), 8
+    mul reg(t52), reg(t51), reg(t53)
+    la reg(t54), 0x564f5d4ddbb0
+    add reg(t50), reg(t54), reg(t52)
+    ld reg(t50), 0(reg(t50))
+    ld reg(t56), -48(reg(fp))
+    li reg(t58), 8
+    mul reg(t57), reg(t56), reg(t58)
+    la reg(t59), 0x564f5d4de2d0
+    add reg(t55), reg(t59), reg(t57)
+    sd reg(t50), 0(reg(t55))
+    ld reg(t61), -48(reg(fp))
+    li reg(t62), 1
+    sub reg(t60), reg(t61), reg(t62)
+    sd reg(t60), -48(reg(fp))
+label16:
+    j label2
+label4:
+    ld reg(t63), -56(reg(fp))
+    ld reg(t65), -40(reg(fp))
+    li reg(t67), 8
+    mul reg(t66), reg(t65), reg(t67)
+    la reg(t68), 0x564f5d4df5b0
+    add reg(t64), reg(t68), reg(t66)
+    sd reg(t63), 0(reg(t64))
+    ld reg(t69), -24(reg(fp))
+    ld reg(t71), -40(reg(fp))
+    li reg(t72), 1
+    sub reg(t70), reg(t71), reg(t72)
+    mv reg(a0), reg(t70)
+    mv reg(a1), reg(t69)
+    jal QuickSort
+    ld reg(t74), -40(reg(fp))
+    li reg(t75), 1
+    add reg(t73), reg(t74), reg(t75)
+    ld reg(t76), -32(reg(fp))
+    mv reg(a0), reg(t76)
+    mv reg(a1), reg(t73)
+    jal QuickSort
+label1:
+    li reg(t77), 0
+    mv reg(sp), reg(fp)
+    ld reg(ra), -8(reg(fp))
+    ld reg(fp), -16(reg(fp))
+    mv reg(a0), reg(t77)
+    ret
+printString:
+    addi reg(sp), reg(sp), -16
+    sd reg(ra), 8(reg(sp))
+    sd reg(fp), 0(reg(sp))
+    addi reg(fp), reg(sp), 16
+    addi reg(sp), reg(sp), -8
+    sd reg(a0), 0(reg(sp))
+    li reg(t78), 0
+    addi reg(sp), reg(sp), -8
+    sd reg(t78), -32(reg(fp))
+label17:
+    ld reg(t80), -32(reg(fp))
+    li reg(t82), 1
+    mul reg(t81), reg(t80), reg(t82)
+    ld reg(t83), -24(reg(fp))
+    add reg(t79), reg(t83), reg(t81)
+    lb reg(t79), 0(reg(t79))
+    li reg(t84), 0
+    bne reg(t79), reg(t84), label18
+    j label19
+label18:
+    ld reg(t86), -32(reg(fp))
+    li reg(t88), 1
+    mul reg(t87), reg(t86), reg(t88)
+    ld reg(t89), -24(reg(fp))
+    add reg(t85), reg(t89), reg(t87)
+    lb reg(t85), 0(reg(t85))
+    mv reg(a0), reg(t85)
+    jal putch
+    ld reg(t91), -32(reg(fp))
+    li reg(t92), 1
+    add reg(t90), reg(t91), reg(t92)
+    sd reg(t90), -32(reg(fp))
+    j label17
+label19:
+    li reg(t93), 0
+    mv reg(sp), reg(fp)
+    ld reg(ra), -8(reg(fp))
+    ld reg(fp), -16(reg(fp))
+    mv reg(a0), reg(t93)
+    ret
+main:
+    addi reg(sp), reg(sp), -16
+    sd reg(ra), 8(reg(sp))
+    sd reg(fp), 0(reg(sp))
+    addi reg(fp), reg(sp), 16
+    jal getint
+    mv reg(t94), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t94), -24(reg(fp))
+    li reg(t95), 0
+    addi reg(sp), reg(sp), -8
+    sd reg(t95), -32(reg(fp))
+label20:
+    ld reg(t96), -32(reg(fp))
+    ld reg(t97), -24(reg(fp))
+    blt reg(t96), reg(t97), label21
+    j label22
+label21:
+    jal getint
+    mv reg(t98), reg(a0)
+    ld reg(t100), -32(reg(fp))
+    li reg(t102), 8
+    mul reg(t101), reg(t100), reg(t102)
+    la reg(t103), 0x564f5d4e4c50
+    add reg(t99), reg(t103), reg(t101)
+    sd reg(t98), 0(reg(t99))
+    ld reg(t105), -32(reg(fp))
+    li reg(t106), 1
+    add reg(t104), reg(t105), reg(t106)
+    sd reg(t104), -32(reg(fp))
+    j label20
+label22:
+    li reg(t107), 0
+    ld reg(t109), -24(reg(fp))
+    li reg(t110), 1
+    sub reg(t108), reg(t109), reg(t110)
+    mv reg(a0), reg(t108)
+    mv reg(a1), reg(t107)
+    jal QuickSort
+    li reg(t111), 0
+    sd reg(t111), -32(reg(fp))
+label23:
+    ld reg(t112), -32(reg(fp))
+    ld reg(t113), -24(reg(fp))
+    blt reg(t112), reg(t113), label24
+    j label25
+label24:
+    ld reg(t115), -32(reg(fp))
+    li reg(t117), 8
+    mul reg(t116), reg(t115), reg(t117)
+    la reg(t118), 0x564f5d4e67c0
+    add reg(t114), reg(t118), reg(t116)
+    ld reg(t114), 0(reg(t114))
+    mv reg(a0), reg(t114)
+    jal putint
+    ld reg(t120), -32(reg(fp))
+    li reg(t121), 1
+    add reg(t119), reg(t120), reg(t121)
+    sd reg(t119), -32(reg(fp))
+    la reg(t122), 0x564f5d4e7150
+    mv reg(a0), reg(t122)
+    jal printString
+    j label23
+label25:
+    li reg(t123), 0
+    mv reg(sp), reg(fp)
+    ld reg(ra), -8(reg(fp))
+    ld reg(fp), -16(reg(fp))
+    mv reg(a0), reg(t123)
+    ret

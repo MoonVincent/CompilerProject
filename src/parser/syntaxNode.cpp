@@ -97,6 +97,6 @@ void printDFS(tree root, std::ofstream &out) {
  */
 
 void printTree(tree root) {
-  std::ofstream out("tree.txt");
+  std::ofstream out("./build/tree.txt");
   printDFS(root, out);
 }

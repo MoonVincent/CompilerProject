@@ -682,13 +682,7 @@ void selectInstr(InterCodeList interCode) {
     }
     interCode = interCode->next;
   }
-  std::ofstream sr("test.sr");
-  printSelectedInstr(sr, instrListHead);
-  printActiveRecord();
-  initializeRegs();
-  allocateRegister();
-  std::ofstream rr("test.s");
-  printAllocatedInstr(rr, instrListHead);
+
 }
 
 /**
@@ -898,8 +892,8 @@ int getValueOffset(std::string valueName, int size) {
  * @brief 输出活跃记录到文件
  * 
  */
-void printActiveRecord() {
-  std::ofstream record("record.i");
+void printActiveRecord(std::ofstream &record) {
+
   for (auto iter = activeRecord.begin(); iter != activeRecord.end(); ++iter) {
     record << iter->first << " <" << iter->second.first << ", "
            << iter->second.second << ">" << std::endl;
