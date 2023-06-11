@@ -1,0 +1,64 @@
+add:
+    addi reg(sp), reg(sp), -16
+    sd reg(ra), 8(reg(sp))
+    sd reg(fp), 0(reg(sp))
+    addi reg(fp), reg(sp), 16
+    addi reg(sp), reg(sp), -16
+    sd reg(a1), 8(reg(sp))
+    sd reg(a0), 0(reg(sp))
+    ld reg(t1), -24(reg(fp))
+    ld reg(t2), -32(reg(fp))
+    add reg(t0), reg(t1), reg(t2)
+    mv reg(sp), reg(fp)
+    ld reg(ra), -8(reg(fp))
+    ld reg(fp), -16(reg(fp))
+    mv reg(a0), reg(t0)
+    ret
+main:
+    addi reg(sp), reg(sp), -16
+    sd reg(ra), 8(reg(sp))
+    sd reg(fp), 0(reg(sp))
+    addi reg(fp), reg(sp), 16
+    addi reg(sp), reg(sp), -80
+    addi reg(sp), reg(sp), -16
+    li reg(t3), 1
+    li reg(t5), 0
+    li reg(t7), 8
+    mul reg(t6), reg(t5), reg(t7)
+    addi reg(t8), reg(fp), -24
+    add reg(t4), reg(t8), reg(t6)
+    sd reg(t3), 0(reg(t4))
+    li reg(t9), 2
+    li reg(t11), 8
+    li reg(t12), 0
+    mul reg(t12), reg(t12), reg(t11)
+    addi reg(t13), reg(fp), -104
+    add reg(t10), reg(t13), reg(t12)
+    sd reg(t9), 0(reg(t10))
+    li reg(t16), 0
+    li reg(t18), 8
+    mul reg(t17), reg(t16), reg(t18)
+    addi reg(t19), reg(fp), -24
+    add reg(t15), reg(t19), reg(t17)
+    ld reg(t15), 0(reg(t15))
+    li reg(t21), 8
+    li reg(t22), 0
+    mul reg(t22), reg(t22), reg(t21)
+    addi reg(t23), reg(fp), -104
+    add reg(t20), reg(t23), reg(t22)
+    ld reg(t20), 0(reg(t20))
+    mv reg(a0), reg(t20)
+    mv reg(a1), reg(t15)
+    jal add
+    mv reg(t14), reg(a0)
+    addi reg(sp), reg(sp), -8
+    sd reg(t14), -120(reg(fp))
+    ld reg(t24), -120(reg(fp))
+    mv reg(a0), reg(t24)
+    jal putint
+    li reg(t25), 0
+    mv reg(sp), reg(fp)
+    ld reg(ra), -8(reg(fp))
+    ld reg(fp), -16(reg(fp))
+    mv reg(a0), reg(t25)
+    ret

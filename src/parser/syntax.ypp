@@ -40,6 +40,7 @@
       ExtDef: Specifier ExtDecList SEMI {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
           | Specifier SEMI {$$ = buildTree(2, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2);}
           | Specifier FunDec CompSt {$$ = buildTree(3, NO_LINE, false, "ExtDef", NO_VALUE, $1, $2, $3);}
+          | error SEMI {}
           ;
     
       ExtDecList: VarDec {$$ = buildTree(1, NO_LINE, false, "ExtDecList", NO_VALUE, $1);}
@@ -63,10 +64,12 @@
 
       VarDec: ID {$$ = buildTree(1, NO_LINE, false, "VarDec", NO_VALUE, $1);}
           | VarDec LB INT RB {$$ = buildTree(4, NO_LINE, false, "VarDec", NO_VALUE, $1, $2, $3, $4);}
+          | error RB {}
           ;
     
       FunDec: ID LP VarList RP {$$ = buildTree(4, NO_LINE, false, "FunDec", NO_VALUE, $1, $2, $3, $4);}
           | ID LP RP {$$ = buildTree(3, NO_LINE, false, "FunDec", NO_VALUE, $1, $2, $3);}
+          | error RP {}
           ;
     
       VarList: ParamDec COMMA VarList {$$ = buildTree(3, NO_LINE, false, "VarList", NO_VALUE, $1, $2, $3);}

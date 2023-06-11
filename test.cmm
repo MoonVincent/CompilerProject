@@ -1,0 +1,18 @@
+struct T {
+    int a;
+    int b;
+};
+
+int add(int x, int y) {
+    return x + y;
+}
+
+int main(){
+    int a[10], res;
+    struct T t;
+    a[0] = 1;
+    t.a = 2;
+    res = add(a[0], t.a);
+    putint(res);
+    return 0;
+}

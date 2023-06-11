@@ -134,7 +134,7 @@ label14:
     li reg(t48), 25
     mul reg(t47), reg(t47), reg(t48)
     add reg(t44), reg(t47), reg(t44)
-    la reg(t46), 0x55c042e662b0
+    la reg(t46), 0x55d6be9362b0
     add reg(t42), reg(t46), reg(t44)
     sd reg(t41), 0(reg(t42))
     ld reg(t50), -48(reg(fp))
@@ -185,7 +185,7 @@ label20:
     li reg(t71), 25
     mul reg(t70), reg(t70), reg(t71)
     add reg(t67), reg(t70), reg(t67)
-    la reg(t69), 0x55c042e699e0
+    la reg(t69), 0x55d6be9399e0
     add reg(t65), reg(t69), reg(t67)
     sd reg(t64), 0(reg(t65))
     ld reg(t73), -48(reg(fp))
@@ -205,7 +205,7 @@ label18:
     bne reg(t78), reg(t79), label22
     j label23
 label22:
-    la reg(t80), 0x55c042e6ade0
+    la reg(t80), 0x55d6be93ade0
     mv reg(a0), reg(t80)
     jal printString
     li reg(t81), 0
@@ -245,7 +245,7 @@ label28:
     li reg(t97), 25
     mul reg(t96), reg(t96), reg(t97)
     add reg(t93), reg(t96), reg(t93)
-    la reg(t95), 0x55c042e6d4e0
+    la reg(t95), 0x55d6be93d4e0
     add reg(t91), reg(t95), reg(t93)
     sd reg(t90), 0(reg(t91))
 label30:
@@ -262,7 +262,7 @@ label31:
     li reg(t108), 25
     mul reg(t107), reg(t107), reg(t108)
     add reg(t104), reg(t107), reg(t104)
-    la reg(t106), 0x55c042e6e6f0
+    la reg(t106), 0x55d6be93e6f0
     add reg(t101), reg(t106), reg(t104)
     ld reg(t101), 0(reg(t101))
     ld reg(t111), -72(reg(fp))
@@ -273,7 +273,7 @@ label31:
     li reg(t116), 25
     mul reg(t115), reg(t115), reg(t116)
     add reg(t112), reg(t115), reg(t112)
-    la reg(t114), 0x55c042e6f3a0
+    la reg(t114), 0x55d6be93f3a0
     add reg(t109), reg(t114), reg(t112)
     ld reg(t109), 0(reg(t109))
     ld reg(t117), -48(reg(fp))
@@ -284,7 +284,7 @@ label31:
     li reg(t122), 25
     mul reg(t121), reg(t121), reg(t122)
     add reg(t118), reg(t121), reg(t118)
-    la reg(t120), 0x55c042e70050
+    la reg(t120), 0x55d6be940050
     add reg(t110), reg(t120), reg(t118)
     ld reg(t110), 0(reg(t110))
     mul reg(t102), reg(t109), reg(t110)
@@ -297,7 +297,7 @@ label31:
     li reg(t129), 25
     mul reg(t128), reg(t128), reg(t129)
     add reg(t125), reg(t128), reg(t125)
-    la reg(t127), 0x55c042e717b0
+    la reg(t127), 0x55d6be9417b0
     add reg(t123), reg(t127), reg(t125)
     sd reg(t100), 0(reg(t123))
     ld reg(t131), -72(reg(fp))
@@ -346,7 +346,7 @@ label37:
     li reg(t154), 25
     mul reg(t153), reg(t153), reg(t154)
     add reg(t150), reg(t153), reg(t150)
-    la reg(t152), 0x55c042e74940
+    la reg(t152), 0x55d6be944940
     add reg(t148), reg(t152), reg(t150)
     ld reg(t148), 0(reg(t148))
     mv reg(a0), reg(t148)
@@ -364,7 +364,7 @@ label39:
     blt reg(t158), reg(t159), label40
     j label41
 label40:
-    la reg(t160), 0x55c042e75ba0
+    la reg(t160), 0x55d6be945ba0
     mv reg(a0), reg(t160)
     jal printString
     ld reg(t162), -72(reg(fp))
@@ -381,7 +381,7 @@ label41:
     li reg(t170), 25
     mul reg(t169), reg(t169), reg(t170)
     add reg(t166), reg(t169), reg(t166)
-    la reg(t168), 0x55c042e76d30
+    la reg(t168), 0x55d6be946d30
     add reg(t164), reg(t168), reg(t166)
     ld reg(t164), 0(reg(t164))
     mv reg(a0), reg(t164)
@@ -392,7 +392,7 @@ label41:
     sd reg(t171), -48(reg(fp))
     j label36
 label38:
-    la reg(t174), 0x55c042e777e0
+    la reg(t174), 0x55d6be9477e0
     mv reg(a0), reg(t174)
     jal printString
     ld reg(t176), -40(reg(fp))
